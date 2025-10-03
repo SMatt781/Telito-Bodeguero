@@ -44,7 +44,7 @@
 <aside class="sidebar" id="sidebar">
     <div class="brand">
         <button class="toggle" id="btnToggle" aria-label="Alternar menú">&#9776;</button>
-        <span class="h5 mb-0 text-label">Bienvenido - Admin</span>
+        <span class="h5 mb-0 text-label">Bienvenido - Adminn</span>
     </div>
     <hr class="text-secondary my-2">
     <ul class="nav nav-pills flex-column px-2">
