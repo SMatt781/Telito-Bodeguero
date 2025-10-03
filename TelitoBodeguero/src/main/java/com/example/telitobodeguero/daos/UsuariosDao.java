@@ -106,26 +106,37 @@ public class UsuariosDao extends BaseDao{
     }
     public Usuarios buscarUsuario(int idUsuario){
         Usuarios usuario = null;
+        try (Connection conn = this.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(
+                     "SELECT * FROM usuarios WHERE idUsuarios = ?")) {
+            pstmt.setInt(1, idUsuario);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    usuario = new Usuarios();
+                    usuario.setIdUsuarios(rs.getInt(1));
+                    usuario.setNombre(rs.getString(2));
+                    usuario.setApellido(rs.getString(3));
+                    usuario.setCorreo(rs.getString(4));
+                    usuario.setContrasenha(rs.getString(5));
 
-            try(Connection conn = this.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM usuarios WHERE idUsuarios = ?");){
-                pstmt.setInt(1, idUsuario);
+                    int rolId  = rs.getInt(6);
+                    if (!rs.wasNull()) {
+                        Roles rol = new Roles();
+                        rol.setIdRoles(rolId);
+                        usuario.setRol(rol);
+                    }
 
-                try(ResultSet rs = pstmt.executeQuery()){
-                    if (rs.next()){
-                        usuario = new Usuarios();
-                        usuario.setIdUsuarios(rs.getInt(1));
-                        usuario.setNombre(rs.getString(2));
-                        usuario.setApellido(rs.getString(3));
-                        usuario.setCorreo(rs.getString(4));
-                        usuario.setContrasenha(rs.getString(5));
-                        usuario.setRoles_idRoles(rs.getInt(6));
-                        usuario.setDistritos_idDistritos(rs.getInt(7));
+                    int distId = rs.getInt(7);
+                    if (!rs.wasNull()) {
+                        Distritos d = new Distritos();
+                        d.setIdDistritos(distId);
+                        usuario.setDistrito(d);
                     }
                 }
-            }catch ( SQLException e) {
-                e.printStackTrace();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return usuario;
     }
 
