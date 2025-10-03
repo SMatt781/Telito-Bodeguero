@@ -4,6 +4,7 @@ public class Distritos {
     private int idDistritos;
     private String nombre;
     private int Zonas_idZonas;
+    private Zonas zonas;
 
     public int getIdDistritos() {
         return idDistritos;
@@ -27,5 +28,12 @@ public class Distritos {
 
     public void setZonas_idZonas(int zonas_idZonas) {
         Zonas_idZonas = zonas_idZonas;
+    }
+        public Zonas getZonas() {
+        return zonas;
+    }
+
+    public void setZonas(Zonas zonas) {
+        this.zonas = zonas;
     }
 }
