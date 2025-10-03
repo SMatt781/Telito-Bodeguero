@@ -1,5 +1,10 @@
 <%@ page import="java.util.Date" %>
+<%@ page import="com.example.telitobodeguero.beans.Roles" %>
+<%@ page import="com.example.telitobodeguero.beans.Distritos" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<jsp:useBean id="listaDistritos" type="java.util.ArrayList<com.example.telitobodeguero.beans.Distritos>" scope="request" />
+<jsp:useBean id="listaRoles" type="java.util.ArrayList<com.example.telitobodeguero.beans.Roles>" scope="request" />
 <!doctype html>
 <html lang="es">
 <head>
@@ -88,50 +93,11 @@
                     <label class="form-label">Distrito</label>
                     <div class="input-group">
                         <label class="input-group-text" for="distrito">Distrito</label>
-                        <select class="form-select" name="distrito_id" id="distrito">
+                        <select class="form-select" name="distrito_id" id="distrito_id">
                             <option selected disabled>Seleccione...</option>
-                            <option value="1">Ancón</option>
-                            <option value="2">Santa Rosa</option>
-                            <option value="3">Carabayllo</option>
-                            <option value="4">Puente Piedra</option>
-                            <option value="5">Comas</option>
-                            <option value="6">Los Olivos</option>
-                            <option value="7">San Martín de Porres</option>
-                            <option value="8">Independencia</option>
-                            <option value="9">San Juan de Miraflores</option>
-                            <option value="10">Villa María de Triunfo</option>
-                            <option value="11">Villa el Salvador</option>
-                            <option value="12">Pachacamac</option>
-                            <option value="13">Lurín</option>
-                            <option value="14">Punta Hermosa</option>
-                            <option value="15">Punta Negra</option>
-                            <option value="16">San Bartolo</option>
-                            <option value="17">Santa María del Mar</option>
-                            <option value="18">Pucusana</option>
-                            <option value="19">San Juan de Lurigancho</option>
-                            <option value="20">Lurigancho/Chosica</option>
-                            <option value="21">Ate</option>
-                            <option value="22">El Agustino</option>
-                            <option value="23">Santa Anita</option>
-                            <option value="24">La Molina</option>
-                            <option value="25">Cieneguilla</option>
-                            <option value="26">Rímac</option>
-                            <option value="27">Cercado de Lima</option>
-                            <option value="28">Breña</option>
-                            <option value="29">Pueblo Libre</option>
-                            <option value="30">Magdalena</option>
-                            <option value="31">Jesús María</option>
-                            <option value="32">La Victoria</option>
-                            <option value="33">Lince</option>
-                            <option value="34">San Isidro</option>
-                            <option value="35">San Miguel</option>
-                            <option value="36">Surquillo</option>
-                            <option value="37">San Borja</option>
-                            <option value="38">Santiago de Surco</option>
-                            <option value="39">Barranco</option>
-                            <option value="40">Chorrillos</option>
-                            <option value="41">San Luis</option>
-                            <option value="42">Miraflores</option>
+                            <% for (Distritos distritos : listaDistritos) { %>
+                            <option value="<%=distritos.getIdDistritos()%>"><%=distritos.getNombre()%></option>
+                            <% }%>
                         </select>
 
                     </div>
@@ -152,12 +118,11 @@
                     <label class="form-label">Rol</label>
                     <div class="input-group">
                         <label class="input-group-text" for="rol">Rol</label>
-                        <select class="form-select" name="rol_id" id="rol">
+                        <select class="form-select" name="rol_id" id="rol_id">
                             <option selected>Seleccione...</option>
-                            <option value="1">Administrador</option>
-                            <option value="2">Logística</option>
-                            <option value="3">Almacén</option>
-                            <option value="4">Productor</option>
+                            <% for (Roles roles : listaRoles) {%>
+                            <option value="<%=roles.getIdRoles()%>"><%=roles.getNombre()%></option>
+                            <% }%>
                         </select>
                     </div>
                 </div>
