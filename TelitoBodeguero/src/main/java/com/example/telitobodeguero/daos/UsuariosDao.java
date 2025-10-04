@@ -12,10 +12,10 @@ public class UsuariosDao extends BaseDao{
         Usuarios usuario = null;
 
         String sql = "SELECT u.idUsuarios, u.nombre, u.apellido, u.correo, u.contrasenha, " +
-               "       u.Distritos_idDistritos, r.idRoles AS rol_id, r.nombre AS rol_nombre " +
+               "       u.Distritos_idDistritos, u.activo, r.idRoles AS rol_id, r.nombre AS rol_nombre " +
                "FROM Usuarios u " +
                "INNER JOIN Roles r ON u.Roles_idRoles = r.idRoles " +
-               "WHERE u.correo = ? AND u.contrasenha = ?";
+               "WHERE u.correo = ? AND u.contrasenha = ? AND u.activo = true ";
 
 
         try (Connection conn = this.getConnection();
@@ -31,6 +31,7 @@ public class UsuariosDao extends BaseDao{
                     usuario.setCorreo(rs.getString("correo"));
                     usuario.setContrasenha(rs.getString("contrasenha"));
                     usuario.setDistritos_idDistritos(rs.getInt("Distritos_idDistritos"));
+                    usuario.setActivo(rs.getBoolean("activo"));
 
                     Roles rol = new Roles();
                     rol.setIdRoles(rs.getInt("rol_id"));
@@ -53,7 +54,7 @@ public class UsuariosDao extends BaseDao{
 
             ResultSet rs = stmt.executeQuery(
                     "SELECT u.idUsuarios, u.nombre, u.apellido, u.correo," +
-                            "       u.distritos_idDistritos, r.idRoles AS rol_id, r.nombre AS rol_nombre, d.idDistritos AS distrito_id, d.nombre AS distrito_nombre " +
+                            "       u.distritos_idDistritos, u.activo, r.idRoles AS rol_id, r.nombre AS rol_nombre, d.idDistritos AS distrito_id, d.nombre AS distrito_nombre " +
                             "FROM usuarios u " +
                             "INNER JOIN roles r ON u.Roles_idRoles = r.idRoles INNER JOIN distritos d ON u.distritos_idDistritos = d.idDistritos ORDER BY u.idUsuarios ASC"
             );
@@ -65,7 +66,7 @@ public class UsuariosDao extends BaseDao{
                 usuario.setCorreo(rs.getString("correo"));
                 //usuario.setRoles_idRoles(rs.getInt("rol_id"));
                 usuario.setDistritos_idDistritos(rs.getInt("distritos_idDistritos"));
-
+                usuario.setActivo(rs.getBoolean("activo"));
                 Roles rol = new Roles();
                 rol.setIdRoles(rs.getInt("rol_id"));
                 rol.setNombre(rs.getString("rol_nombre"));
@@ -89,8 +90,8 @@ public class UsuariosDao extends BaseDao{
 
             try(Connection conn= this.getConnection();){
                 String sql=
-                        "INSERT INTO Usuarios (nombre,apellido,correo,contrasenha,Roles_idRoles,Distritos_idDistritos) " +
-                        "VALUES (?,?,?,?,?,?)";
+                        "INSERT INTO Usuarios (nombre,apellido,correo,contrasenha,Roles_idRoles,Distritos_idDistritos,activo) " +
+                        "VALUES (?,?,?,?,?,?,true)";
                 try(PreparedStatement pstmt = conn.prepareStatement(sql)){
                     pstmt.setString(1,nombre);
                     pstmt.setString(2,apellido);
@@ -118,6 +119,7 @@ public class UsuariosDao extends BaseDao{
                     usuario.setApellido(rs.getString(3));
                     usuario.setCorreo(rs.getString(4));
                     usuario.setContrasenha(rs.getString(5));
+                    usuario.setActivo(rs.getBoolean("activo"));
 
                     int rolId  = rs.getInt(6);
                     if (!rs.wasNull()) {
@@ -170,7 +172,7 @@ public class UsuariosDao extends BaseDao{
     public void borrarUsuario(int idUsuario){
 
         try (Connection conn = this.getConnection();) {
-                String sql = "DELETE FROM Usuarios WHERE idUsuarios = ?";
+                String sql = "UPDATE Usuarios SET activo = 0 WHERE idUsuarios = ?";
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                     pstmt.setInt(1, idUsuario);
                     pstmt.executeUpdate();
@@ -180,4 +182,10 @@ public class UsuariosDao extends BaseDao{
             }
         }
 
+    public void activarUsuario(int idUsuario){
+        String sql = "UPDATE Usuarios SET activo = 1 WHERE idUsuarios = ?";
+        try (Connection c = this.getConnection(); PreparedStatement p = c.prepareStatement(sql)) {
+            p.setInt(1, idUsuario); p.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
 }
