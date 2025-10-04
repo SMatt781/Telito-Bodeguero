@@ -1,6 +1,8 @@
 package com.example.telitobodeguero.servlets;
 
 import com.example.telitobodeguero.beans.Usuarios;
+import com.example.telitobodeguero.daos.DistritosDao;
+import com.example.telitobodeguero.daos.RolesDao;
 import com.example.telitobodeguero.daos.UsuariosDao;
 import com.example.telitobodeguero.utils.Auth;
 import jakarta.servlet.RequestDispatcher;
@@ -65,6 +67,8 @@ public class ListaUsuariosServlet extends HttpServlet {
             throws ServletException, IOException {
         String action=request.getParameter("action") == null ? "usuarios" : request.getParameter("action");
         UsuariosDao usuariosDao = new UsuariosDao();
+        RolesDao rolesDao = new RolesDao();
+        DistritosDao distritosDao = new DistritosDao();
         RequestDispatcher view;
         switch (action) {
             case "usuarios":
@@ -82,6 +86,8 @@ public class ListaUsuariosServlet extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_FORBIDDEN);
                     return;
                 }
+                request.setAttribute("listaRoles",rolesDao.obtenerListaRoles());
+                request.setAttribute("listaDistritos",distritosDao.listaDistritos());
                 view= request.getRequestDispatcher("/Gestion/ModificacionUsuarios/nuevoUser.jsp");
                 view.forward(request, response);
                 break;
@@ -96,6 +102,8 @@ public class ListaUsuariosServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath()+"/ListaUsuariosServlet");
                 }else{
                     request.setAttribute("usuario", usuario);
+                    request.setAttribute("listaRoles",rolesDao.obtenerListaRoles());
+                    request.setAttribute("listaDistritos",distritosDao.listaDistritos());
                     view = request.getRequestDispatcher("/Gestion/ModificacionUsuarios/editarUser.jsp");
                     view.forward(request, response);
                 }
@@ -109,6 +117,13 @@ public class ListaUsuariosServlet extends HttpServlet {
                 if(usuariosDao.buscarUsuario(idUsuario)!=null){
                     usuariosDao.borrarUsuario(idUsuario);
                 }
+                response.sendRedirect(request.getContextPath()+"/ListaUsuariosServlet");
+                break;
+
+            case "activar":
+                if (!Auth.can(request, 12)) { response.sendError(HttpServletResponse.SC_FORBIDDEN); return; }
+                idUsuario = Integer.parseInt(request.getParameter("id"));
+                usuariosDao.activarUsuario(idUsuario);
                 response.sendRedirect(request.getContextPath()+"/ListaUsuariosServlet");
                 break;
         }
