@@ -99,8 +99,6 @@
                     <th scope="col">Correo</th>
                     <th scope="col">Activo / Inactivo</th>
                     <th></th>
-                    <th></th>
-
                 </tr>
                 </thead>
                 <tbody>
@@ -110,9 +108,21 @@
                     <td><%=usuario.getNombre() +" "+usuario.getApellido()%></td>
                     <td><%=usuario.getRol().getNombre()%></td>
                     <td><%=usuario.getCorreo()%></td>
-                    <td><span class="badge bg-success">Activo</span></td>
+                    <td>
+                        <% if (usuario.getActivo()) { %>
+                        <a class="badge bg-success"
+                           href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=borrar&id=<%=usuario.getIdUsuarios()%>"
+                           onclick="return confirm('¿Desactivar a <%=usuario.getNombre()%>?');">
+                            Activo
+                        </a>
+                        <% } else { %>
+                        <a class="badge bg-secondary"
+                           href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=activar&id=<%=usuario.getIdUsuarios()%>">
+                            Inactivo
+                        </a>
+                        <% } %>
+                    </td>
                     <td><a href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=editar&id=<%=usuario.getIdUsuarios()%>">Editar</a></td>
-                    <td><a href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=borrar&id=<%=usuario.getIdUsuarios()%>">Borrar</a></td>
                 </tr>
                 <% } %>
 
