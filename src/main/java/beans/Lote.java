@@ -3,38 +3,80 @@ package beans;
 import java.time.LocalDate;
 
 public class Lote {
-    private Integer idLote;
+    private int idLote;
     private LocalDate fechaVencimiento;
     private String ubicacion;
-    private Integer productoId;
-    private Integer cantidad;
-    private Integer usuarioId;
+    private int productoId;
+    private int cantidad;
+    private int usuarioId;
+    private String productoNombre;
 
-    // para la vista
-    private String productoNombre; // nombre del producto
-    private String sku;            // sku del producto
+    // 🔹 Nuevo campo para SKU
+    private String productoSku;
 
-    public Integer getIdLote() { return idLote; }
-    public void setIdLote(Integer idLote) { this.idLote = idLote; }
+    // --- Getters y Setters ---
+    public int getIdLote() {
+        return idLote;
+    }
 
-    public LocalDate getFechaVencimiento() { return fechaVencimiento; }
-    public void setFechaVencimiento(LocalDate fechaVencimiento) { this.fechaVencimiento = fechaVencimiento; }
+    public void setIdLote(int idLote) {
+        this.idLote = idLote;
+    }
 
-    public String getUbicacion() { return ubicacion; }
-    public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
+    public LocalDate getFechaVencimiento() {
+        return fechaVencimiento;
+    }
 
-    public Integer getProductoId() { return productoId; }
-    public void setProductoId(Integer productoId) { this.productoId = productoId; }
+    public void setFechaVencimiento(LocalDate fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
+    }
 
-    public Integer getCantidad() { return cantidad; }
-    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
+    public String getUbicacion() {
+        return ubicacion;
+    }
 
-    public Integer getUsuarioId() { return usuarioId; }
-    public void setUsuarioId(Integer usuarioId) { this.usuarioId = usuarioId; }
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
 
-    public String getProductoNombre() { return productoNombre; }
-    public void setProductoNombre(String productoNombre) { this.productoNombre = productoNombre; }
+    public int getProductoId() {
+        return productoId;
+    }
 
-    public String getSku() { return sku; }
-    public void setSku(String sku) { this.sku = sku; }
+    public void setProductoId(int productoId) {
+        this.productoId = productoId;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public int getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(int usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    public String getProductoNombre() {
+        return productoNombre;
+    }
+
+    public void setProductoNombre(String productoNombre) {
+        this.productoNombre = productoNombre;
+    }
+
+    // 🔹 Getter y Setter del SKU
+    public String getProductoSku() {
+        return productoSku;
+    }
+
+    public void setProductoSku(String productoSku) {
+        this.productoSku = productoSku;
+    }
 }
