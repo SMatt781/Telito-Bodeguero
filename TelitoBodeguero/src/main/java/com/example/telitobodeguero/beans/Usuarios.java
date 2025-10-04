@@ -10,6 +10,7 @@ public class Usuarios {
     private int Distritos_idDistritos;
     private Roles rol;
     private Distritos distrito;
+    private Boolean activo;
 
     public int getIdUsuarios() {
         return idUsuarios;
@@ -81,5 +82,13 @@ public class Usuarios {
 
     public void setDistrito(Distritos distrito) {
         this.distrito = distrito;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 }
