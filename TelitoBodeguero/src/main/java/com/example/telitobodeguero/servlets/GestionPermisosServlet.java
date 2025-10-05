@@ -3,6 +3,7 @@ package com.example.telitobodeguero.servlets;
 import com.example.telitobodeguero.beans.Permisos;
 import com.example.telitobodeguero.beans.Roles_has_Permisos;
 import com.example.telitobodeguero.daos.ListaPermisosDao;
+import com.example.telitobodeguero.daos.RolesDao;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,6 +25,8 @@ public class GestionPermisosServlet extends HttpServlet {
         ListaPermisosDao listaPermisosDao = new ListaPermisosDao();
         ArrayList<Roles_has_Permisos> listaPermisos = listaPermisosDao.obtenerListaPermisos();
         request.setAttribute("lista", listaPermisos);
+        RolesDao  rolesDao = new RolesDao();
+        request.setAttribute("listaRoles", rolesDao.obtenerListaRoles());
 
         RequestDispatcher view = request.getRequestDispatcher("/Gestion/gestionPermisos.jsp");
         view.forward(request, response);
@@ -42,8 +45,13 @@ public class GestionPermisosServlet extends HttpServlet {
             ListaPermisosDao dao = new ListaPermisosDao();
             dao.actualizarActivacion(rolId, permisoId, estado == 1);
 
-            // Volvemos a la tabla
-            response.sendRedirect(request.getContextPath() + "/GestionPermisosServlet");
+            String rolFiltro = request.getParameter("rolFiltro");
+            if (rolFiltro != null && !rolFiltro.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/GestionPermisosServlet?rolId=" + rolFiltro);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/GestionPermisosServlet");
+            }
+
             return;
         }
 
