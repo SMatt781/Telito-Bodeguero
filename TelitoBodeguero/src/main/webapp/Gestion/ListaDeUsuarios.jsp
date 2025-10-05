@@ -1,7 +1,10 @@
 <%@ page import="java.util.Date" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.example.telitobodeguero.beans.Usuarios" %>
+<%@ page import="java.util.Set" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<% Set<Integer> permisos = (Set<Integer>) session.getAttribute("permisosRol");
+if (permisos == null) permisos = java.util.Collections.emptySet(); %>
 <% ArrayList<Usuarios> listaUsuarios = (ArrayList<Usuarios>) request.getAttribute("usuarios");
     if (listaUsuarios == null) listaUsuarios = new ArrayList<>();
 %>
@@ -59,27 +62,7 @@
 <body>
 
 <!-- ===== Sidebar izquierda ===== -->
-<aside class="sidebar" id="sidebar">
-    <div class="brand">
-        <button class="toggle" id="btnToggle" aria-label="Alternar menú">&#9776;</button>
-        <span class="h5 mb-0 text-label">Bienvenido - Admin</span>
-    </div>
-    <hr class="text-secondary my-2">
-    <ul class="nav nav-pills flex-column px-2">
-        <li class="nav-item mb-1">
-            <a class="nav-link" href="Admin_Inicio.jsp"><span class="text-label">Inicio</span></a>
-        </li>
-        <li class="nav-item mb-1">
-            <a class="nav-link" href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=formCrear">
-                <img src="../images/nuevoUsuario.jpg" alt="" width="18" height="18" class="me-2">
-                <span class="text-label">Nuevo usuario</span>
-            </a>
-        </li>
-        <li class="nav-item mt-2">
-            <a class="nav-link" href="index.jsp"><span class="text-label">Cerrar sesión</span></a>
-        </li>
-    </ul>
-</aside>
+<jsp:include page="/sidebar.jsp" />
 
 <!-- ===== Contenido principal ===== -->
 <main class="main" id="main">
@@ -88,7 +71,14 @@
             <h1 class="mb-0">Lista de usuarios</h1>
             <!-- lugar para acciones rápidas si luego agregas filtros/botones -->
         </div>
-
+        <% if (permisos.contains(10)) { %>
+        <li class="nav-item mb-1">
+            <a class="nav-link"
+               href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=formCrear">
+                <span class="text-label">Nuevo usuario</span>
+            </a>
+        </li>
+        <% } %>
         <div class="table-responsive table-card">
             <table class="table table-striped align-middle mb-0">
                 <thead>
