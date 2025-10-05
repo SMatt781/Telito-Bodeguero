@@ -72,17 +72,13 @@ public class ListaUsuariosServlet extends HttpServlet {
         RequestDispatcher view;
         switch (action) {
             case "usuarios":
-                if (!Auth.can(request, 9)) { // 9 = Ver usuarios
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                    return;
-                }
                 ArrayList<Usuarios> listaUsuarios = usuariosDao.obtenerUsuarios();
                 request.setAttribute("usuarios", listaUsuarios);
                 view = request.getRequestDispatcher("/Gestion/ListaDeUsuarios.jsp");
                 view.forward(request, response);
                 break;
             case "formCrear":
-                if (!Auth.can(request, 10)) { // Ejemplo: permiso "Crear Usuario"
+                if (!Auth.can(request, 3)) { // Ejemplo: permiso "Crear Usuario"
                     response.sendError(HttpServletResponse.SC_FORBIDDEN);
                     return;
                 }
@@ -92,7 +88,7 @@ public class ListaUsuariosServlet extends HttpServlet {
                 view.forward(request, response);
                 break;
             case "editar":
-                if (!Auth.can(request, 11)) { // Ejemplo: permiso para "Editar Usuario"
+                if (!Auth.can(request, 4)) { // Ejemplo: permiso para "Editar Usuario"
                     response.sendError(HttpServletResponse.SC_FORBIDDEN);
                     return;
                 }
@@ -109,7 +105,7 @@ public class ListaUsuariosServlet extends HttpServlet {
                 }
                 break;
             case "borrar":
-                if (!Auth.can(request, 12)) { // Ejemplo: permiso "Editar Usuario"
+                if (!Auth.can(request, 5)) { // Ejemplo: permiso "Editar Usuario"
                     response.sendError(HttpServletResponse.SC_FORBIDDEN);
                     return;
                 }
