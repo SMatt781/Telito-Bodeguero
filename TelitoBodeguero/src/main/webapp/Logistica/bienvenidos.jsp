@@ -72,55 +72,7 @@
 <body>
 
 <!-- ===== Sidebar ===== -->
-<aside class="sidebar" id="sidebar">
-    <div class="brand">
-        <button class="toggle" id="btnToggle" aria-label="Alternar menú">&#9776;</button>
-        <span class="h5 mb-0 text-label">Telito - Bodeguero</span>
-    </div>
-    <hr class="text-secondary my-2">
-
-    <ul class="nav nav-pills flex-column px-2">
-        <li class="nav-item mb-1">
-            <a class="nav-link" href="<%= request.getContextPath() %>/Bienvenidos">
-                <span class="text-label">Inicio Logística</span>
-            </a>
-        </li>
-        <li class="nav-item mb-1">
-            <a class="nav-link" href="<%= request.getContextPath() %>/StockBajo_OrdenCompra?action=stock">
-                <span class="text-label">Productos con stock bajo</span>
-            </a>
-        </li>
-        <li class="nav-item mb-1">
-            <a class="nav-link" href="<%= request.getContextPath() %>/StockBajo_OrdenCompra?action=ordenes">
-                <span class="text-label">Órdenes de compra</span>
-            </a>
-        </li>
-        <li class="nav-item mb-1">
-            <a class="nav-link" href="<%= request.getContextPath() %>/ReporteMovimientos">
-                <span class="text-label">Reportes de movimientos</span>
-            </a>
-        </li>
-        <li class="nav-item mb-1">
-            <a class="nav-link" href="<%= request.getContextPath() %>/StockBajo_OrdenCompra?action=crear">
-                <span class="text-label">Generar nueva orden</span>
-            </a>
-        </li>
-        <li class="nav-item mb-1">
-            <a class="nav-link" href="<%= request.getContextPath() %>/ListaProductos">
-                <span class="text-label">Productos</span>
-            </a>
-        </li>
-
-        <div class="spacer"></div>
-
-        <!-- Cerrar sesión al final -->
-        <li class="nav-item mt-auto mb-3">
-            <a class="nav-link" href="<%= request.getContextPath() %>/index.jsp">
-                <span class="text-label">Cerrar sesión</span>
-            </a>
-        </li>
-    </ul>
-</aside>
+<jsp:include page="/sidebar.jsp" />
 
 <!-- ===== Main ===== -->
 <main class="main" id="main">
