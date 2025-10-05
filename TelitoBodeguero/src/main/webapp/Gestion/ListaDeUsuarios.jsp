@@ -69,16 +69,14 @@ if (permisos == null) permisos = java.util.Collections.emptySet(); %>
     <div class="container-fluid">
         <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
             <h1 class="mb-0">Lista de usuarios</h1>
-            <!-- lugar para acciones rápidas si luego agregas filtros/botones -->
-        </div>
-        <% if (permisos.contains(10)) { %>
-        <li class="nav-item mb-1">
-            <a class="nav-link"
-               href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=formCrear">
-                <span class="text-label">Nuevo usuario</span>
+
+            <% if (permisos.contains(10)) { %>
+            <a href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=formCrear"
+               class="btn btn-primary">
+                + Nuevo usuario
             </a>
-        </li>
-        <% } %>
+            <% } %>
+        </div>
         <div class="table-responsive table-card">
             <table class="table table-striped align-middle mb-0">
                 <thead>
