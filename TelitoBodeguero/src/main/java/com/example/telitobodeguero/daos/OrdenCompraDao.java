@@ -17,7 +17,7 @@ public class OrdenCompraDao {
     public ArrayList<com.example.telitobodeguero.beans.OrdenCompra> obtenerOrdenCompra(String estadoFiltro, String terminoBusquedaProveedor) {
         ArrayList<com.example.telitobodeguero.beans.OrdenCompra> listaOrdenCompra = new ArrayList<>();
         String user = "root";
-        String pass = "12345678";
+        String pass = "root";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         StringBuilder sql = new StringBuilder(
@@ -104,7 +104,7 @@ public class OrdenCompraDao {
     public void borrarOrden(int idOrden) {
         // [CÓDIGO DE borrarOrden se mantiene igual]
         String user = "root";
-        String pass = "12345678";
+        String pass = "root";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         String delItems = "DELETE FROM OrdenCompraItem WHERE OrdenCompra_idOrdenCompra = ?";
@@ -141,7 +141,7 @@ public class OrdenCompraDao {
     // -------------------------------------------------------------------------
     public void crearOrden(int idProducto, int cantidad, String fechaLlegada) {
         String user = "root";
-        String pass = "12345678";
+        String pass = "root";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         String sqlOrden = "INSERT INTO OrdenCompra (estado, fecha_llegada) VALUES ('Enviada', ?)";
@@ -196,7 +196,7 @@ public class OrdenCompraDao {
         // [CÓDIGO DE obtenerProductos se mantiene igual]
         ArrayList<com.example.telitobodeguero.beans.Producto> listaProductos = new ArrayList<>();
         String user = "root";
-        String pass = "12345678";
+        String pass = "root";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         String sql = "SELECT idProducto, nombre FROM Producto";
@@ -226,7 +226,7 @@ public class OrdenCompraDao {
     public int obtenerProveedorIdPorProducto(int idProducto) {
         // [CÓDIGO DE obtenerProveedorIdPorProducto se mantiene igual]
         String user = "root";
-        String pass = "12345678";
+        String pass = "root";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
         int idProveedor = -1;
 
@@ -259,7 +259,7 @@ public class OrdenCompraDao {
 // -------------------------------------------------------------------------
     public int contarOrdenesEnTransito() {
         String user = "root";
-        String pass = "12345678";
+        String pass = "root";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         // ✅ La condición clave: Contar órdenes cuya columna 'estado' es 'Enviada'

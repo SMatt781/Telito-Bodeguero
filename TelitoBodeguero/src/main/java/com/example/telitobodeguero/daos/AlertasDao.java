@@ -12,7 +12,7 @@ public class AlertasDao {
         ArrayList<Alertas> listaAlertas = new ArrayList<>();
         try {
             String user = "root";
-            String pass = "12345678";
+            String pass = "root";
             String url = "jdbc:mysql://localhost:3306/bodega-telito";
 
             Class.forName("com.mysql.cj.jdbc.Driver");

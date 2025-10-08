@@ -7,9 +7,10 @@ public class Movimiento {
     private String tipoMovimiento;
     private LocalDate fecha;
     private int cantidad;
-    private int Lote_idLote;
-    private int Zonas_idZonas;
-    private Producto producto;
+//    private int Lote_idLote;
+//    private int Zonas_idZonas;
+    private Lote lote;
+    //private Producto producto;
     private Zonas zona;
 
     public Zonas getZona() {
@@ -19,11 +20,20 @@ public class Movimiento {
         this.zona = zona;
     }
 
-    public Producto getProducto() {
-        return producto;
+//    public Producto getProducto() {
+//        return producto;
+//    }
+//    public void setProducto(Producto producto) {
+//        this.producto = producto;
+//    }
+
+
+    public Lote getLote() {
+        return lote;
     }
-    public void setProducto(Producto producto) {
-        this.producto = producto;
+
+    public void setLote(Lote lote) {
+        this.lote = lote;
     }
 
     public int getIdRegistro() {
@@ -57,22 +67,22 @@ public class Movimiento {
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
-
-    public int getLote_idLote() {
-        return Lote_idLote;
-    }
-
-    public void setLote_idLote(int lote_idLote) {
-        Lote_idLote = lote_idLote;
-    }
-
-    public int getZonas_idZonas() {
-        return Zonas_idZonas;
-    }
-
-    public void setZonas_idZonas(int zonas_idZonas) {
-        Zonas_idZonas = zonas_idZonas;
-    }
+//
+//    public int getLote_idLote() {
+//        return Lote_idLote;
+//    }
+//
+//    public void setLote_idLote(int lote_idLote) {
+//        Lote_idLote = lote_idLote;
+//    }
+//
+//    public int getZonas_idZonas() {
+//        return Zonas_idZonas;
+//    }
+//
+//    public void setZonas_idZonas(int zonas_idZonas) {
+//        Zonas_idZonas = zonas_idZonas;
+//    }
 
 
 }

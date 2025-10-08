@@ -9,13 +9,13 @@ public abstract class BaseDao {
     
     public Connection getConnection() throws SQLException{
         try{
-            Class.forName("com.mysql.cj.jbdc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         }catch (ClassNotFoundException ex){
             ex.printStackTrace();
         }
 
         String user= "root";
-        String pass ="12345678";
+        String pass ="root";
         String url = "jdbc:mysql://localhost:3306/bodega-telito";
 
         return DriverManager.getConnection(url,user,pass);

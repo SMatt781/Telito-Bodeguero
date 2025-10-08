@@ -2,10 +2,46 @@ package com.example.telitobodeguero.beans;
 
 public class Incidencia {
 
+    private int idIncidencia;
     private String tipoIncidencia;
     private int cantidad;
     private String descripcion;
     private int Lote_idLote ;
+    private Zonas zona;
+    private Producto producto;
+    private String estado;
+
+    public int getIdIncidencia() {
+        return idIncidencia;
+    }
+
+    public void setIdIncidencia(int idIncidencia) {
+        this.idIncidencia = idIncidencia;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
+
+    public Zonas getZona() {
+        return zona;
+    }
+
+    public void setZona(Zonas zona) {
+        this.zona = zona;
+    }
 
     public String getTipoIncidencia() {
         return tipoIncidencia;

@@ -2,9 +2,7 @@ package com.example.telitobodeguero.daos;
 
 
 
-import com.example.telitobodeguero.beans.Movimiento;
-import com.example.telitobodeguero.beans.Producto;
-import com.example.telitobodeguero.beans.Zonas;
+import com.example.telitobodeguero.beans.*;
 
 import com.example.telitobodeguero.beans.Movimiento;
 
@@ -21,7 +19,7 @@ public class MovimientoDaoLogis {
     public ArrayList<com.example.telitobodeguero.beans.Movimiento> obtenerListaMovimientos() {
         ArrayList<Movimiento> listaMovimientos = new ArrayList<>();
         String user = "root";
-        String pass = "12345678";
+        String pass = "root";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         String sql = "SELECT " +
@@ -53,9 +51,19 @@ public class MovimientoDaoLogis {
                     mov.setTipoMovimiento(rs.getString("Movimiento"));
                     mov.setCantidad(rs.getInt("Cantidad"));
 
-                    Producto p = new Producto();
-                    p.setNombre(rs.getString("NombreProducto"));
-                    mov.setProducto(p);
+                    //cambio para movimiento
+                    Lote lote = new Lote();
+                    lote.setIdLote(rs.getInt("L.idLote"));
+
+                    Producto producto = new Producto();
+                    producto.setNombre(rs.getString("NombreProducto"));
+
+                    lote.setProducto(producto);
+                    mov.setLote(lote);
+
+//                    Producto p = new Producto();
+//                    p.setNombre(rs.getString("NombreProducto"));
+//                    mov.setProducto(p);
 
                     Zonas z = new Zonas();
                     z.setNombre(rs.getString("NombreZona")); // Asegura que tu bean tenga este setter
@@ -76,7 +84,7 @@ public class MovimientoDaoLogis {
     // -------------------------------------------------------------------------
     public int contarTotalMovimientos() {
         String user = "root";
-        String pass = "12345678";
+        String pass = "root";
         String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
         String sql = "SELECT COUNT(*) AS total FROM Movimiento";
         int total = 0;
@@ -107,7 +115,7 @@ public class MovimientoDaoLogis {
 
         ArrayList<Movimiento> listaMovimientos = new ArrayList<>();
         String user = "root";
-        String pass = "12345678";
+        String pass = "root";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         StringBuilder sql = new StringBuilder(
@@ -163,9 +171,20 @@ public class MovimientoDaoLogis {
                         mov.setTipoMovimiento(rs.getString("Movimiento"));
                         mov.setCantidad(rs.getInt("Cantidad"));
 
-                        Producto p = new Producto();
-                        p.setNombre(rs.getString("NombreProducto"));
-                        mov.setProducto(p);
+
+                        Lote lote = new Lote();
+                        lote.setIdLote(rs.getInt("L.idLote"));
+
+                        Producto producto = new Producto();
+                        producto.setNombre(rs.getString("NombreProducto"));
+
+                        lote.setProducto(producto);
+                        mov.setLote(lote);
+
+
+//                        Producto p = new Producto();
+//                        p.setNombre(rs.getString("NombreProducto"));
+//                        mov.setProducto(p);
 
                         Zonas z = new Zonas();
                         z.setNombre(rs.getString("NombreZona"));

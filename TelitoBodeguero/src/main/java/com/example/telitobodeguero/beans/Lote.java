@@ -4,7 +4,8 @@ public class Lote {
     private int idLote;
     private String fechaVencimiento;
     private String ubicacion;
-    private String Producto_idProducto;
+    //private String Producto_idProducto;
+    private Producto producto;
     private int cantidad;
     private int Usuarios_idUsuarios;
 
@@ -32,12 +33,21 @@ public class Lote {
         this.ubicacion = ubicacion;
     }
 
-    public String getProducto_idProducto() {
-        return Producto_idProducto;
+//    public String getProducto_idProducto() {
+//        return Producto_idProducto;
+//    }
+//
+//    public void setProducto_idProducto(String producto_idProducto) {
+//        Producto_idProducto = producto_idProducto;
+//    }
+
+
+    public Producto getProducto() {
+        return producto;
     }
 
-    public void setProducto_idProducto(String producto_idProducto) {
-        Producto_idProducto = producto_idProducto;
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 
     public int getCantidad() {

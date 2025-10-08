@@ -15,7 +15,7 @@ public class ListaPermisosDao {
         Set<Integer> set = new HashSet<>();
         try {
             String user = "root";
-            String pass = "12345678";
+            String pass = "root";
             String url = "jdbc:mysql://localhost:3306/bodega-telito";
 
             Class.forName("com.mysql.cj.jdbc.Driver");

@@ -103,32 +103,38 @@
   <hr>
   <ul class="nav nav-pills flex-column mb-auto">
     <li>
-      <a href="index_yo.html" class="nav-link text-white">
-        <img src="inicio.png" width="25" height="25" class="me-2">
+      <a href="<%=request.getContextPath()%>/AlmacenServlet" class="nav-link text-white">
+        <img src="<%=request.getContextPath()%>/Almacen/img/inicio.png" width="25" height="25" class="me-2">
         <span class="sidebar-text">Inicio</span>
       </a>
     </li>
 
     <li>
-      <a href="#" class="nav-link text-white">
-        <img src="indexGestion2.png" width="25" height="25" class="me-2">
+      <a href="<%=request.getContextPath()%>/AlmacenServlet" class="nav-link text-white">
+        <img src="<%=request.getContextPath()%>/Almacen/img/indexGestion2.png" width="25" height="25" class="me-2">
         <span class="sidebar-text">Gestion de inventarios</span>
       </a>
     </li>
 
     <li>
-      <a href="carga.html" class="nav-link text-white">
-        <img src="indexCarga.png" width="25" height="25" class="me-2">
+      <a href="<%=request.getContextPath()%>/CargaExcelServlet" class="nav-link text-white">
+        <img src="<%=request.getContextPath()%>/Almacen/img/indexCarga.png" width="25" height="25" class="me-2">
         <span class="sidebar-text">Carga masiva de datos</span>
       </a>
     </li>
+      <li>
+          <a href="<%=request.getContextPath()%>/IncidenciaAlmServlet" class="nav-link text-white">
+              <img src="<%=request.getContextPath()%>/Almacen/img/incidencia.png" width="25" height="25" class="me-2">
+              <span class="sidebar-text">Incidencias </span>
+          </a>
+      </li>
 
 
   </ul>
 
   <div class="dropdown mt-auto">
     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-      <img src="indexUsuario.webp" alt="" width="32" height="32" class="rounded-circle me-2">
+      <img src="<%=request.getContextPath()%>/Almacen/img/indexUsuario.webp" alt="" width="32" height="32" class="rounded-circle me-2">
       <strong class="sidebar-text">Usuario</strong>
     </a>
     <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
@@ -140,17 +146,18 @@
 <!--Parte del contenido-->
 <div class="main-content" id="main-content">
 
-  <img src="telitoLogo.png"   class="logo-header">
+  <img src="<%=request.getContextPath()%>/Almacen/img/telitoLogo.png"   class="logo-header">
 
 
   <div class="container-fluid d-flex flex-column justify-content-start">
     <h1 class="text-primary fw-bold titulo-principal">INVENTARIO GENERAL</h1>
 
     <div class="row py-3">
-      <div class="col-9">
-        <!--Barra buscar-->
-        <input class="form-control form-control-lg" type="search" placeholder="Buscar..." aria-label="Search">
-      </div>
+        <%--Por el momento--%>
+<%--      <div class="col-9">--%>
+<%--        <!--Barra buscar-->--%>
+<%--        <input class="form-control form-control-lg" type="search" placeholder="Buscar..." aria-label="Search">--%>
+<%--      </div>--%>
 
       <!--TABLA DE PRODUCTOS-->
 
@@ -176,33 +183,26 @@
               <td><%=prod.getNombre()%></td>
               <td><%=prod.getStock()%> </td>
               <td><%=prod.getLotes()%> </td>
-              <td><%=prod.getZona()%> </td>
+              <td><%=prod.getZona().getNombre()%> </td>
 
               <td>
                 <div class="col">
-                  <button type="button" class="btn btn-secondary rounded-circle"
-                          data-bs-toggle="popover" data-bs-placement="bottom"
-                          data-bs-custom-class="custom-popover"
-                          data-bs-title="<%=prod.getNombre()%>"
-                          data-bs-html="true"
-                          data-bs-content="<img src='aceiteVegetal.webp' class='img-fluid mb-2'> <p>Precio referencial: <%=prod.getPrecio()%></p>">
-                    <img src="botonVer2.png" alt="Ver" width="20" height="20" class="rounded-circle align-items-center d-flex">
-                  </button>
 
-                  <a href="AlmacenServlet?accion=mostrarRegistro&tipo=entrada&sku=<%= prod.getSku()%>&lote=<%= prod.getLotes()%>"
+
+                  <a href="AlmacenServlet?accion=mostrarRegistro&tipo=entrada&sku=<%= prod.getSku()%>&lote=<%= prod.getLotes()%>&zonaNombre=<%=prod.getZona().getNombre()%>"
                      type="button" class="btn btn-success rounded-circle">
-                    <img src="entrada.png" alt="Entrada" width="20" height="20" class="rounded-circle align-items-center d-flex">
+                    <img src="<%=request.getContextPath()%>/Almacen/img/entrada.png" alt="Entrada" width="20" height="20" class="rounded-circle align-items-center d-flex">
                   </a>
 
 
-                  <a href="AlmacenServlet?accion=mostrarRegistro&tipo=salida&sku=<%= prod.getSku()%>&lote=<%= prod.getLotes()%>"
+                  <a href="AlmacenServlet?accion=mostrarRegistro&tipo=salida&sku=<%= prod.getSku()%>&lote=<%= prod.getLotes()%>&zonaNombre=<%=prod.getZona().getNombre()%>"
                      type="button" class="btn btn-personalizado rounded-circle">
-                    <img src="salida.png" alt="Salida" width="20" height="20" class="rounded-circle align-items-center d-flex">
+                    <img src="<%=request.getContextPath()%>/Almacen/img/salida.png" alt="Salida" width="20" height="20" class="rounded-circle align-items-center d-flex">
                   </a>
 
-                  <a href="AlmacenServlet?accion=mostrarIncidencia&sku=<%= prod.getSku()%>&lote=<%= prod.getLotes()%>"
+                  <a href="AlmacenServlet?accion=mostrarIncidencia&sku=<%= prod.getSku()%>&lote=<%= prod.getLotes()%>&zonaNombre=<%=prod.getZona().getNombre()%>&prodNombre=<%=prod.getNombre()%>"
                      type="button" class="btn btn-danger rounded-circle">
-                    <img src="incidencia.png" alt="Incidencia" width="20" height="20" class="rounded-circle align-items-center d-flex">
+                    <img src="<%=request.getContextPath()%>/Almacen/img/incidencia.png" alt="Incidencia" width="20" height="20" class="rounded-circle align-items-center d-flex">
                   </a>
                 </div>
               </td>

@@ -13,8 +13,10 @@
   String sku = (String) request.getAttribute("sku");
   String lote = (String) request.getAttribute("lote");
   //zona fija a oeste
-  String zona = "Oeste";
-  String zonaId = "2";
+    String zona = (String) request.getAttribute("zonaNombre");
+    String zonaId = (String) request.getAttribute("idZona");
+//  String zona = "Oeste";
+//  String zonaId = "2";
 
 %>
 <!DOCTYPE html>
@@ -95,32 +97,39 @@
 
   <hr>
   <ul class="nav nav-pills flex-column mb-auto">
-    <li>
-      <a href="index_yo.html" class="nav-link text-white">
-        <img src="inicio.png" width="25" height="25" class="me-2">
-        <span class="sidebar-text">Inicio</span>
-      </a>
-    </li>
-    <li>
-      <a href="gestion.html" class="nav-link text-white">
-        <img src="indexGestion2.png" width="25" height="25" class="me-2">
-        <span class="sidebar-text">Gestion de inventarios</span>
-      </a>
-    </li>
+      <li>
+          <a href="<%=request.getContextPath()%>/AlmacenServlet" class="nav-link text-white">
+              <img src="<%=request.getContextPath()%>/Almacen/img/inicio.png" width="25" height="25" class="me-2">
+              <span class="sidebar-text">Inicio</span>
+          </a>
+      </li>
 
-    <li>
-      <a href="carga.html" class="nav-link text-white">
-        <img src="indexCarga.png" width="25" height="25" class="me-2">
-        <span class="sidebar-text">Carga masiva de datos</span>
-      </a>
-    </li>
+      <li>
+          <a href="<%=request.getContextPath()%>/AlmacenServlet" class="nav-link text-white">
+              <img src="<%=request.getContextPath()%>/Almacen/img/indexGestion2.png" width="25" height="25" class="me-2">
+              <span class="sidebar-text">Gestion de inventarios</span>
+          </a>
+      </li>
+
+      <li>
+          <a href="<%=request.getContextPath()%>/CargaExcelServlet" class="nav-link text-white">
+              <img src="<%=request.getContextPath()%>/Almacen/img/indexCarga.png" width="25" height="25" class="me-2">
+              <span class="sidebar-text">Carga masiva de datos</span>
+          </a>
+      </li>
+      <li>
+          <a href="<%=request.getContextPath()%>/IncidenciaAlmServlet" class="nav-link text-white">
+              <img src="<%=request.getContextPath()%>/Almacen/img/indexCarga.png" width="25" height="25" class="me-2">
+              <span class="sidebar-text">Incidencias </span>
+          </a>
+      </li>
 
 
   </ul>
 
   <div class="dropdown mt-auto">
     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-      <img src="indexUsuario.webp" alt="" width="32" height="32" class="rounded-circle me-2">
+      <img src="<%=request.getContextPath()%>/Almacen/img/indexUsuario.webp" alt="" width="32" height="32" class="rounded-circle me-2">
       <strong class="sidebar-text">Usuario</strong>
     </a>
     <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">

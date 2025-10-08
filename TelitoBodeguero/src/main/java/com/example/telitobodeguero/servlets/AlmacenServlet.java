@@ -1,7 +1,7 @@
 package com.example.telitobodeguero.servlets;
 
 
-import com.example.telitobodeguero.beans.Incidencia;
+import com.example.telitobodeguero.beans.*;
 import com.example.telitobodeguero.daos.ProductoDao;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -9,12 +9,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.example.telitobodeguero.beans.Movimiento;
-import com.example.telitobodeguero.beans.Producto;
 import com.example.telitobodeguero.daos.MovimientoDao;
 import com.example.telitobodeguero.daos.ProductoDaoLogis;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 @WebServlet(name = "AlmacenServlet",value = "/AlmacenServlet")
@@ -24,52 +23,59 @@ public class AlmacenServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-
+        int zonaId = 2; //caso zona Oeste
         String accion = request.getParameter("accion");
-        if ("mostrarRegistro".equals(accion)){
-            //obtengo los parametros de la URL
+
+        if(accion == null || accion.isEmpty() || accion.equals("verInventario")){
+            ProductoDao productoDao = new ProductoDao();
+            ArrayList<Producto> listaProd = productoDao.obtenerProductos(zonaId);
+            request.setAttribute("listaProductos", listaProd);
+            RequestDispatcher view = request.getRequestDispatcher("/Almacen/gestionAlmacen.jsp");
+            view.forward(request,response);
+        }else if(accion.equals("mostrarRegistro")){
             String tipo = request.getParameter("tipo");
             String sku = request.getParameter("sku"); //capturo el SKU de la tabla
             String lote = request.getParameter("lote");
+            String zonaNombre = request.getParameter("zonaNombre");
+
+
 
             //paso los datos al request
             request.setAttribute("sku",sku);
             request.setAttribute("lote",lote);
+            request.setAttribute("zonaNombre",zonaNombre);
+            request.setAttribute("zonaId",zonaId);
 
             if ("entrada".equals(tipo)){
                 //para el registro entrada
-                request.getRequestDispatcher("registrarEntrada.jsp").forward(request,response);
+                request.getRequestDispatcher("/Almacen/registrarEntrada.jsp").forward(request,response);
             } else if ("salida".equals(tipo)) {
                 //para el registro salida
-                request.getRequestDispatcher("registrarSalida.jsp").forward(request,response);
+                request.getRequestDispatcher("/Almacen/registrarSalida.jsp").forward(request,response);
             }
-        }else if("mostrarIncidencia".equals(accion)){
+
+        } else if (accion.equals("mostrarIncidencia")) {
             String sku = request.getParameter("sku");
             String lote = request.getParameter("lote");
+            String zona = request.getParameter("zonaNombre");
+            String prodNombre = request.getParameter("prodNombre");
             //paso los datos al request
             request.setAttribute("sku",sku);
             request.setAttribute("lote",lote);
-            request.getRequestDispatcher("registrarIncidencia.jsp").forward(request,response);
-        }else{
-            response.setContentType("text/html");
-
-            //creo la instancia y llamo al metodo
-            ProductoDao productoDao = new ProductoDao();
-            ArrayList<Producto> listaProductos = productoDao.obtenerProductos();
-
-            //configuro datos a enviar
-            request.setAttribute("listaProductos",listaProductos);
-            //elijo el metodo de redireccion
-            RequestDispatcher view = request.getRequestDispatcher("gestionAlmacen.jsp");
-            view.forward(request,response);
+            request.setAttribute("zonaNombre",zona);
+            request.setAttribute("prodNombre",prodNombre);
+            request.getRequestDispatcher("/Almacen/registrarIncidencia.jsp").forward(request,response);
         }
+
 
     }
 
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         String accion = request.getParameter("accion");
+        int zonaId = 2; //caso zona Oeste
 
 
         boolean  exitoIn=false;
@@ -77,6 +83,7 @@ public class AlmacenServlet extends HttpServlet {
         //boolean exitoInc=false;
         //llamo al metodo Dao
         MovimientoDao movimientoDao = new MovimientoDao();
+
         if("registrarMovimiento".equals(accion)){
             //recibo datos
             String tipo  =request.getParameter("tipo");
@@ -92,42 +99,48 @@ public class AlmacenServlet extends HttpServlet {
                 lote = Integer.parseInt(loteStr.trim());
             }
             String fechaVencimiento =  request.getParameter("fechaVencimiento");
-            int idZona = Integer.parseInt(request.getParameter("idZona"));
+//            int idZona = Integer.parseInt(request.getParameter("idZona"));
             String sku = request.getParameter("sku");
 
-
-            //lleno en bean de movimiento
-            Movimiento movimiento  = new Movimiento();
+            //lleno el bean de movimiento
+            Movimiento movimiento = new Movimiento();
             movimiento.setTipoMovimiento(tipo);
+            movimiento.setFecha(LocalDate.parse(fechaRegistro));
             movimiento.setCantidad(cantidad);
-            //movimiento.setFecha(fechaRegistro);
-            movimiento.setLote_idLote(lote);
-            movimiento.setZonas_idZonas(idZona);
-            if("IN".equals(tipo)){
-                exitoIn = movimientoDao.registrarEntrada(movimiento, sku, fechaVencimiento,1);
-                if(exitoIn){
-                    response.sendRedirect(request.getContextPath()+"/AlmacenServlet?accion=verInvertario");
-                }else{
-                    request.setAttribute("error","Error al registrar la entrada. Verifique que el SKU y el Lote sean válidos.");
-                    request.getRequestDispatcher("registrarEntrada.jsp").forward(request,response);
+            Lote l = new Lote();
+            l.setIdLote(lote);
+            l.setFechaVencimiento(fechaVencimiento);
+            Producto p = new Producto();
+            p.setSku(sku);
+            l.setProducto(p);
+            Zonas z  = new Zonas();
+            z.setIdZonas(zonaId);
+            movimiento.setLote(l);
+            movimiento.setZona(z);
 
+            if("IN".equals(tipo)){
+                exitoIn = movimientoDao.registrarEntrada(movimiento);
+                if(exitoIn){
+                    response.sendRedirect(request.getContextPath()+"/AlmacenServlet?accion=verInventario");
+
+                }else{
+                    String mensaje = "Error al registrar la entrada. Verifique que el SKU y el Lote sean válidos.";
+                    request.setAttribute("error",mensaje);
+                    request.getRequestDispatcher("/Almacen/registrarEntrada.jsp").forward(request,response);
                 }
-            } else if ("OUT".equals(tipo)) {
+            }else  if("OUT".equals(tipo)){
                 exitoOut = movimientoDao.registrarSalida(movimiento);
                 if(exitoOut){
-                    response.sendRedirect(request.getContextPath()+"/AlmacenServlet?accion=verInvertario");
+                    response.sendRedirect(request.getContextPath()+"/AlmacenServlet?accion=verInventario");
                 }else{
-                    request.setAttribute("error","Error al registrar la salida. Verifique que el SKU y el Lote sean válidos.");
-                    request.getRequestDispatcher("registrarSalida.jsp").forward(request,response);
-
+                    String mensaje = "Error al registrar la entrada. Verifique que el SKU y el Lote sean válidos.";
+                    request.setAttribute("error",mensaje);
+                    request.getRequestDispatcher("/Almacen/registrarSalida.jsp").forward(request,response);
                 }
             }
 
-
-
-        } else if ("registrarIncidencia".equals(accion)) {
+        }else if("registrarIncidencia".equals(accion)){
             Incidencia inc =  new Incidencia();
-            //recibo datos
             String tipoInc = request.getParameter("tipoInc");
             String cantidadIncStr = request.getParameter("cantidadInc");
             int cantidadInc = 0;
@@ -140,28 +153,38 @@ public class AlmacenServlet extends HttpServlet {
             if(loteIncStr != null && !loteIncStr.trim().isEmpty()){
                 loteInc = Integer.parseInt(loteIncStr);
             }
+            String zonaNombre = request.getParameter("zonaNombre");
+            String sku = request.getParameter("sku");
+            String prodNombre = request.getParameter("prodNombre");
+            String estado =  request.getParameter("estado");
 
             //lleno en el bean de incidencia
             inc.setTipoIncidencia(tipoInc);
             inc.setCantidad(cantidadInc);
             inc.setDescripcion(descripcionInc);
             inc.setLote_idLote(loteInc);
+            inc.setEstado(estado);
+            Zonas zona = new Zonas();
+            zona.setIdZonas(zonaId);
+            zona.setNombre(zonaNombre);
+            Producto p = new Producto();
+            p.setNombre(prodNombre);
+            p.setSku(sku);
+            inc.setProducto(p);
+            inc.setZona(zona);
 
             //llamo al metodo
             boolean exitoInc=movimientoDao.registrarIncidencia(inc);
             if(exitoInc){
-                response.sendRedirect(request.getContextPath()+"/AlmacenServlet?accion=verInvertario");
+                response.sendRedirect(request.getContextPath()+"/AlmacenServlet?accion=verInventario");
             }else{
                 request.setAttribute("error","Error al registrar la incidencia. Verifique que el SKU y el Lote sean válidos.");
-                request.getRequestDispatcher("registrarIncidencia.jsp").forward(request,response);
+                request.getRequestDispatcher("/Almacen/registrarIncidencia.jsp").forward(request,response);
             }
 
 
-
-
-
-
         }
+
 
 
     }
