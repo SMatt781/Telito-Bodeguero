@@ -9,7 +9,7 @@ public abstract class BaseDao {
     
     public Connection getConnection() throws SQLException{
         try{
-            Class.forName("com.mysql.cj.jbdc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         }catch (ClassNotFoundException ex){
             ex.printStackTrace();
         }
