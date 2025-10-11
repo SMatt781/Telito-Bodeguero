@@ -23,16 +23,16 @@
 <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar" id="sidebar">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <button class="btn btn-primary" id="toggleButton" type="button">&#9776;</button>
-        <a href="<%=ctx%>/Productor.jsp" class="d-flex align-items-center text-white text-decoration-none">
+        <a href="<%=ctx%>/MisProductos.jsp" class="d-flex align-items-center text-white text-decoration-none">
             <span class="fs-5 sidebar-text">Telito bodeguero</span>
         </a>
     </div>
     <hr/>
     <ul class="nav nav-pills flex-column mb-auto">
-        <li><a href="<%=ctx%>/Productor.jsp" class="nav-link text-white active"><span class="sidebar-text">Inicio</span></a></li>
-        <li><a href="<%=ctx%>/MisProductos" class="nav-link text-white"><span class="sidebar-text">Mis Productos</span></a></li>
-        <li><a href="<%=ctx%>/GestionLotes.jsp" class="nav-link text-white"><span class="sidebar-text">Gestión de Lotes</span></a></li>
-        <li><a href="<%=ctx%>/OrdenesCompra" class="nav-link text-white"><span class="sidebar-text">Órdenes de Compra</span></a></li>
+        <li><a href="<%=ctx%>/Productor/indexProductor.jsp" class="nav-link text-white active"><span class="sidebar-text">Inicio</span></a></li>
+        <li><a href="<%=ctx%>/Productor/MisProductos.jsp" class="nav-link text-white"><span class="sidebar-text">Mis Productos</span></a></li>
+        <li><a href="<%=ctx%>/Productor/GestionLotes.jsp" class="nav-link text-white"><span class="sidebar-text">Gestión de Lotes</span></a></li>
+        <li><a href="<%=ctx%>/Productor/OrdenesCompra.jsp" class="nav-link text-white"><span class="sidebar-text">Órdenes de Compra</span></a></li>
     </ul>
 </div>
 
@@ -49,7 +49,7 @@
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary">Mis Productos</h5>
                     <p class="card-text">Gestione sus productos.</p>
-                    <a href="<%=ctx%>/MisProductos" class="btn btn-outline-primary">Entrar</a>
+                    <a href="<%=ctx%>/Productor/MisProductos.jsp" class="btn btn-outline-primary">Entrar</a>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary">Gestión de Lotes</h5>
                     <p class="card-text">Controle inventarios y movimientos.</p>
-                    <a href="<%=ctx%>/GestionLotes.jsp" class="btn btn-outline-primary">Entrar</a>
+                    <a href="<%=ctx%>/Productor/GestionLotes.jsp" class="btn btn-outline-primary">Entrar</a>
                 </div>
             </div>
         </div>
@@ -69,7 +69,7 @@
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary">Órdenes de compra</h5>
                     <p class="card-text">Revise órdenes y estados.</p>
-                    <a href="<%=ctx%>/OrdenesCompra" class="btn btn-outline-primary">Entrar</a>
+                    <a href="<%=ctx%>/Productor/OrdenesCompra.jsp" class="btn btn-outline-primary">Entrar</a>
                 </div>
             </div>
         </div>
