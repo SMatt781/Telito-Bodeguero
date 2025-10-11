@@ -32,16 +32,16 @@
 <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar" id="sidebar">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <button class="btn btn-primary" id="toggleButton" type="button" aria-label="Toggle Sidebar">&#9776;</button>
-        <a href="<%=ctx%>/indexProductor.jsp" class="d-flex align-items-center text-white text-decoration-none">
+        <a href="<%=ctx%>/Productor/indexProductor.jsp" class="d-flex align-items-center text-white text-decoration-none">
             <span class="fs-5 sidebar-text">Telito bodeguero</span>
         </a>
     </div>
     <hr />
     <ul class="nav nav-pills flex-column mb-auto">
-        <li><a class="nav-link text-white" href="<%=ctx%>/indexProductor.jsp"><span class="sidebar-text">Inicio</span></a></li>
-        <li><a class="nav-link text-white active" href="<%=ctx%>/MisProductos"><span class="sidebar-text">Mis productos</span></a></li>
-        <li><a class="nav-link text-white" href="<%=ctx%>/Lotes"><span class="sidebar-text">Gestión de Lotes</span></a></li>
-        <li><a class="nav-link text-white" href="<%=ctx%>/OrdenesCompra"><span class="sidebar-text">Órdenes de Compra</span></a></li>
+        <li><a class="nav-link text-white" href="<%=ctx%>/Productor/indexProductor.jsp"><span class="sidebar-text">Inicio</span></a></li>
+        <li><a class="nav-link text-white active" href="<%=ctx%>/Productor/MisProductos.jsp"><span class="sidebar-text">Mis productos</span></a></li>
+        <li><a class="nav-link text-white" href="<%=ctx%>/Productor/GestionLotes.jsp"><span class="sidebar-text">Gestión de Lotes</span></a></li>
+        <li><a class="nav-link text-white" href="<%=ctx%>/Productor/OrdenesCompra.jsp"><span class="sidebar-text">Órdenes de Compra</span></a></li>
     </ul>
 </div>
 
@@ -58,7 +58,7 @@
                 <span class="input-group-text">🔎</span>
                 <input id="buscarInput" type="search" class="form-control" placeholder="Buscar por SKU o nombre...">
             </div>
-            <a href="<%=ctx%>/ProductoNuevo" class="btn btn-primary btn-sm">Añadir producto</a>
+            <a href="<%=ctx%>/Productor/ProductoForm.jsp" class="btn btn-primary btn-sm">Añadir producto</a>
         </div>
     </div>
 
