@@ -37,8 +37,8 @@
     <hr/>
     <ul class="nav nav-pills flex-column mb-auto">
         <li><a href="<%=ctx%>/index.jsp"    class="nav-link text-white"><span class="sidebar-text">Inicio</span></a></li>
-        <li><a href="<%=ctx%>/MisProductos" class="nav-link text-white"><span class="sidebar-text">Mis Productos</span></a></li>
-        <li><a href="<%=ctx%>/Lotes"        class="nav-link text-white active"><span class="sidebar-text">Gestión de Lotes</span></a></li>
+        <li><a href="<%=ctx%>/Productor/MisProductos.jsp" class="nav-link text-white"><span class="sidebar-text">Mis Productos</span></a></li>
+        <li><a href="<%=ctx%>/Productor/GestionLotes.jsp"        class="nav-link text-white active"><span class="sidebar-text">Gestión de Lotes</span></a></li>
         <li><a href="<%=ctx%>/OrdenesCompra"class="nav-link text-white"><span class="sidebar-text">Órdenes de Compra</span></a></li>
     </ul>
 </div>
@@ -140,17 +140,17 @@
         btnAdd.addEventListener('click', () => {
             if (!idProducto) {
                 alert('Primero elige un producto en "Mis Productos" y entra por "Ver detalle".');
-                window.location.href = ctx + '/MisProductos';
+                window.location.href = ctx + '/Productor/MisProductos.jsp';
                 return;
             }
-            window.location.href = ctx + '/Lotes?action=formCrear&idProducto=' + encodeURIComponent(idProducto);
+            window.location.href = ctx + '/LoteServlet?action=formCrear&idProducto=' + encodeURIComponent(idProducto);
         });
 
         // Modificar
         btnEdit.addEventListener('click', () => {
             if (!selected) { alert('Selecciona un lote'); return; }
             const idLote = selected.dataset.id;
-            window.location.href = ctx + '/Lotes?action=editar&id=' + encodeURIComponent(idLote);
+            window.location.href = ctx + '/LoteServlet?action=editar&id=' + encodeURIComponent(idLote);
         });
 
         // Eliminar (mantiene el filtro si lo hay)
@@ -159,7 +159,7 @@
             const idLote = selected.dataset.id;
             const prod   = selected.dataset.prod || idProducto;
             if (!confirm('¿Eliminar el lote ' + idLote + '?')) return;
-            window.location.href = ctx + '/Lotes?action=borrar&id=' + encodeURIComponent(idLote)
+            window.location.href = ctx + '/LoteServlet?action=borrar&id=' + encodeURIComponent(idLote)
                 + (prod ? '&idProducto=' + encodeURIComponent(prod) : '');
         });
     })();
