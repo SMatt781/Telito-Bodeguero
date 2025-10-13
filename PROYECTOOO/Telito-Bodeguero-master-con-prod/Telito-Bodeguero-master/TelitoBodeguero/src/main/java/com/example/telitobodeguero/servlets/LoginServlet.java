@@ -47,7 +47,7 @@ public class LoginServlet extends HttpServlet {
                     homeUrl = request.getContextPath() + "/Bienvenidos";
                     break;  // Logística
                 case 3:
-                    homeUrl = request.getContextPath()+"/Almacen/bienvenidos.jsp";
+                    homeUrl = request.getContextPath()+"/InicioAlmacenServlet";
                     break;    // Almacén
                 case 4:
                     homeUrl = request.getContextPath()+"/Productor/indexProductor.jsp";
@@ -83,7 +83,7 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath()+"/Bienvenidos");
                     return;  // Logística
                 case 3:
-                    response.sendRedirect(request.getContextPath()+"/almacen/bienvenidos.jsp");
+                    response.sendRedirect(request.getContextPath()+"/Almacen/homeAlmacen.jsp");
                     return;    // Almacén
                 case 4:
                     response.sendRedirect(request.getContextPath()+"/Productor/indexProductor.jsp");
