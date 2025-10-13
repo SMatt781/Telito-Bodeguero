@@ -64,7 +64,7 @@
                 <span class="input-group-text">🔎</span>
                 <input id="buscarInput" type="search" class="form-control" placeholder="Buscar por SKU o nombre...">
             </div>
-            <a href="<%=ctx%>/Productor/ProductoForm.jsp" class="btn btn-primary btn-sm">Añadir producto</a>
+            <a href="<%=ctx%>/ProductoNuevo" class="btn btn-primary btn-sm">Añadir producto</a>
         </div>
     </div>
 
