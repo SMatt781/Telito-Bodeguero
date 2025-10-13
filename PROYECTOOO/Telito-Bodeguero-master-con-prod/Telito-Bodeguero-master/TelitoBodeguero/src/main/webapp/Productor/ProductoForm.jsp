@@ -9,8 +9,36 @@
     <title>Nuevo producto</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+    <style>
+        .sidebar{
+            position:fixed; inset:0 auto 0 0;       /* top:0; left:0; bottom:0 */
+            width:280px; background:#212529; color:#fff;
+            z-index:1000; transition:width .25s ease;
+            overflow-y:auto;
+        }
+        .sidebar.collapsed{ width:80px; }
+        .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
+        .sidebar .brand .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
+        .sidebar .nav-link{ color:#d6d6d6; }
+        .sidebar .nav-link:hover, .sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
+        .sidebar .dropdown-menu{ background:#2b3035; }
+        .sidebar .dropdown-item{ color:#fff; }
+        .sidebar .dropdown-item:hover{ background:#0d6efd; }
+        /* Ocultar textos cuando está colapsado */
+        .sidebar.collapsed .text-label{ display:none; }
+
+        .main{
+            margin-left:280px; transition:margin-left .25s ease;
+            min-height:100vh; padding:2rem;
+        }
+        .main.collapsed{ margin-left:80px; }
+    </style>
 </head>
 <body class="bg-light">
+<jsp:include page="/sidebar.jsp" />
+
+<main class="main" id="main">
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="m-0">Añadir producto</h3>
@@ -43,6 +71,19 @@
         </div>
     </form>
 </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script>
+// Toggle del sidebar
+const btn = document.getElementById('btnToggle');
+const sidebar = document.getElementById('sidebar');
+const main = document.getElementById('main');
+btn.addEventListener('click', () => {
+sidebar.classList.toggle('collapsed');
+main.classList.toggle('collapsed');
+});
+</script>
 </body>
 </html>
 
