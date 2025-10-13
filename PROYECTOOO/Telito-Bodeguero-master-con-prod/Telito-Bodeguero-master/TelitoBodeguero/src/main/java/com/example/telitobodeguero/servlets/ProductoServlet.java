@@ -33,7 +33,7 @@ public class ProductoServlet extends HttpServlet {
             request.setAttribute("productos", productos);
             request.setAttribute("productosPrecios", productosPrecios);
 
-            RequestDispatcher rd = request.getRequestDispatcher("/MisProductos.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/Productor/MisProductos.jsp");
             rd.forward(request, response);
 
         } catch (Exception e) {
