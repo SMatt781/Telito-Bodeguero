@@ -19,14 +19,14 @@ public class MovimientoDaoLogis {
     public ArrayList<com.example.telitobodeguero.beans.Movimiento> obtenerListaMovimientos() {
         ArrayList<Movimiento> listaMovimientos = new ArrayList<>();
         String user = "root";
-        String pass = "root";
+        String pass = "12345678";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         String sql = "SELECT " +
                 "M.fecha AS Fecha, " +
                 "M.tipo AS Movimiento, " +
                 "P.nombre AS NombreProducto, " +
-                "M.cantidad AS Cantidad, " +
+                "M.cantidad AS Cantidad, L.idLote," +
                 "Z.nombre AS NombreZona " +
                 "FROM Movimiento M " +
                 "INNER JOIN Lote L ON M.Lote_idLote = L.idLote " +
@@ -53,7 +53,7 @@ public class MovimientoDaoLogis {
 
                     //cambio para movimiento
                     Lote lote = new Lote();
-                    lote.setIdLote(rs.getInt("L.idLote"));
+                    lote.setIdLote(rs.getInt("idLote"));
 
                     Producto producto = new Producto();
                     producto.setNombre(rs.getString("NombreProducto"));
@@ -66,7 +66,7 @@ public class MovimientoDaoLogis {
 //                    mov.setProducto(p);
 
                     Zonas z = new Zonas();
-                    z.setNombre(rs.getString("NombreZona")); // Asegura que tu bean tenga este setter
+                    z.setNombre(rs.getString("NombreZona"));
                     mov.setZona(z);
 
                     listaMovimientos.add(mov);
@@ -84,7 +84,7 @@ public class MovimientoDaoLogis {
     // -------------------------------------------------------------------------
     public int contarTotalMovimientos() {
         String user = "root";
-        String pass = "root";
+        String pass = "12345678";
         String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
         String sql = "SELECT COUNT(*) AS total FROM Movimiento";
         int total = 0;
@@ -115,12 +115,12 @@ public class MovimientoDaoLogis {
 
         ArrayList<Movimiento> listaMovimientos = new ArrayList<>();
         String user = "root";
-        String pass = "root";
+        String pass = "12345678";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         StringBuilder sql = new StringBuilder(
                 "SELECT M.fecha AS Fecha, M.tipo AS Movimiento, " +
-                        "P.nombre AS NombreProducto, M.cantidad AS Cantidad, Z.nombre AS NombreZona " +
+                        "P.nombre AS NombreProducto, L.idLote, M.cantidad AS Cantidad, Z.nombre AS NombreZona " +
                         "FROM Movimiento M " +
                         "INNER JOIN Lote L ON M.Lote_idLote = L.idLote " +
                         "INNER JOIN Producto P ON L.Producto_idProducto = P.idProducto " +
@@ -173,7 +173,7 @@ public class MovimientoDaoLogis {
 
 
                         Lote lote = new Lote();
-                        lote.setIdLote(rs.getInt("L.idLote"));
+                        lote.setIdLote(rs.getInt("idLote"));
 
                         Producto producto = new Producto();
                         producto.setNombre(rs.getString("NombreProducto"));
