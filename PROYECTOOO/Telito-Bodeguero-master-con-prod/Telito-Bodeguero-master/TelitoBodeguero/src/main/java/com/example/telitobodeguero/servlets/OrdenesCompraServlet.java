@@ -26,7 +26,7 @@ public class OrdenesCompraServlet extends HttpServlet {
         try {
             List<OrdenCompra> filas = dao.listarOCConItemsParaProductor(idProductor);
             request.setAttribute("filas", filas);
-            RequestDispatcher rd = request.getRequestDispatcher("/OrdenesCompra.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/Productor/OrdenesCompra.jsp");
             rd.forward(request, response);
         } catch (Exception ex) {
             throw new ServletException(ex);
