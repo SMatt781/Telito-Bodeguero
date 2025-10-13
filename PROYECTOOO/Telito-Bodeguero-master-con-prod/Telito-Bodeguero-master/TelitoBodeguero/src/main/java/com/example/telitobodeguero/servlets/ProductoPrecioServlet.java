@@ -64,7 +64,7 @@ public class ProductoPrecioServlet extends HttpServlet {
                     + "&nombre=" + safe(nombre) + "&precio=" + safe(precioStr)
                     + (stockStr != null ? "&stock=" + safe(stockStr) : "");
             req.getSession().setAttribute("error", "Datos inválidos: " + e.getMessage());
-            resp.sendRedirect(req.getContextPath() + "/ProductoForm.jsp" + q);
+            resp.sendRedirect(req.getContextPath() + "/Productor/ProductoForm.jsp" + q);
 
         } catch (SQLException e) {
             throw new ServletException("No se pudo actualizar el producto", e);
