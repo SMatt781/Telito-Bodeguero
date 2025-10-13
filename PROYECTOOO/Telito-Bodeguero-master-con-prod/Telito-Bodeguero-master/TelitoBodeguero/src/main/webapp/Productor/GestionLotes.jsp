@@ -17,8 +17,28 @@
           rel="stylesheet" crossorigin="anonymous" />
     <style>
         body{display:flex;min-height:100vh}
-        .sidebar{width:280px;transition:width .3s ease}
-        .sidebar.collapsed{width:80px}.sidebar.collapsed .sidebar-text{display:none}
+        .sidebar{
+            position:fixed; inset:0 auto 0 0;       /* top:0; left:0; bottom:0 */
+            width:280px; background:#212529; color:#fff;
+            z-index:1000; transition:width .25s ease;
+            overflow-y:auto;
+        }
+        .sidebar.collapsed{ width:80px; }
+        .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
+        .sidebar .brand .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
+        .sidebar .nav-link{ color:#d6d6d6; }
+        .sidebar .nav-link:hover, .sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
+        .sidebar .dropdown-menu{ background:#2b3035; }
+        .sidebar .dropdown-item{ color:#fff; }
+        .sidebar .dropdown-item:hover{ background:#0d6efd; }
+        /* Ocultar textos cuando está colapsado */
+        .sidebar.collapsed .text-label{ display:none; }
+
+        .main{
+            margin-left:280px; transition:margin-left .25s ease;
+            min-height:100vh; padding:2rem;
+        }
+        .main.collapsed{ margin-left:80px; }
         .nav-link.text-white:hover{background:#0d6efd;color:#fff!important}
         .main-content{flex:1;padding:2rem;background:#f8f9fa}
         #tablaLotes tbody tr{cursor:pointer}
@@ -27,23 +47,9 @@
 </head>
 <body>
 
-<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar" id="sidebar">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <button class="btn btn-primary" id="toggleButton" type="button">&#9776;</button>
-        <a href="<%=ctx%>/index.jsp" class="d-flex align-items-center text-white text-decoration-none">
-            <span class="fs-5 sidebar-text">Telito bodeguero</span>
-        </a>
-    </div>
-    <hr/>
-    <ul class="nav nav-pills flex-column mb-auto">
-        <li><a href="<%=ctx%>/index.jsp"    class="nav-link text-white"><span class="sidebar-text">Inicio</span></a></li>
-        <li><a href="<%=ctx%>/MisProductos" class="nav-link text-white"><span class="sidebar-text">Mis Productos</span></a></li>
-        <li><a href="<%=ctx%>/Lotes"        class="nav-link text-white active"><span class="sidebar-text">Gestión de Lotes</span></a></li>
-        <li><a href="<%=ctx%>/OrdenesCompra"class="nav-link text-white"><span class="sidebar-text">Órdenes de Compra</span></a></li>
-    </ul>
-</div>
+<jsp:include page="/sidebar.jsp" />
 
-<div class="main-content">
+<main class="main" id="main">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="display-6 fw-bold text-primary m-0">Gestión de lotes</h2>
 
@@ -108,6 +114,7 @@
         <button id="btnDel"  type="button" class="btn btn-danger  rounded-pill px-4 fw-bold" disabled>Eliminar</button>
     </div>
 </div>
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script>
@@ -115,8 +122,14 @@
         const ctx         = '<%= ctx %>';
         const idProducto  = '<%= idProducto == null ? "" : idProducto.toString() %>';
 
-        document.getElementById('toggleButton')
-            .addEventListener('click', ()=>document.getElementById('sidebar').classList.toggle('collapsed'));
+        // Toggle del sidebar
+        const btn = document.getElementById('btnToggle');
+        const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        btn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            main.classList.toggle('collapsed');
+        });
 
         const tbody   = document.getElementById('tbodyLotes');
         const btnAdd  = document.getElementById('btnAdd');
