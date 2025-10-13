@@ -1,0 +1,35 @@
+package com.example.telitobodeguero.servlets;
+
+import com.example.telitobodeguero.beans.OrdenCompra;
+import com.example.telitobodeguero.daos.OrdenCompraDao;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet(name = "OrdenesCompraServlet", urlPatterns = {"/OrdenesCompra"})
+public class OrdenesCompraServlet extends HttpServlet {
+
+    private final OrdenCompraDao dao = new OrdenCompraDao();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int idProductor = 4; // TODO: tomar de sesión
+
+        try {
+            List<OrdenCompra> filas = dao.listarOCConItemsParaProductor(idProductor);
+            request.setAttribute("filas", filas);
+            RequestDispatcher rd = request.getRequestDispatcher("/Productor/OrdenesCompra.jsp");
+            rd.forward(request, response);
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+    }
+}
