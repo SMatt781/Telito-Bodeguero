@@ -48,7 +48,7 @@ public class LoteServlet extends HttpServlet {
                         }
                     }
 
-                    RequestDispatcher rd = request.getRequestDispatcher("/LoteForm.jsp");
+                    RequestDispatcher rd = request.getRequestDispatcher("/Productor/LoteForm.jsp");
                     rd.forward(request, response);
                     break;
                 }
@@ -81,7 +81,7 @@ public class LoteServlet extends HttpServlet {
                     request.setAttribute("disponible", disponibleEdicion);
                     request.setAttribute("editMode", true);
 
-                    RequestDispatcher rd = request.getRequestDispatcher("/LoteForm.jsp");
+                    RequestDispatcher rd = request.getRequestDispatcher("//Productor/LoteForm.jsp");
                     rd.forward(request, response);
                     break;
                 }
@@ -105,7 +105,7 @@ public class LoteServlet extends HttpServlet {
                     request.setAttribute("productos", productos);
                     request.setAttribute("idProducto", idProductoStr);
 
-                    RequestDispatcher rd = request.getRequestDispatcher("/GestionLotes.jsp");
+                    RequestDispatcher rd = request.getRequestDispatcher("/Productor/GestionLotes.jsp");
                     rd.forward(request, response);
                     break;
                 }
@@ -185,7 +185,7 @@ public class LoteServlet extends HttpServlet {
                             request.setAttribute("editMode", true);
                         }
 
-                        RequestDispatcher rd = request.getRequestDispatcher("/LoteForm.jsp");
+                        RequestDispatcher rd = request.getRequestDispatcher("/Productor/LoteForm.jsp");
                         rd.forward(request, response);
                         return;
                     }
