@@ -50,7 +50,7 @@ public class LoginServlet extends HttpServlet {
                     homeUrl = request.getContextPath()+"/Almacen/bienvenidos.jsp";
                     break;    // Almacén
                 case 4:
-                    homeUrl = request.getContextPath()+"/indexProductor.jsp";
+                    homeUrl = request.getContextPath()+"/Productor/indexProductor.jsp";
                     break;  // Productor
                 default:
                     homeUrl = request.getContextPath()+"/index.jsp";
@@ -86,7 +86,7 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath()+"/almacen/bienvenidos.jsp");
                     return;    // Almacén
                 case 4:
-                    response.sendRedirect(request.getContextPath()+"/productor/bienvenidos.jsp");
+                    response.sendRedirect(request.getContextPath()+"/Productor/indexProductor.jsp");
                     return;  // Productor
                 default:
                     response.sendRedirect(request.getContextPath()+"/index.jsp");
