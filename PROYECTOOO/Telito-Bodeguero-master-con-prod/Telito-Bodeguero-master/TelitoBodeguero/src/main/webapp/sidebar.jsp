@@ -158,7 +158,7 @@
         <li>
             <a href="<%=request.getContextPath()%>/AlmacenServlet" class="nav-link text-white">
                 <img src="<%=request.getContextPath()%>/Almacen/img/indexGestion2.png" width="25" height="25" class="me-2">
-                <span class="sidebar-text">Gestion de inventarios</span>
+                <span class="text-label">Gestion de inventarios</span>
             </a>
         </li>
         <% } %>
@@ -167,7 +167,7 @@
         <li>
             <a href="<%=request.getContextPath()%>/cargaExcel" class="nav-link text-white">
                 <img src="<%=request.getContextPath()%>/Almacen/img/indexCarga.png" width="25" height="25" class="me-2">
-                <span class="sidebar-text">Carga masiva de datos</span>
+                <span class="text-label">Carga masiva de datos</span>
             </a>
         </li>
         <% } %>
@@ -176,7 +176,7 @@
         <li>
             <a href="<%=request.getContextPath()%>/IncidenciaAlmServlet" class="nav-link text-white">
                 <img src="<%=request.getContextPath()%>/Almacen/img/incidencia.png" width="25" height="25" class="me-2">
-                <span class="sidebar-text">Incidencias </span>
+                <span class="text-label">Incidencias </span>
             </a>
         </li>
         <% } %>
