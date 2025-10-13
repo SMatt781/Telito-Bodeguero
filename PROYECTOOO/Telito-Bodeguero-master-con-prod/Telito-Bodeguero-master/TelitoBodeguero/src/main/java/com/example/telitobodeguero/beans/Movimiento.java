@@ -89,7 +89,7 @@ public class Movimiento {
     //    private int Lote_idLote;
 //    private int Zonas_idZonas;
     private Lote lote;
-    //private Producto producto;
+    private Producto producto;
     private Zonas zona;
 
     public Zonas getZona() {
@@ -99,12 +99,12 @@ public class Movimiento {
         this.zona = zona;
     }
 
-//    public Producto getProducto() {
-//        return producto;
-//    }
-//    public void setProducto(Producto producto) {
-//        this.producto = producto;
-//    }
+    public Producto getProducto() {
+        return producto;
+    }
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
 
 
     public Lote getLote() {
