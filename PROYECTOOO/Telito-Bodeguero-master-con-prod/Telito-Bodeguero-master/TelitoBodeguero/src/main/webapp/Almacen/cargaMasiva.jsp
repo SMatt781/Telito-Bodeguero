@@ -23,35 +23,43 @@
             overflow-x: hidden;
            background: #f7f7f9;
         }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            height: 100vh;
-            background-color: #212529;
-             z-index: 1000;
-            transition: width 0.3s ease-in-out;
+        .sidebar{
+            position:fixed; inset:0 auto 0 0;       /* top:0; left:0; bottom:0 */
+            width:280px; background:#212529; color:#fff;
+            z-index:1000; transition:width .25s ease;
+            overflow-y:auto;
+            display: flex;
+            flex-direction: column;
         }
-        .sidebar.collapsed {
-            width: 80px;
+        .sidebar.collapsed{ width:80px; }
+        .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
+        .sidebar .brand .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
+        .sidebar .nav-link{ color:#d6d6d6; }
+        .sidebar .nav-link:hover, .sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
+        .sidebar .dropdown-menu{ background:#2b3035; }
+        .sidebar .dropdown-item{ color:#fff; }
+        .sidebar .dropdown-item:hover{ background:#0d6efd; }
+        /* Ocultar textos cuando está colapsado */
+        .sidebar.collapsed .text-label{ display:none; }
+        .main{
+            margin-left:280px; transition:margin-left .25s ease;
+            min-height:100vh; padding:2rem;
         }
-        .sidebar.collapsed .sidebar-text {
-            display: none;
-        }
+
         .nav-link.text-white:hover {
             background-color: #0d6efd;
-        color: #fff !important;
+            color: #fff !important;
         }
         .main-content {
             flex-grow: 1;
             padding: 3rem;
-            margin-left: 280px;
-            transition: margin-left 0.3s ease-in-out;
+            background-color: #f8f9fa;
+            margin-left: 280px; /* Margen para dejar espacio a la barra lateral */
+            transition: margin-left 0.3s ease-in-out; /* Animación para el cambio de margen */
             min-height: 100vh;
         }
-        .main-content.collapsed {
-            margin-left: 80px;
+
+        .main.collapsed{ margin-left:80px;
         }
         .titulo-principal {
             font-size: 3rem;
@@ -63,54 +71,9 @@
 </head>
 <body>
 
-<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <button class="btn btn-primary" id="toggleButton" aria-label="Toggle Sidebar">
-            &#9776;
-        </button>
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none">
-            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
-            <span class="fs-4 sidebar-text">Bienvenido, Almacén!:)</span>
-        </a>
-    </div>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-        <li>
-            <a href="<%=request.getContextPath()%>/InicioAlmacenServlet" class="nav-link text-white">
-                <img src="<%=request.getContextPath()%>/Almacen/img/inicio.png" width="25" height="25" class="me-2">
-                <span class="sidebar-text">Inicio</span>
-            </a>
-        </li>
-        <li>
-            <a href="<%=request.getContextPath()%>/AlmacenServlet" class="nav-link text-white">
-            <img src="<%=request.getContextPath()%>/Almacen/img/indexGestion2.png" width="25" height="25" class="me-2">
-            <span class="sidebar-text">Gestion de inventarios</span>
-        </a>
-        </li>
-        <li>
-            <a href="<%=request.getContextPath()%>/cargaExcel" class="nav-link text-white">
-                <img src="<%=request.getContextPath()%>/Almacen/img/indexCarga.png" width="25" height="25" class="me-2">
-                <span class="sidebar-text">Carga masiva de datos</span>
-            </a>
-        </li>
-        <li>
-            <a href="<%=request.getContextPath()%>/IncidenciaAlmServlet" class="nav-link text-white">
-                <img src="<%=request.getContextPath()%>/Almacen/img/incidencia.png" width="25" height="25" class="me-2">
-                <span class="sidebar-text">Incidencias</span>
-            </a>
-        </li>
-    </ul>
-    <div class="dropdown mt-auto">
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="<%=request.getContextPath()%>/Almacen/img/indexUsuario.webp" alt="" width="32" height="32" class="rounded-circle me-2">
-        <strong class="sidebar-text">Usuario</strong>
-    </a>
-        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-            <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
-        </ul>
-    </div>
-</div>
-<div class="main-content" id="main-content">
+<jsp:include page="/sidebar.jsp" />
+
+<main class="main" id="main">
     <div class="container py-4">
         <h3 class="mb-3">Carga masiva desde Excel</h3>
 
@@ -198,18 +161,19 @@
         </div>
         <% } %>
     </div>
-</div>
+</main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const toggleButton = document.getElementById('toggleButton');
+    // Toggle del sidebar
+    const btn = document.getElementById('btnToggle');
     const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('main-content');
-
-    toggleButton.addEventListener('click', () => {
+    const main = document.getElementById('main');
+    btn.addEventListener('click', () => {
         sidebar.classList.toggle('collapsed');
-        mainContent.classList.toggle('collapsed');
+        main.classList.toggle('collapsed');
     });
-    </script>
+
+</script>
 </body>
 </html>
