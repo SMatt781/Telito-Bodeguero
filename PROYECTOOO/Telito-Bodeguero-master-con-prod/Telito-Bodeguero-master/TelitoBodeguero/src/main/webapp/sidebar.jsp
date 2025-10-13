@@ -20,6 +20,15 @@
         roleId = u.getRol().getIdRoles();
     }
 %>
+<style>
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+    }
+    .sidebar .nav {
+        flex-grow: 1;
+    }
+</style>
 
 <aside class="sidebar" id="sidebar">
     <div class="brand">
@@ -119,13 +128,86 @@
         </li>
         <% } %>
 
+        <!-- Productor -->
 
-
-        <!-- Cerrar sesión -->
+        <% if ((permisos.contains(14) && roleId==1) || (permisos.contains(14) && roleId==2) || (permisos.contains(14) && roleId==3) || (permisos.contains(14) && roleId==4)) { %>
         <li class="nav-item mt-2">
-            <a class="nav-link" href="<%= ctx %>/index.jsp">
-                <span class="text-label">Cerrar sesión</span>
+            <a class="nav-link <%= uri.contains("/MisProductos") ? "active" : "" %>" href="<%= ctx %>/MisProductos">
+                <span class="text-label">Mis productos</span>
             </a>
         </li>
+        <% } %>
+        <% if ((permisos.contains(15) && roleId==1) || (permisos.contains(15) && roleId==2) || (permisos.contains(15) && roleId==3) || (permisos.contains(15) && roleId==4)) { %>
+        <li class="nav-item mt-2">
+            <a class="nav-link <%= uri.contains("/Lotes") ? "active" : "" %>" href="<%= ctx %>/Lotes">
+                <span class="text-label">Gestión de Lotes</span>
+            </a>
+        </li>
+        <% } %>
+        <% if ((permisos.contains(16) && roleId==1) || (permisos.contains(16) && roleId==2) || (permisos.contains(16) && roleId==3) || (permisos.contains(16) && roleId==4)) { %>
+        <li class="nav-item mt-2">
+            <a class="nav-link <%= uri.contains("/OrdenesCompra") ? "active" : "" %>" href="<%= ctx %>/OrdenesCompra">
+                <span class="text-label">Órdenes de compras</span>
+            </a>
+        </li>
+        <% } %>
+
+        <!-- Almacén -->
+
+        <% if ((permisos.contains(17) && roleId==1) || (permisos.contains(17) && roleId==2) || (permisos.contains(17) && roleId==3) || (permisos.contains(17) && roleId==4)) { %>
+        <li>
+            <a href="<%=request.getContextPath()%>/AlmacenServlet" class="nav-link text-white">
+                <img src="<%=request.getContextPath()%>/Almacen/img/indexGestion2.png" width="25" height="25" class="me-2">
+                <span class="sidebar-text">Gestion de inventarios</span>
+            </a>
+        </li>
+        <% } %>
+
+        <% if ((permisos.contains(18) && roleId==1) || (permisos.contains(18) && roleId==2) || (permisos.contains(18) && roleId==3) || (permisos.contains(18) && roleId==4)) { %>
+        <li>
+            <a href="<%=request.getContextPath()%>/cargaExcel" class="nav-link text-white">
+                <img src="<%=request.getContextPath()%>/Almacen/img/indexCarga.png" width="25" height="25" class="me-2">
+                <span class="sidebar-text">Carga masiva de datos</span>
+            </a>
+        </li>
+        <% } %>
+
+        <% if ((permisos.contains(19) && roleId==1) || (permisos.contains(19) && roleId==2) || (permisos.contains(19) && roleId==3) || (permisos.contains(19) && roleId==4)) { %>
+        <li>
+            <a href="<%=request.getContextPath()%>/IncidenciaAlmServlet" class="nav-link text-white">
+                <img src="<%=request.getContextPath()%>/Almacen/img/incidencia.png" width="25" height="25" class="me-2">
+                <span class="sidebar-text">Incidencias </span>
+            </a>
+        </li>
+        <% } %>
     </ul>
+
+        <!-- Cerrar sesión -->
+
+            <li class="nav-item mt-auto m-4">
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <% if (roleId==1) { %>
+                        <img src="<%=request.getContextPath()%>/images/SesionAdmin.jpg" alt="" width="32" height="32" class="rounded-circle me-2">
+                        <% } %>
+                        <% if (roleId==2) { %>
+                        <img src="<%=request.getContextPath()%>/Logistica/images/sesionLogistica.jpg" alt="" width="32" height="32" class="rounded-circle me-2">
+                        <% } %>
+                        <% if (roleId==3) { %>
+                        <img src="<%=request.getContextPath()%>/Almacen/img/indexUsuario.webp" alt="" width="32" height="32" class="rounded-circle me-2">
+                        <% } %>
+                        <% if (roleId==4) { %>
+                        <img src="<%=request.getContextPath()%>/Productor/images/sesionProductor.webp" alt="" width="32" height="32" class="rounded-circle me-2">
+                        <% } %>
+
+                        <strong class="text-label">Usuario</strong>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                        <li><a class="dropdown-item" href="<%= ctx %>/index.jsp">Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </li>
+
+
 </aside>
