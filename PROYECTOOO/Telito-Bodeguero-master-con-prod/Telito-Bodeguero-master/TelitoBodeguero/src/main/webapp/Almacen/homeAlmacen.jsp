@@ -52,6 +52,7 @@
             .sidebar .dropdown-item:hover{ background:#0d6efd; }
             /* Ocultar textos cuando está colapsado */
             .sidebar.collapsed .text-label{ display:none; }
+
             .main{
                 margin-left:280px; transition:margin-left .25s ease;
                 min-height:100vh; padding:2rem;
