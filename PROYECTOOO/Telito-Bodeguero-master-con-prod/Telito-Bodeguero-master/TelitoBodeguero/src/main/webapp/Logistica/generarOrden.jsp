@@ -7,6 +7,7 @@
 --%>
 <%@ page import="com.example.telitobodeguero.beans.Usuarios" %>
 <%@ page import="com.example.telitobodeguero.beans.Producto" %>
+<%@ page import="com.example.telitobodeguero.beans.Zonas" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
