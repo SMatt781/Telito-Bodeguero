@@ -81,7 +81,7 @@ public class LoteServlet extends HttpServlet {
                     request.setAttribute("disponible", disponibleEdicion);
                     request.setAttribute("editMode", true);
 
-                    RequestDispatcher rd = request.getRequestDispatcher("//Productor/LoteForm.jsp");
+                    RequestDispatcher rd = request.getRequestDispatcher("/Productor/LoteForm.jsp");
                     rd.forward(request, response);
                     break;
                 }
