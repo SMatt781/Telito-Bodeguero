@@ -115,15 +115,15 @@
                     <%
                         if (listaProductos != null && !listaProductos.isEmpty()) {
                             for (Producto p : listaProductos) {
-                                int loteId = (p.getLote()!=null)? p.getLote().getIdLote() : 0;
-                                int zonaId = (p.getZona()!=null)? p.getZona().getIdZonas() : 0;
+                                Integer loteId = (p.getLote()!=null) ? p.getLote().getIdLote() : null;
+                                String zonaNombre = (p.getZona()!=null) ? p.getZona().getNombre() : null; // << nombre, no id
                     %>
                     <tr>
                         <td><%= p.getSku() %></td>
                         <td><%= p.getNombre() %></td>
                         <td><%= p.getStock() %></td>
-                        <td><%= loteId %></td>
-                        <td><%= zonaId %></td>
+                        <td><%= (loteId != null) ? loteId : "-" %></td>
+                        <td><%= (zonaNombre != null && !zonaNombre.isEmpty()) ? zonaNombre : "-" %></td>
                     </tr>
                     <%
                         }
@@ -133,6 +133,7 @@
                         <td colspan="6" class="text-center">No se encontraron productos.</td>
                     </tr>
                     <% } %>
+
                     </tbody>
                 </table>
             </div>
