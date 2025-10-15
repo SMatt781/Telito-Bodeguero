@@ -84,42 +84,38 @@
             border:1px solid #a7a7a7; border-radius:999px; font-weight:700;
         }
         .btn-apply:hover { filter:brightness(.95); }
+
+        .sidebar{
+            position:fixed; inset:0 auto 0 0;             /* top:0;left:0;bottom:0 */
+            width:280px; background:#212529; color:#fff;
+            z-index:1000; transition:width .25s ease; overflow-y:auto;
+        }
+        .sidebar.collapsed{ width:80px; }
+        .sidebar .brand{
+            padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem;
+        }
+        .sidebar .brand .toggle{
+            border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem;
+        }
+        .sidebar .nav-link{ color:#d6d6d6; }
+        .sidebar .nav-link:hover,.sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
+        .sidebar .spacer{ height:1px; background:#343a40; margin:.5rem 0; }
+        .sidebar.collapsed .text-label{ display:none; }
+
+        /* Main que se desplaza según el ancho de la barra */
+        .main{
+            margin-left:280px; transition:margin-left .25s ease;
+            min-height:100vh; padding:2rem;
+        }
+        .main.collapsed{ margin-left:80px; }
     </style>
 </head>
 <body>
 <div class="d-flex">
     <!-- Columna izquierda -->
-    <aside class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
-           style="width:280px;min-height:100vh;">
-        <a href="#" class="d-flex align-items-center mb-3 text-white text-decoration-none">
-            <span class="fs-4">Telito bodeguero</span>
-        </a>
-        <hr>
+    <jsp:include page="/sidebar.jsp" />
 
-        <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item">
-                <a class="nav-link text-white" href="${sessionScope.homeUrl}">Inicio</a>
-            </li>
-
-            <a href="javascript:history.back()" class="btn btn-outline-light w-100 text-start mt-3">
-                &larr; Volver
-            </a>
-        </ul>
-
-        <div class="mt-auto pt-3">
-            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-               id="dropdownUser1" data-bs-toggle="dropdown">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSu4RsCfoBYE4gan-EGNAvN3uRY0x43GwyK5A&s"
-                     width="32" height="32" class="rounded-circle me-2">
-                <strong>Usuario</strong>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
-            </ul>
-        </div>
-    </aside>
-
-    <main class="flex-grow-1 p-4" style="background:#f8f9fa;min-height:100vh;">
+    <main class="main" id="main">
         <hr>
         <h1 class="text-uppercase">Nueva orden de compra</h1>
         <hr>
@@ -162,5 +158,15 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+    // Toggle del sidebar
+    const btn = document.getElementById('btnToggle');
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main');
+    btn && btn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        main.classList.toggle('collapsed');
+    });
+</script>
 </body>
 </html>
