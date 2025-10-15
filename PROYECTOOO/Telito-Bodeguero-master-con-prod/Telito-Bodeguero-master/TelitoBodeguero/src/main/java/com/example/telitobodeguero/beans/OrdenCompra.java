@@ -11,6 +11,7 @@ public class OrdenCompra {
     private Producto producto;
 
     private String nombreProveedor;
+    private Zonas zona;
 
 
     public int getCodigoOrdenCompra() {
@@ -56,5 +57,12 @@ public class OrdenCompra {
     }
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public Zonas getZona() {
+        return zona;
+    }
+    public void setZona(Zonas zona) {
+        this.zona = zona;
     }
 }
