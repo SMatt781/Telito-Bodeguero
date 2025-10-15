@@ -85,7 +85,7 @@ if (permisos == null) permisos = java.util.Collections.emptySet(); %>
                     <th scope="col">Usuario</th>
                     <th scope="col">Rol</th>
                     <th scope="col">Correo</th>
-                    <th scope="col">Activo / Inactivo</th>
+                    <th scope="col">Acciones</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -96,21 +96,25 @@ if (permisos == null) permisos = java.util.Collections.emptySet(); %>
                     <td><%=usuario.getNombre() +" "+usuario.getApellido()%></td>
                     <td><%=usuario.getRol().getNombre()%></td>
                     <td><%=usuario.getCorreo()%></td>
-                    <td>
+                    <td class="d-flex gap-2">
+                        <%-- Botón Editar (con estilo de botón) --%>
+                        <a href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=editar&id=<%=usuario.getIdUsuarios()%>"
+                           class="btn btn-warning btn-sm">Editar</a>
+                        <%-- Botón Activo/Inactivo (con estilo de botón) --%>
                         <% if (usuario.getActivo()) { %>
-                        <a class="badge bg-success"
+                        <a class="btn btn-success btn-sm"
                            href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=borrar&id=<%=usuario.getIdUsuarios()%>"
                            onclick="return confirm('¿Desactivar a <%=usuario.getNombre()%>?');">
                             Activo
                         </a>
                         <% } else { %>
-                        <a class="badge bg-secondary"
+                        <a class="btn btn-secondary btn-sm"
                            href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=activar&id=<%=usuario.getIdUsuarios()%>">
                             Inactivo
                         </a>
                         <% } %>
                     </td>
-                    <td><a href="<%=request.getContextPath()%>/ListaUsuariosServlet?action=editar&id=<%=usuario.getIdUsuarios()%>">Editar</a></td>
+
                 </tr>
                 <% } %>
 
