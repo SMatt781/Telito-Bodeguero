@@ -28,6 +28,28 @@
     .sidebar .nav {
         flex-grow: 1;
     }
+    .nav-category {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #adb5bd; /* Un gris claro para el título */
+        text-transform: uppercase;
+        display: block;
+        margin-top: 0.5rem;
+    }
+    /* Ajuste para los enlaces anidados */
+    .nav .nav-link {
+        color: #d6d6d6;
+        transition: background-color 0.2s, color 0.2s;
+    }
+    .nav .nav-link:hover, .nav .nav-link.active {
+        background-color: #0d6efd;
+        color: #fff;
+    }
+    .nav .nav .nav-link { /* Estilo específico para sub-items */
+        font-size: 0.9em;
+        padding-left: 2rem; /* Mayor indentación para sub-items */
+    }
 </style>
 
 <aside class="sidebar" id="sidebar">
@@ -48,22 +70,22 @@
 
         <%-- Lista de usuarios (permiso 9) --%>
         <% if ((permisos.contains(1) && roleId==1) || (permisos.contains(1) && roleId==2) || (permisos.contains(1) && roleId==3) || (permisos.contains(1) && roleId==4)) { %>
-        <li class="nav-item dropdown mb-1">
-            <a class="nav-link dropdown-toggle" href="#" id="usuariosDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="text-label">Gestión de usuarios y roles</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="usuariosDropdown">
+        <li class="nav-item">
+            <span class="nav-category text-label">Gestión y Roles</span>
+            <ul class="nav flex-column">
                 <% if ((permisos.contains(2) && roleId==1) || (permisos.contains(2) && roleId==2) || (permisos.contains(2) && roleId==3) || (permisos.contains(2) && roleId==4)) { %>
-                <li>
-                    <a class="dropdown-item <%= uri.contains("/ListaUsuariosServlet") ? "active" : "" %>" href="<%= ctx %>/ListaUsuariosServlet">
-                        <img src="images/image.png" alt="" width="20" height="20" class="me-2">Listado de usuarios
+                <li class="nav-item">
+                    <a class="nav-link <%= uri.contains("/ListaUsuariosServlet") ? "active" : "" %>" href="<%= ctx %>/ListaUsuariosServlet">
+                        <img src="images/image.png" alt="" width="20" height="20" class="me-2">
+                        <span class="text-label">Listado de usuarios</span>
                     </a>
                 </li>
                 <% } %>
                 <% if ((permisos.contains(6) && roleId==1)) { %>
-                <li>
-                    <a class="dropdown-item <%= uri.contains("/ListaUsuariosServlet") ? "active" : "" %>" href="<%= ctx %>/GestionPermisosServlet">
-                        <img src="images/gestionPermisos.png" alt="" width="20" height="20" class="me-2">Gestión de permisos
+                <li class="nav-item">
+                    <a class="nav-link <%= uri.contains("/GestionPermisosServlet") ? "active" : "" %>" href="<%= ctx %>/GestionPermisosServlet">
+                        <img src="images/gestionPermisos.png" alt="" width="20" height="20" class="me-2">
+                        <span class="text-label">Gestión de permisos</span>
                     </a>
                 </li>
                 <% } %>
@@ -74,29 +96,30 @@
 
         <%-- Inventario (permiso 20, ejemplo) --%>
         <% if ((permisos.contains(7) && roleId==1) || (permisos.contains(7) && roleId==2) || (permisos.contains(7) && roleId==3) || (permisos.contains(7) && roleId==4)) { %>
-        <li class="nav-item dropdown mb-1">
-            <a class="nav-link dropdown-toggle" href="#" id="reportesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="text-label">Reportes Globales</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="reportesDropdown">
+        <li class="nav-item">
+            <span class="nav-category text-label">Reportes Globales</span>
+            <ul class="nav flex-column">
                 <% if ((permisos.contains(8) && roleId==1) || (permisos.contains(8) && roleId==2) || (permisos.contains(8) && roleId==3) || (permisos.contains(8) && roleId==4)) { %>
-                <li>
-                    <a class="dropdown-item <%= uri.contains("/ListaProductos") ? "active" : "" %>" href="<%= ctx %>/ListaProductos">
-                        <img src="images/reporteInventarios.jpg" alt="" width="20" height="20" class="me-2">Reporte de inventarios
+                <li class="nav-item">
+                    <a class="nav-link <%= uri.contains("/ListaProductos") ? "active" : "" %>" href="<%= ctx %>/ListaProductos">
+                        <img src="images/reporteInventarios.jpg" alt="" width="20" height="20" class="me-2">
+                        <span class="text-label">Reporte de inventarios</span>
                     </a>
                 </li>
                 <% } %>
                 <% if ((permisos.contains(9) && roleId==1) || (permisos.contains(9) && roleId==2) || (permisos.contains(9) && roleId==3) || (permisos.contains(9) && roleId==4)) { %>
-                <li>
-                    <a class="dropdown-item <%= uri.contains("/ReporteMovimientos") ? "active" : "" %>" href="<%= ctx %>/ReporteMovimientos">
-                        <img src="images/reporteMovimientos.png" alt="" width="20" height="20" class="me-2">Reporte de movimientos
+                <li class="nav-item">
+                    <a class="nav-link <%= uri.contains("/ReporteMovimientos") ? "active" : "" %>" href="<%= ctx %>/ReporteMovimientos">
+                        <img src="images/reporteMovimientos.png" alt="" width="20" height="20" class="me-2">
+                        <span class="text-label">Reporte de movimientos</span>
                     </a>
                 </li>
                 <% } %>
                 <% if ((permisos.contains(10) && roleId==1) || (permisos.contains(10) && roleId==2) || (permisos.contains(10) && roleId==3) || (permisos.contains(10) && roleId==4)) { %>
-                <li>
-                    <a class="dropdown-item <%= uri.contains("/StockBajo_OrdenCompra") ? "active" : "" %>" href="<%= ctx %>/StockBajo_OrdenCompra?action=stock">
-                        <img src="images/reporteVentas.png" alt="" width="20" height="20" class="me-2">Reporte de compras
+                <li class="nav-item">
+                    <a class="nav-link <%= uri.contains("/StockBajo_OrdenCompra") ? "active" : "" %>" href="<%= ctx %>/StockBajo_OrdenCompra?action=stock">
+                        <img src="images/reporteVentas.png" alt="" width="20" height="20" class="me-2">
+                        <span class="text-label">Reporte de compras</span>
                     </a>
                 </li>
                 <% } %>
@@ -104,29 +127,6 @@
         </li>
         <% } %>
 
-        <% if ((permisos.contains(11) && roleId==1) || (permisos.contains(11) && roleId==2) || (permisos.contains(11) && roleId==3) || (permisos.contains(11) && roleId==4)) { %>
-        <li class="nav-item dropdown mb-1">
-            <a class="nav-link dropdown-toggle" href="#" id="panelDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="text-label">Panel de supervisión</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="panelDropdown">
-                <% if ((permisos.contains(12) && roleId==1) || (permisos.contains(12) && roleId==2) || (permisos.contains(12) && roleId==3) || (permisos.contains(12) && roleId==4)) { %>
-                <li>
-                    <a class="dropdown-item <%= uri.contains("/StockBajo_OrdenCompra") ? "active" : "" %>" href="/StockBajo_OrdenCompra">
-                        <img src="images/estadisticas.png" alt="" width="20" height="20" class="me-2">Estadísticas
-                    </a>
-                </li>
-                <% } %>
-                <% if ((permisos.contains(13) && roleId==1) || (permisos.contains(13) && roleId==2) || (permisos.contains(13) && roleId==3) || (permisos.contains(13) && roleId==4)) { %>
-                <li>
-                    <a class="dropdown-item <%= uri.contains("/StockBajo_OrdenCompra") ? "active" : "" %>" href="/StockBajo_OrdenCompra">
-                        <img src="images/alertas.png" alt="" width="20" height="20" class="me-2">Alertas y notificaciones
-                    </a>
-                </li>
-                <% } %>
-            </ul>
-        </li>
-        <% } %>
 
         <!-- Productor -->
 
