@@ -129,7 +129,6 @@
                         <th>Stock</th>
                         <th>Lote</th>
                         <th>Zona</th>
-                        <th class="col-acciones">Generar orden</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -145,12 +144,6 @@
                         <td><%= p.getStock() %></td>
                         <td><%= loteId %></td>
                         <td><%= zonaId %></td>
-                        <td class="col-acciones">
-                            <a class="btn btn-sm btn-primary"
-                               href="StockBajo_OrdenCompra?action=form_crear&productoId=<%= p.getIdProducto() %>">
-                                Generar orden
-                            </a>
-                        </td>
                     </tr>
                     <%
                         }
