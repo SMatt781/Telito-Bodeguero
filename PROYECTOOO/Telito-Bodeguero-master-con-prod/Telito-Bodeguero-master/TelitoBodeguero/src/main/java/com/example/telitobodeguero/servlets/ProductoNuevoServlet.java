@@ -19,7 +19,7 @@ public class ProductoNuevoServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher rd = request.getRequestDispatcher("/ProductoForm.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("/Productor/ProductoForm.jsp");
         rd.forward(request, response);
     }
 
