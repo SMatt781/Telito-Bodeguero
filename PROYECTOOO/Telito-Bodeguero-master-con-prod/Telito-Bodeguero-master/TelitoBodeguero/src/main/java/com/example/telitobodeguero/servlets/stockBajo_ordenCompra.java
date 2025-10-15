@@ -37,6 +37,10 @@ public class stockBajo_ordenCompra extends HttpServlet {
                 ArrayList<Producto> listaProductos = ocDao.obtenerProductos();
                 request.setAttribute("listaProductos", listaProductos);
 
+                // 🚨 NUEVA LÓGICA: Cargar Zonas para el dropdown
+                ArrayList<Zonas> listaZonas = ocDao.obtenerListaZonas();
+                request.setAttribute("listaZonas", listaZonas);
+
                 RequestDispatcher view = request.getRequestDispatcher("/Logistica/generarOrden.jsp");
                 view.forward(request, response);
             }
@@ -100,35 +104,31 @@ public class stockBajo_ordenCompra extends HttpServlet {
 
         switch (action) {
 
-            // 🛠️ NUEVO: Maneja la creación de la nueva orden
+            // 🛠️ ACTUALIZACIÓN: Maneja la creación de la nueva orden
             case "crear" -> {
-
-                // 🚨 CAMBIO 1: Eliminamos la captura del proveedorIdStr, ya que lo buscamos en el DAO
-                // String proveedorIdStr = request.getParameter("proveedorId");
 
                 String productoIdStr = request.getParameter("productoId");
                 String cantidadStr = request.getParameter("cantidad");
                 String fechaLlegadaStr = request.getParameter("fechaLlegada");
+                String zonaIdStr = request.getParameter("zonaId"); // 🚨 NUEVO: Capturamos el ID de la zona
 
                 try {
-                    // 🚨 CAMBIO 2: Eliminamos la conversión del proveedorId
-                    // int proveedorId = Integer.parseInt(proveedorIdStr);
-
                     int productoId = Integer.parseInt(productoIdStr);
                     int cantidad = Integer.parseInt(cantidadStr);
+                    int idZona = Integer.parseInt(zonaIdStr); // 🚨 NUEVO: Convertimos a int
 
-                    // 🚨 CAMBIO 3: La llamada al DAO ahora SOLO usa 3 parámetros
-                    ocDao.crearOrden(productoId, cantidad, fechaLlegadaStr);
+                    // 🚨 CAMBIO CRÍTICO: La llamada al DAO ahora incluye 4 parámetros
+                    ocDao.crearOrden(productoId, cantidad, fechaLlegadaStr, idZona);
 
                     // Si la creación es exitosa, redirige al listado
                     response.sendRedirect(request.getContextPath() + "/StockBajo_OrdenCompra?action=list");
                     return;
 
                 } catch (NumberFormatException e) {
-                    System.err.println("Error de formato al crear orden: ID o Cantidad no numéricos. " + e.getMessage());
+                    System.err.println("Error de formato al crear orden: ID, Cantidad o Zona no numéricos. " + e.getMessage());
                     response.sendRedirect(request.getContextPath() + "/StockBajo_OrdenCompra?action=form_crear&error=formato");
                     return;
-                } catch (RuntimeException e) { // Captura el error de la BD/DAO (incluido el "Proveedor no encontrado")
+                } catch (RuntimeException e) {
                     System.err.println("Error crítico al crear orden: " + e.getMessage());
                     e.printStackTrace();
                     // Redirige al formulario con un error
