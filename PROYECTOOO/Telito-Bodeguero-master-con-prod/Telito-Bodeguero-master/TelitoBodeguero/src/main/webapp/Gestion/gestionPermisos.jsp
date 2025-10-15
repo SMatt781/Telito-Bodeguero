@@ -51,6 +51,54 @@
             margin-bottom: 1.25rem;
             text-transform: uppercase;
         }
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem; /* Espacio entre cada opción de rol */
+        }
+        .filter-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none; /* Evita que el texto se seleccione al hacer clic */
+        }
+        .filter-item input[type="radio"] {
+            display: none; /* Ocultamos el radio button por defecto */
+        }
+        .filter-item .radio-circle {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #adb5bd; /* Borde gris */
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        /* Círculo interior que aparece al seleccionar */
+        .filter-item .radio-circle::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background-color: #0d6efd; /* Azul de Bootstrap */
+            border-radius: 50%;
+            display: block;
+            transform: scale(0); /* Oculto por defecto */
+            transition: transform 0.2s ease;
+        }
+        /* Cuando el radio button está seleccionado, cambiamos el estilo del círculo */
+        .filter-item input[type="radio"]:checked + .radio-circle {
+            border-color: #0d6efd;
+        }
+        /* Mostramos el círculo interior cuando está seleccionado */
+        .filter-item input[type="radio"]:checked + .radio-circle::after {
+            transform: scale(1);
+        }
+        .filter-item .role-name {
+            font-weight: 500;
+            color: #495057;
+        }
     </style>
 </head>
 <body>
@@ -66,41 +114,46 @@
         </div>
 
         <!-- FILTRO DE ROL -->
-        <form method="get" action="<%=request.getContextPath()%>/GestionPermisosServlet" class="mb-3">
-            <div class="row g-2 align-items-center">
-                <div class="col-auto">
-                    <label for="rolId" class="col-form-label fw-bold">Filtrar por rol:</label>
+        <div class="mb-4">
+            <label class="form-label fw-bold d-block mb-2">Filtrar por rol:</label>
+            <form method="get" action="<%=request.getContextPath()%>/GestionPermisosServlet" id="roleFilterForm">
+                <div class="filter-group">
+                    <label class="filter-item">
+                        <input type="radio" name="rolId" value="" onchange="this.form.submit()" <%= (rolSeleccionado == null) ? "checked" : "" %>>
+                        <span class="radio-circle"></span>
+                        <span class="role-name">Ver Todos</span>
+                    </label>
+
+                    <% for (Roles r : listaRoles) { %>
+                    <label class="filter-item">
+                        <input type="radio" name="rolId" value="<%=r.getIdRoles()%>" onchange="this.form.submit()" <%= (rolSeleccionado != null && rolSeleccionado.equals(r.getIdRoles())) ? "checked" : "" %>>
+                        <span class="radio-circle"></span>
+                        <span class="role-name"><%=r.getNombre()%></span>
+                    </label>
+                    <% } %>
                 </div>
-                <div class="col-auto">
-                    <select name="rolId" id="rolId" class="form-select" onchange="this.form.submit()">
-                        <option value="">-- Todos los roles --</option>
-                        <% for (Roles r : listaRoles) { %>
-                        <option value="<%=r.getIdRoles()%>" <%= (rolSeleccionado != null && rolSeleccionado.equals(r.getIdRoles())) ? "selected" : "" %>>
-                            <%=r.getNombre()%>
-                        </option>
-                        <% } %>
-                    </select>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
         <!-- FIN FILTRO DE ROL -->
 
         <div class="table-responsive table-card">
             <table class="table table-striped align-middle mb-0">
                 <thead>
                 <tr>
-                    <th scope="col">ID rol</th>
+                    <th scope="col">#</th>
                     <th scope="col">Rol</th>
                     <th scope="col">Permiso</th>
                     <th scope="col">Activo/Desactivo</th>
                 </tr>
                 </thead>
                 <tbody>
+                <% int contadorFilas = 0; %>
                 <% for (Roles_has_Permisos rhp: listaPermisos) {
                     if (rolSeleccionado == null || rhp.getRol().getIdRoles() == rolSeleccionado) {
+                        contadorFilas++;
                 %>
                 <tr>
-                    <th scope="row"><%=rhp.getRol().getIdRoles()%></th>
+                    <th scope="row"><%= contadorFilas %></th>
                     <td><%=rhp.getRol().getNombre()%></td>
                     <td><%=rhp.getPermiso().getNombre()%></td>
                     <td>
@@ -138,19 +191,33 @@
     });
 
     function toggleStatus(rolId, permisoId, element) {
+
         const hiddenInput = document.getElementById("estado-" + rolId + "-" + permisoId);
+
         if (element.classList.contains("bg-success")) {
+
             element.classList.remove("bg-success");
+
             element.classList.add("bg-secondary");
+
             element.textContent = "Inactivo";
+
             hiddenInput.value = "0";
+
         } else {
+
             element.classList.remove("bg-secondary");
+
             element.classList.add("bg-success");
+
             element.textContent = "Activo";
+
             hiddenInput.value = "1";
+
         }
+
         document.getElementById("form-" + rolId + "-" + permisoId).submit();
+
     }
 
     // Guardar la posición antes de recargar
