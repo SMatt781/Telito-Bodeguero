@@ -14,10 +14,10 @@ import java.util.List;
 public class OrdenCompraDao {
 
     // -------------------------------------------------------------------------
-// 1. OBTENER ORDENES DE COMPRA (CORRECCIÓN FINAL - Basada en Query Original)
-// -------------------------------------------------------------------------
-    public ArrayList<com.example.telitobodeguero.beans.OrdenCompra> obtenerOrdenCompra(String estadoFiltro, String terminoBusquedaProveedor) {
-        ArrayList<com.example.telitobodeguero.beans.OrdenCompra> listaOrdenCompra = new ArrayList<>();
+    // 1. OBTENER ORDENES DE COMPRA (Listar y Mapear Zona)
+    // -------------------------------------------------------------------------
+    public ArrayList<OrdenCompra> obtenerOrdenCompra(String estadoFiltro, String terminoBusquedaProveedor) {
+        ArrayList<OrdenCompra> listaOrdenCompra = new ArrayList<>();
         String user = "root";
         String pass = "12345678";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
@@ -29,7 +29,8 @@ public class OrdenCompraDao {
                         "  p.nombre AS Producto, " +
                         "  oci.cantidad AS Cantidad, " +
                         "  oc.fecha_llegada AS FechaLlegada, " +
-                        "  oc.estado AS Estado " +
+                        "  oc.estado AS Estado, " +
+                        "  z.nombre AS NombreZona " + // <-- Nueva columna
                         "FROM OrdenCompra oc " +
                         "JOIN OrdenCompraItem oci ON oc.idOrdenCompra = oci.OrdenCompra_idOrdenCompra " +
                         "JOIN Producto p          ON oci.Producto_idProducto = p.idProducto " +
@@ -41,6 +42,7 @@ public class OrdenCompraDao {
                         ") lmax ON lmax.Producto_idProducto = p.idProducto " +
                         "JOIN Lote l ON l.idLote = lmax.idLote " +
                         "JOIN Usuarios u ON u.idUsuarios = l.Usuarios_idUsuarios " +
+                        "LEFT JOIN Zonas z ON oc.Zonas_idZonas = z.idZonas " + // <-- Nuevo JOIN
                         "WHERE u.Roles_idRoles = 4 " // solo productores
         );
 
@@ -73,21 +75,24 @@ public class OrdenCompraDao {
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        com.example.telitobodeguero.beans.OrdenCompra oc = new com.example.telitobodeguero.beans.OrdenCompra();
+                        OrdenCompra oc = new OrdenCompra();
                         oc.setCodigoOrdenCompra(rs.getInt("CodigoOrdenCompra"));
                         oc.setNombreProveedor(rs.getString("Proveedor"));
 
-                        com.example.telitobodeguero.beans.Producto p = new com.example.telitobodeguero.beans.Producto();
+                        Producto p = new Producto();
                         p.setNombre(rs.getString("Producto"));
                         oc.setProducto(p);
 
-                        // Si tu driver no soporta LocalDate:
-                        // java.sql.Date f = rs.getDate("FechaLlegada");
-                        // oc.setFechaLlegada(f != null ? f.toLocalDate() : null);
                         oc.setFechaLlegada(rs.getObject("FechaLlegada", LocalDate.class));
 
                         oc.setCantidad(rs.getInt("Cantidad"));
                         oc.setEstado(rs.getString("Estado"));
+
+                        // Mapeo de la nueva Zona
+                        Zonas z = new Zonas();
+                        z.setNombre(rs.getString("NombreZona"));
+                        oc.setZona(z);
+
                         listaOrdenCompra.add(oc);
                     }
                 }
@@ -97,7 +102,6 @@ public class OrdenCompraDao {
         }
         return listaOrdenCompra;
     }
-
 
 
     // -------------------------------------------------------------------------
@@ -139,14 +143,15 @@ public class OrdenCompraDao {
     }
 
     // -------------------------------------------------------------------------
-    // 3. CREAR ORDEN
+    // 3. CREAR ORDEN (Se añade idZona)
     // -------------------------------------------------------------------------
-    public void crearOrden(int idProducto, int cantidad, String fechaLlegada) {
+    public void crearOrden(int idProducto, int cantidad, String fechaLlegada, int idZona) { // <-- NUEVO PARAMETRO
         String user = "root";
         String pass = "12345678";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
-        String sqlOrden = "INSERT INTO OrdenCompra (estado, fecha_llegada) VALUES ('Enviada', ?)";
+        // SQL: Se añade Zonas_idZonas a la inserción
+        String sqlOrden = "INSERT INTO OrdenCompra (estado, fecha_llegada, Zonas_idZonas) VALUES ('Enviada', ?, ?)";
         String sqlItem  = "INSERT INTO OrdenCompraItem (OrdenCompra_idOrdenCompra, Producto_idProducto, cantidad) VALUES (?, ?, ?)";
 
         Connection conn = null;
@@ -158,9 +163,9 @@ public class OrdenCompraDao {
 
             int idGenerado = -1;
             try (PreparedStatement pstmtOrden = conn.prepareStatement(sqlOrden, Statement.RETURN_GENERATED_KEYS)) {
-                // Si puedes, mejor usa java.sql.Date:
-                // pstmtOrden.setDate(1, java.sql.Date.valueOf(java.time.LocalDate.parse(fechaLlegada)));
+
                 pstmtOrden.setString(1, fechaLlegada);
+                pstmtOrden.setInt(2, idZona); // <-- Seteamos el ID de la Zona
                 pstmtOrden.executeUpdate();
 
                 try (ResultSet rs = pstmtOrden.getGeneratedKeys()) {
@@ -194,9 +199,9 @@ public class OrdenCompraDao {
     // -------------------------------------------------------------------------
     // 4. OBTENER PRODUCTOS (Para form_crear)
     // -------------------------------------------------------------------------
-    public ArrayList<com.example.telitobodeguero.beans.Producto> obtenerProductos() {
+    public ArrayList<Producto> obtenerProductos() {
         // [CÓDIGO DE obtenerProductos se mantiene igual]
-        ArrayList<com.example.telitobodeguero.beans.Producto> listaProductos = new ArrayList<>();
+        ArrayList<Producto> listaProductos = new ArrayList<>();
         String user = "root";
         String pass = "12345678";
         String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
@@ -210,7 +215,7 @@ public class OrdenCompraDao {
                  ResultSet rs = pstmt.executeQuery()) {
 
                 while (rs.next()) {
-                    com.example.telitobodeguero.beans.Producto p = new com.example.telitobodeguero.beans.Producto();
+                    Producto p = new Producto();
                     p.setIdProducto(rs.getInt("idProducto"));
                     p.setNombre(rs.getString("nombre"));
                     listaProductos.add(p);
@@ -257,8 +262,8 @@ public class OrdenCompraDao {
     }
 
     // -------------------------------------------------------------------------
-// 6. CONTAR PRODUCTOS EN TRÁNSITO
-// -------------------------------------------------------------------------
+    // 6. CONTAR PRODUCTOS EN TRÁNSITO
+    // -------------------------------------------------------------------------
     public int contarOrdenesEnTransito() {
         String user = "root";
         String pass = "12345678";
@@ -285,6 +290,40 @@ public class OrdenCompraDao {
         return total;
     }
 
+    // -------------------------------------------------------------------------
+    // 7. OBTENER LISTA DE ZONAS (NUEVO MÉTODO)
+    // -------------------------------------------------------------------------
+    /**
+     * Obtiene todas las zonas de la tabla Zonas para el dropdown de creación.
+     */
+    public ArrayList<Zonas> obtenerListaZonas() {
+        ArrayList<Zonas> listaZonas = new ArrayList<>();
+        String user = "root";
+        String pass = "12345678";
+        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+
+        String sql = "SELECT idZonas, nombre FROM Zonas ORDER BY nombre";
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            try (Connection conn = DriverManager.getConnection(url, user, pass);
+                 PreparedStatement pstmt = conn.prepareStatement(sql);
+                 ResultSet rs = pstmt.executeQuery()) {
+
+                while (rs.next()) {
+                    Zonas z = new Zonas();
+                    z.setIdZonas(rs.getInt("idZonas"));
+                    z.setNombre(rs.getString("nombre"));
+                    listaZonas.add(z);
+                }
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return listaZonas;
+    }
+
+
     public List<OrdenCompra> listarOCConItemsParaProductor(int idProductor) throws SQLException {
         String sql = """
             SELECT 
@@ -310,6 +349,9 @@ public class OrdenCompraDao {
             """;
 
         List<OrdenCompra> lista = new ArrayList<>();
+        // Asumiendo que DB.getConnection() te proporciona una conexión válida
+        // Nota: Esta parte del código no usa los parámetros user, pass, url definidos al inicio de la clase.
+        // Si tienes una clase DB, asegúrate de que funcione o cámbiala por DriverManager.getConnection(url, user, pass)
         try (Connection c = DB.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -335,8 +377,9 @@ public class OrdenCompraDao {
                     prod.setNombre(rs.getString("producto"));
                     r.setProducto(prod); // usa setProducto(Producto)
 
-                    // Si en el futuro quieres mapear nombreProveedor, agrégalo al SELECT y setéalo aquí:
-                    // r.setNombreProveedor(rs.getString("nombre_proveedor"));
+                    // Aquí no se mapea la Zona porque esta consulta es para la vista del Productor
+                    // y el requerimiento usualmente no incluye la zona en esa vista.
+                    // Si la necesitaras, deberías agregarla al SQL y mapearla aquí.
 
                     lista.add(r);
                 }
