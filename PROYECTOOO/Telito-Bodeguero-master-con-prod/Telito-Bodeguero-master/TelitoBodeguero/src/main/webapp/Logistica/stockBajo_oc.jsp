@@ -170,7 +170,6 @@
                     <th>Stock</th>
                     <th>Lote</th>
                     <th>Zona</th>
-                    <th>Generar Orden</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -184,10 +183,6 @@
                     <td><%= p.getStock() %></td>
                     <td><%= (p.getLote() != null) ? p.getLote().getIdLote() : "N/A" %></td>
                     <td><%= (p.getZona() != null) ? p.getZona().getIdZonas() : "N/A" %></td>
-                    <td>
-                        <a href="StockBajo_OrdenCompra?action=form_crear&productoId=<%= p.getIdProducto() %>"
-                           class="btn btn-sm btn-primary">Generar orden</a>
-                    </td>
                 </tr>
                 <%
                     }
