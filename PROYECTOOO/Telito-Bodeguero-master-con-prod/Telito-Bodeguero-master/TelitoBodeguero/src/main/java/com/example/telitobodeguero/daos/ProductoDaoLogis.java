@@ -15,9 +15,9 @@ public class ProductoDaoLogis {
         String pass = "12345678";
         String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
-        // 🚨 CONSULTA SQL CORREGIDA: Usa subconsultas para obtener Lote y Zona ID del último movimiento 🚨
+        // ✅ CONSULTA SQL TOTALMENTE CORREGIDA: Usando P.stock en todas las cláusulas.
         String sql = "SELECT " +
-                "    P.idProducto, P.sku, P.nombre, P.Stock_productoId, " +
+                "    P.idProducto, P.sku, P.nombre, P.stock, " + // <-- Correcto
                 // SUBQUERY para obtener el ID del Lote (int) del último movimiento asociado a este Producto
                 "    (SELECT Lote_idLote FROM Movimiento M " +
                 "     INNER JOIN Lote L ON M.Lote_idLote = L.idLote " +
@@ -29,8 +29,8 @@ public class ProductoDaoLogis {
                 "     WHERE L.Producto_idProducto = P.idProducto " +
                 "     ORDER BY M.fecha DESC LIMIT 1) AS ZonaID " +
                 "FROM Producto P " +
-                "WHERE P.Stock_productoId <= P.stockMinimo " +
-                "ORDER BY P.Stock_productoId ASC " +
+                "WHERE P.stock <= P.stockMinimo " +             // <-- ¡CORREGIDO!
+                "ORDER BY P.stock ASC " +                      // <-- ¡CORREGIDO!
                 "LIMIT 5";
 
         try {
@@ -46,9 +46,8 @@ public class ProductoDaoLogis {
                     // Mapeo de datos principales
                     p.setIdProducto(rs.getInt("idProducto"));
                     p.setNombre(rs.getString("nombre"));
-                    // ✅ CORREGIDO: Lee SKU como String
                     p.setSku(rs.getString("sku"));
-                    p.setStock(rs.getInt("Stock_productoId"));
+                    p.setStock(rs.getInt("stock")); // <-- Correcto
 
                     // Mapeo de IDs de Lote y Zona (usando los alias de la subconsulta)
                     Lote lote = new Lote();
@@ -72,8 +71,8 @@ public class ProductoDaoLogis {
         String pass = "12345678";
         String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
-        // Consulta SQL: Usa las columnas de tu DB (Stock_productoId y stockMinimo) para contar
-        String sql = "SELECT COUNT(*) FROM Producto WHERE Stock_productoId <= stockMinimo";
+        // ✅ CORREGIDO: Cambiado Stock_productoId por stock
+        String sql = "SELECT COUNT(*) FROM Producto WHERE stock <= stockMinimo";
         int total = 0;
 
         try {
@@ -93,6 +92,7 @@ public class ProductoDaoLogis {
         return total;
     }
 
+    // 2. MÉTODO CORREGIDO: obtenerListaProductos()
     public ArrayList<Producto> obtenerListaProductos(String busquedaTermino, String ordenFiltro) {
         ArrayList<Producto> listaProductos = new ArrayList<>();
         String user = "root";
@@ -102,7 +102,8 @@ public class ProductoDaoLogis {
         // Modificamos la consulta para incluir las subconsultas de LoteID y ZonaID
         StringBuilder sql = new StringBuilder(
                 "SELECT " +
-                        "P.idProducto, P.sku, P.nombre, P.Stock_productoId AS stock, P.stockMinimo, " +
+                        // ✅ CORREGIDO: Cambiado P.Stock_productoId por P.stock
+                        "P.idProducto, P.sku, P.nombre, P.stock AS stock, P.stockMinimo, " +
 
                         // INCLUIMOS SUBQUERY para obtener el ID del Lote (int) del último movimiento
                         "    (SELECT Lote_idLote FROM Movimiento M " +
@@ -126,12 +127,13 @@ public class ProductoDaoLogis {
         // 🚨 1. LÓGICA DE FILTRO POR BÚSQUEDA (SKU o NOMBRE) 🚨
         boolean hayBusqueda = (busquedaTermino != null && !busquedaTermino.isBlank());
         if (hayBusqueda) {
-            // Filtramos por SKU o Nombre (ya que 'busquedaTermino' reemplazó al filtro de proveedor)
+            // Filtramos por SKU o Nombre
             sql.append("AND (P.sku LIKE ? OR P.nombre LIKE ?) ");
         }
 
         // 2. Ordenamiento
         sql.append("ORDER BY ");
+        // El resto del código de ordenamiento está bien porque usa el alias 'stock'
         if (ordenFiltro != null) {
             if (ordenFiltro.equalsIgnoreCase("stock_asc")) {
                 sql.append("stock ASC");
@@ -168,7 +170,7 @@ public class ProductoDaoLogis {
                         p.setIdProducto(rs.getInt("idProducto"));
                         p.setSku(rs.getString("sku"));
                         p.setNombre(rs.getString("nombre"));
-                        p.setStock(rs.getInt("stock"));
+                        p.setStock(rs.getInt("stock")); // Lee el alias 'stock'
 
                         // Mapeo de IDs de Lote y Zona
                         Lote  lote = new Lote();
