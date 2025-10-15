@@ -16,7 +16,7 @@ public class MovimientoDaoLogis {
     // -------------------------------------------------------------------------
     // 1. OBTENER ÚLTIMOS 5 MOVIMIENTOS (Dashboard)
     // -------------------------------------------------------------------------
-    public ArrayList<com.example.telitobodeguero.beans.Movimiento> obtenerListaMovimientos() {
+    public ArrayList<Movimiento> obtenerListaMovimientos() {
         ArrayList<Movimiento> listaMovimientos = new ArrayList<>();
         String user = "root";
         String pass = "12345678";
@@ -51,20 +51,18 @@ public class MovimientoDaoLogis {
                     mov.setTipoMovimiento(rs.getString("Movimiento"));
                     mov.setCantidad(rs.getInt("Cantidad"));
 
-                    //cambio para movimiento
-                    Lote lote = new Lote();
-                    lote.setIdLote(rs.getInt("idLote"));
-
+                    // 1. Mapear el Producto (CORREGIDO: Se asigna a Movimiento directamente)
                     Producto producto = new Producto();
                     producto.setNombre(rs.getString("NombreProducto"));
+                    mov.setProducto(producto); // <-- Línea clave si la JSP usa mov.getProducto()
 
+                    // 2. Mapear el Lote (Se mantiene el anidamiento para integridad del Bean)
+                    Lote lote = new Lote();
+                    lote.setIdLote(rs.getInt("idLote"));
                     lote.setProducto(producto);
                     mov.setLote(lote);
 
-//                    Producto p = new Producto();
-//                    p.setNombre(rs.getString("NombreProducto"));
-//                    mov.setProducto(p);
-
+                    // Mapear la Zona
                     Zonas z = new Zonas();
                     z.setNombre(rs.getString("NombreZona"));
                     mov.setZona(z);
@@ -171,21 +169,18 @@ public class MovimientoDaoLogis {
                         mov.setTipoMovimiento(rs.getString("Movimiento"));
                         mov.setCantidad(rs.getInt("Cantidad"));
 
-
-                        Lote lote = new Lote();
-                        lote.setIdLote(rs.getInt("idLote"));
-
+                        // 1. Mapear el Producto (CORREGIDO: Se asigna a Movimiento directamente)
                         Producto producto = new Producto();
                         producto.setNombre(rs.getString("NombreProducto"));
+                        mov.setProducto(producto); // <-- Línea clave si la JSP usa mov.getProducto()
 
+                        // 2. Mapear el Lote (Se mantiene el anidamiento)
+                        Lote lote = new Lote();
+                        lote.setIdLote(rs.getInt("idLote"));
                         lote.setProducto(producto);
                         mov.setLote(lote);
 
-
-//                        Producto p = new Producto();
-//                        p.setNombre(rs.getString("NombreProducto"));
-//                        mov.setProducto(p);
-
+                        // Mapear la Zona
                         Zonas z = new Zonas();
                         z.setNombre(rs.getString("NombreZona"));
                         mov.setZona(z);
@@ -199,10 +194,6 @@ public class MovimientoDaoLogis {
         }
         return listaMovimientos;
     }
-
-    // Archivo: MovimientoDao.java
-
-// ... (métodos existentes) ...
 
     // -------------------------------------------------------------------------
     // 4. CONTAR TOTAL DE MOVIMIENTOS POR TIPO (Entradas/Salidas)
@@ -239,5 +230,4 @@ public class MovimientoDaoLogis {
         }
         return total;
     }
-
 }
