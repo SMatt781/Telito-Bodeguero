@@ -13,48 +13,63 @@ public class ProductoDaoLogis {
 
         String user = "root";
         String pass = "12345678";
-        String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
-        // ✅ CONSULTA SQL TOTALMENTE CORREGIDA: Usando P.stock en todas las cláusulas.
-        String sql = "SELECT " +
-                "    P.idProducto, P.sku, P.nombre, P.stock, " + // <-- Correcto
-                // SUBQUERY para obtener el ID del Lote (int) del último movimiento asociado a este Producto
-                "    (SELECT Lote_idLote FROM Movimiento M " +
-                "     INNER JOIN Lote L ON M.Lote_idLote = L.idLote " +
-                "     WHERE L.Producto_idProducto = P.idProducto " +
-                "     ORDER BY M.fecha DESC LIMIT 1) AS LoteID, " +
-                // SUBQUERY para obtener el ID de la Zona (int) del último movimiento asociado a este Producto
-                "    (SELECT Zonas_idZonas FROM Movimiento M " +
-                "     INNER JOIN Lote L ON M.Lote_idLote = L.idLote " +
-                "     WHERE L.Producto_idProducto = P.idProducto " +
-                "     ORDER BY M.fecha DESC LIMIT 1) AS ZonaID " +
-                "FROM Producto P " +
-                "WHERE P.stock <= P.stockMinimo " +             // <-- ¡CORREGIDO!
-                "ORDER BY P.stock ASC " +                      // <-- ¡CORREGIDO!
-                "LIMIT 5";
+        // Top 5 por stock (<= stockMinimo), mostrando LoteID (último lote) y ZonaNombre
+        String sql =
+                "SELECT " +
+                        "  P.idProducto, P.sku, P.nombre, P.stock, " +
+                        "  (SELECT L.idLote " +
+                        "     FROM Lote L " +
+                        "    WHERE L.Producto_idProducto = P.idProducto " +
+                        "    ORDER BY L.fechaVencimiento DESC, L.idLote DESC " +
+                        "    LIMIT 1) AS LoteID, " +
+                        "  COALESCE( " +
+                        "    (SELECT Z.nombre " +
+                        "       FROM Lote L " +
+                        "       JOIN Usuarios  U ON U.idUsuarios = L.Usuarios_idUsuarios " +
+                        "       JOIN Distritos D ON D.idDistritos = U.Distritos_idDistritos " +
+                        "       JOIN Zonas     Z ON Z.idZonas     = D.Zonas_idZonas " +
+                        "      WHERE L.Producto_idProducto = P.idProducto " +
+                        "      ORDER BY L.fechaVencimiento DESC, L.idLote DESC " +
+                        "      LIMIT 1), " +
+                        "    (SELECT Z2.nombre " +
+                        "       FROM OrdenCompraItem OCI " +
+                        "       JOIN OrdenCompra   OC  ON OC.idOrdenCompra = OCI.OrdenCompra_idOrdenCompra " +
+                        "       JOIN Zonas         Z2  ON Z2.idZonas       = OC.Zonas_idZonas " +
+                        "      WHERE OCI.Producto_idProducto = P.idProducto " +
+                        "        AND OC.Zonas_idZonas IS NOT NULL " +
+                        "      ORDER BY OC.fecha_llegada DESC, OC.idOrdenCompra DESC " +
+                        "      LIMIT 1) " +
+                        "  ) AS ZonaNombre " +
+                        "FROM Producto P " +
+                        "WHERE P.stock <= P.stockMinimo " +
+                        "ORDER BY P.stock ASC " +
+                        "LIMIT 5";
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-
             try (Connection conn = DriverManager.getConnection(url, user, pass);
                  PreparedStatement pstmt = conn.prepareStatement(sql);
                  ResultSet rs = pstmt.executeQuery()) {
 
                 while (rs.next()) {
                     Producto p = new Producto();
-
-                    // Mapeo de datos principales
                     p.setIdProducto(rs.getInt("idProducto"));
-                    p.setNombre(rs.getString("nombre"));
                     p.setSku(rs.getString("sku"));
-                    p.setStock(rs.getInt("stock")); // <-- Correcto
+                    p.setNombre(rs.getString("nombre"));
+                    p.setStock(rs.getInt("stock"));
 
-                    // Mapeo de IDs de Lote y Zona (usando los alias de la subconsulta)
+                    // LoteID puede venir como Long: usar Number para evitar ClassCastException
+                    Number loteNum = (Number) rs.getObject("LoteID");
                     Lote lote = new Lote();
-                    lote.setIdLote(rs.getInt("LoteID"));
+                    if (loteNum != null) lote.setIdLote(loteNum.intValue());
                     p.setLote(lote);
+
+                    // Nombre de la zona directamente
+                    String zonaNombre = rs.getString("ZonaNombre");
                     Zonas zona = new Zonas();
-                    zona.setIdZonas(rs.getInt("ZonaID"));
+                    zona.setNombre(zonaNombre);   // usar nombre, no id
                     p.setZona(zona);
 
                     listaProductos.add(p);
@@ -97,43 +112,53 @@ public class ProductoDaoLogis {
         ArrayList<Producto> listaProductos = new ArrayList<>();
         String user = "root";
         String pass = "12345678";
-        String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
-        // Modificamos la consulta para incluir las subconsultas de LoteID y ZonaID
+        // SQL: LoteID (último lote) + ZonaNombre (por usuario del lote; fallback por OC)
         StringBuilder sql = new StringBuilder(
                 "SELECT " +
-                        // ✅ CORREGIDO: Cambiado P.Stock_productoId por P.stock
-                        "P.idProducto, P.sku, P.nombre, P.stock AS stock, P.stockMinimo, " +
+                        "  P.idProducto, P.sku, P.nombre, P.stock AS stock, P.stockMinimo, " +
+                        "  (SELECT L.idLote " +
+                        "     FROM Lote L " +
+                        "    WHERE L.Producto_idProducto = P.idProducto " +
+                        "    ORDER BY L.fechaVencimiento DESC, L.idLote DESC " +
+                        "    LIMIT 1) AS LoteID, " +
 
-                        // INCLUIMOS SUBQUERY para obtener el ID del Lote (int) del último movimiento
-                        "    (SELECT Lote_idLote FROM Movimiento M " +
-                        "     INNER JOIN Lote L2 ON M.Lote_idLote = L2.idLote " +
-                        "     WHERE L2.Producto_idProducto = P.idProducto " +
-                        "     ORDER BY M.fecha DESC LIMIT 1) AS LoteID, " +
-
-                        // INCLUIMOS SUBQUERY para obtener el ID de la Zona (int) del último movimiento
-                        "    (SELECT Zonas_idZonas FROM Movimiento M " +
-                        "     INNER JOIN Lote L3 ON M.Lote_idLote = L3.idLote " +
-                        "     WHERE L3.Producto_idProducto = P.idProducto " +
-                        "     ORDER BY M.fecha DESC LIMIT 1) AS ZonaID " +
+                        "  COALESCE( " +
+                        "    (SELECT Z.nombre " +
+                        "       FROM Lote L " +
+                        "       JOIN Usuarios  U ON U.idUsuarios = L.Usuarios_idUsuarios " +
+                        "       JOIN Distritos D ON D.idDistritos = U.Distritos_idDistritos " +
+                        "       JOIN Zonas     Z ON Z.idZonas     = D.Zonas_idZonas " +
+                        "      WHERE L.Producto_idProducto = P.idProducto " +
+                        "      ORDER BY L.fechaVencimiento DESC, L.idLote DESC " +
+                        "      LIMIT 1), " +
+                        "    (SELECT Z2.nombre " +
+                        "       FROM OrdenCompraItem OCI " +
+                        "       JOIN OrdenCompra   OC  ON OC.idOrdenCompra = OCI.OrdenCompra_idOrdenCompra " +
+                        "       JOIN Zonas         Z2  ON Z2.idZonas       = OC.Zonas_idZonas " +
+                        "      WHERE OCI.Producto_idProducto = P.idProducto " +
+                        "        AND OC.Zonas_idZonas IS NOT NULL " +
+                        "      ORDER BY OC.fecha_llegada DESC, OC.idOrdenCompra DESC " +
+                        "      LIMIT 1) " +
+                        "  ) AS ZonaNombre " +
 
                         "FROM Producto P " +
-                        // Los JOINs se mantienen por si los necesitas para futuras consultas, pero no afectan la búsqueda actual
-                        "LEFT JOIN Lote L ON L.Producto_idProducto = P.idProducto " +
-                        "LEFT JOIN Usuarios U ON U.idUsuarios = L.Usuarios_idUsuarios " +
-                        "WHERE 1=1 "
+                        "WHERE EXISTS ( " +
+                        "  SELECT 1 FROM Lote Lx " +
+                        "  WHERE Lx.Producto_idProducto = P.idProducto " +
+                        "    AND Lx.ubicacion LIKE 'Almacén%' " +
+                        ") "
         );
 
-        // 🚨 1. LÓGICA DE FILTRO POR BÚSQUEDA (SKU o NOMBRE) 🚨
+        // Filtro de búsqueda (SKU o Nombre)
         boolean hayBusqueda = (busquedaTermino != null && !busquedaTermino.isBlank());
         if (hayBusqueda) {
-            // Filtramos por SKU o Nombre
             sql.append("AND (P.sku LIKE ? OR P.nombre LIKE ?) ");
         }
 
-        // 2. Ordenamiento
+        // Ordenamiento
         sql.append("ORDER BY ");
-        // El resto del código de ordenamiento está bien porque usa el alias 'stock'
         if (ordenFiltro != null) {
             if (ordenFiltro.equalsIgnoreCase("stock_asc")) {
                 sql.append("stock ASC");
@@ -148,36 +173,37 @@ public class ProductoDaoLogis {
             sql.append("P.nombre ASC");
         }
 
-
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             try (Connection conn = DriverManager.getConnection(url, user, pass);
                  PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
                 int paramIndex = 1;
-
-                // 🚨 SETEO DE PARÁMETROS DE BÚSQUEDA 🚨
                 if (hayBusqueda) {
-                    // Seteamos el mismo término de búsqueda dos veces, uno para SKU y otro para Nombre
-                    pstmt.setString(paramIndex++, "%" + busquedaTermino.trim() + "%");
-                    pstmt.setString(paramIndex++, "%" + busquedaTermino.trim() + "%");
+                    String like = "%" + busquedaTermino.trim() + "%";
+                    pstmt.setString(paramIndex++, like);
+                    pstmt.setString(paramIndex++, like);
                 }
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
                         Producto p = new Producto();
-
                         p.setIdProducto(rs.getInt("idProducto"));
                         p.setSku(rs.getString("sku"));
                         p.setNombre(rs.getString("nombre"));
-                        p.setStock(rs.getInt("stock")); // Lee el alias 'stock'
+                        p.setStock(rs.getInt("stock"));
 
-                        // Mapeo de IDs de Lote y Zona
-                        Lote  lote = new Lote();
-                        lote.setIdLote(rs.getInt("LoteID"));
+                        // Evita ClassCastException (Long vs Integer)
+                        Number loteNum = (Number) rs.getObject("LoteID");
+
+                        Lote lote = new Lote();
+                        if (loteNum != null) lote.setIdLote(loteNum.intValue());
                         p.setLote(lote);
+
+                        // Zona: nombre directamente
+                        String zonaNombre = rs.getString("ZonaNombre");
                         Zonas zona = new Zonas();
-                        zona.setIdZonas(rs.getInt("ZonaID"));
+                        zona.setNombre(zonaNombre);  // <- usar nombre
                         p.setZona(zona);
 
                         listaProductos.add(p);
