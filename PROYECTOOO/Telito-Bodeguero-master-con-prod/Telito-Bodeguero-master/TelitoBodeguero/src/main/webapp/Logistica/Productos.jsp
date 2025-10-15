@@ -106,8 +106,10 @@
                            value="<%= request.getAttribute("busquedaTermino") != null ? request.getAttribute("busquedaTermino") : "" %>"
                            style="width: 250px;">
 
-                    <select class="form-select" name="orden" onchange="document.getElementById('ordenForm').submit()">
-                        <option value="nombre_asc" <%= "nombre_asc".equals(request.getAttribute("ordenFiltro")) ? "selected" : "" %>>Producto (A - Z)</option>
+                    <select class="form-select"
+                            name="orden"
+                            onchange="document.getElementById('ordenForm').submit()"
+                            style="width: 250px;"> <option value="nombre_asc" <%= "nombre_asc".equals(request.getAttribute("ordenFiltro")) ? "selected" : "" %>>Producto (A - Z)</option>
                         <option value="nombre_desc" <%= "nombre_desc".equals(request.getAttribute("ordenFiltro")) ? "selected" : "" %>>Producto (Z - A)</option>
                         <option value="stock_asc" <%= "stock_asc".equals(request.getAttribute("ordenFiltro")) ? "selected" : "" %>>Stock (Menos a Más)</option>
                         <option value="stock_desc" <%= "stock_desc".equals(request.getAttribute("ordenFiltro")) ? "selected" : "" %>>Stock (Más a Menos)</option>
