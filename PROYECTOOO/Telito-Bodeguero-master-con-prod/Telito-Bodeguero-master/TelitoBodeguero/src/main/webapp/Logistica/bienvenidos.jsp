@@ -115,20 +115,11 @@
     <!-- Panel gráfico (colores previos) -->
     <div class="graph-box mb-4">
         <div class="d-flex align-items-center justify-content-between">
-            <h6 class="m-0 fw-bold text-secondary text-uppercase">Gráfico entrada/salida</h6>
             <a class="btn btn-sm btn-outline-primary"
                href="<%= request.getContextPath() %>/StockBajo_OrdenCompra?action=stock"
                style="white-space: nowrap;">
                 Ver productos con stock bajo
             </a>
-        </div>
-
-        <div class="chart-frame mt-3">Gráfico de barras</div>
-
-        <div class="legend-line">
-            <span>Leyenda:</span>
-            <span class="pill in"></span> <span>Entrada</span>
-            <span class="pill out ms-4"></span> <span>Salida</span>
         </div>
     </div>
 
