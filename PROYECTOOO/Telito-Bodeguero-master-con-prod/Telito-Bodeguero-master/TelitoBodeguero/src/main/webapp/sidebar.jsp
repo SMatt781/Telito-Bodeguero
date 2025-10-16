@@ -103,7 +103,7 @@
                 <li class="nav-item">
                     <a class="nav-link <%= uri.contains("/ListaProductos") ? "active" : "" %>" href="<%= ctx %>/ListaProductos">
                         <img src="images/reporteInventarios.jpg" alt="" width="20" height="20" class="me-2">
-                        <span class="text-label">Reporte de inventarios</span>
+                        <span class="text-label">Reporte de inventario</span>
                     </a>
                 </li>
                 <% } %>
@@ -119,7 +119,7 @@
                 <li class="nav-item">
                     <a class="nav-link <%= uri.contains("/StockBajo_OrdenCompra") ? "active" : "" %>" href="<%= ctx %>/StockBajo_OrdenCompra?action=stock">
                         <img src="images/reporteVentas.png" alt="" width="20" height="20" class="me-2">
-                        <span class="text-label">Reporte de compras</span>
+                        <span class="text-label">Reporte de órdenes de compras</span>
                     </a>
                 </li>
                 <% } %>
