@@ -173,7 +173,7 @@
                 <a href="ReporteMovimientos?action=list" class="btn btn-outline-secondary btn-sm">
                     Ver reporte completo
                 </a>
-                <button class="btn btn-outline-primary btn-sm">Exportar CSV</button>
+
             </div>
         </div>
     </div>
