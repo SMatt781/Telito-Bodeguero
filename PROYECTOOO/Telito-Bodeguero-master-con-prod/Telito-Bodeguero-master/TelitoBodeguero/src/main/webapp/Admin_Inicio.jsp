@@ -134,8 +134,8 @@
 
         <div class="container-fluid px-0 mt-5">
             <div class="row justify-content-center">
-                <div class="col-12 col-lg-10">
-                    <canvas id="graficoGastos" style="max-width:1000px; height:250px;"></canvas>
+                <div class="col-12 col-lg-12">
+                    <canvas id="graficoGastos" style="max-width:100%; height:450px;"></canvas>
                 </div>
             </div>
         </div>
@@ -165,7 +165,8 @@
                         title: {
                             display: true,
                             text: 'Distribución de gastos por zona',
-                            font: { size: 18 }
+                            // ✅ CAMBIO: Se aumentó el tamaño de la fuente a 24
+                            font: { size: 24 }
                         }
                     },
                     scales: {
