@@ -57,14 +57,76 @@ public class InicioAdminDao {
     }
 
 
-
-
     //de acá tambien se sacan los valores para el cuadrito, la operacion se hace en el servlet
+    public void generarAlertasDesdeStock() {
+        String sqlProductos = "SELECT idProducto, nombre, stock, stockMinimo FROM producto";
+        String sqlInsert = "INSERT INTO alertas (mensaje, tipoAlerta, Producto_idProducto, Zonas_idZonas) " +
+                "VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DB.getConnection();
+             PreparedStatement psProductos = conn.prepareStatement(sqlProductos);
+             ResultSet rs = psProductos.executeQuery()) {
+
+            //Limpiar alertas antes de regenerar
+            conn.prepareStatement("DELETE FROM alertas").executeUpdate();
+
+            while (rs.next()) {
+                Producto producto = new Producto();
+                producto.setIdProducto(rs.getInt("idProducto"));
+                producto.setNombre(rs.getString("nombre"));
+                producto.setStock(rs.getInt("stock"));
+                producto.setStockMinimo(rs.getInt("stockMinimo"));
+
+                String tipoAlerta = null;
+                if (producto.getStock() == 0) {
+                    tipoAlerta = "Stock nulo";
+                } else if (producto.getStock() < producto.getStockMinimo()) {
+                    tipoAlerta = "Stock bajo";
+                }
+
+                if (tipoAlerta != null) {
+                    int zonaId = obtenerZonaPorProducto(producto.getIdProducto(), conn);
+                    try (PreparedStatement psInsert = conn.prepareStatement(sqlInsert)) {
+                        psInsert.setString(1, producto.getNombre() + " en " + tipoAlerta.toLowerCase());
+                        psInsert.setString(2, tipoAlerta);
+                        psInsert.setInt(3, producto.getIdProducto());
+                        psInsert.setInt(4, zonaId);
+                        psInsert.executeUpdate();
+                        System.out.println("Alerta insertada: " + producto.getNombre() + " -> " + tipoAlerta);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al generar alertas: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Obtiene la zona real del producto a través de lote y movimiento
+    private int obtenerZonaPorProducto(int idProducto, Connection conn) throws SQLException {
+        String sql = "SELECT m.Zonas_idZonas FROM movimiento m " +
+                "JOIN lote l ON m.Lote_idLote = l.idLote " +
+                "WHERE l.Producto_idProducto = ? " +
+                "ORDER BY m.fecha DESC LIMIT 1";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idProducto);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("Zonas_idZonas");
+                }
+            }
+        }
+        return 1; // fallback si no se encuentra zona
+    }
+
+    // Obtiene la lista de alertas con producto y zona
     public ArrayList<Alertas> obtenerListaAlertas() {
         ArrayList<Alertas> listaAlertas = new ArrayList<>();
-        String sql = "SELECT a.idAlertas, a.mensaje, a.tipoAlerta, a.Producto_idProducto, " +
-                "       p.idProducto AS producto_id, p.sku, p.nombre AS producto_nombre, p.stock, " +
-                "       z.idZonas, z.nombre AS zonas_nombre " +
+        String sql = "SELECT a.idAlertas, a.mensaje, a.tipoAlerta, a.Producto_idProducto, a.Zonas_idZonas, " +
+                "       p.idProducto AS producto_id, p.sku, p.nombre AS producto_nombre, p.precio, p.stock, p.stockMinimo, " +
+                "       z.idZonas AS zona_id, z.nombre AS zona_nombre " +
                 "FROM alertas a " +
                 "JOIN producto p ON a.Producto_idProducto = p.idProducto " +
                 "JOIN zonas z ON a.Zonas_idZonas = z.idZonas";
@@ -84,13 +146,15 @@ public class InicioAdminDao {
                 producto.setIdProducto(rs.getInt("producto_id"));
                 producto.setSku(rs.getString("sku"));
                 producto.setNombre(rs.getString("producto_nombre"));
+                producto.setPrecio(String.valueOf(rs.getBigDecimal("precio")));
                 producto.setStock(rs.getInt("stock"));
+                producto.setStockMinimo(rs.getInt("stockMinimo"));
                 alerta.setProducto(producto);
 
-                Zonas zonas = new Zonas();
-                zonas.setIdZonas(rs.getInt("idZonas"));
-                zonas.setNombre(rs.getString("zonas_nombre"));
-                alerta.setZonas(zonas);
+                Zonas zona = new Zonas();
+                zona.setIdZonas(rs.getInt("zona_id"));
+                zona.setNombre(rs.getString("zona_nombre"));
+                alerta.setZonas(zona);
 
                 listaAlertas.add(alerta);
             }
