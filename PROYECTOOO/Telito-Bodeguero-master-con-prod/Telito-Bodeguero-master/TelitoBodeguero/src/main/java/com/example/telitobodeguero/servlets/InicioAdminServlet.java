@@ -26,8 +26,10 @@ public class InicioAdminServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         InicioAdminDao alertasDao = new InicioAdminDao();
+        alertasDao.generarAlertasDesdeStock();
         ArrayList<Alertas> listaAlertas = alertasDao.obtenerListaAlertas();
         request.setAttribute("lista", listaAlertas);
+        //operación para el cuadrito de alertas obtenidas
         request.setAttribute("cantidadAlertas", listaAlertas.size());
         //operación para el cuadrito de alertas obtenidas
 
