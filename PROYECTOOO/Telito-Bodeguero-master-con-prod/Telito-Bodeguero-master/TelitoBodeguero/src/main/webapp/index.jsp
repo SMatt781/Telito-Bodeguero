@@ -22,11 +22,18 @@
         }
         .brand-mini .dot{ width:10px; height:10px; border-radius:50%; background:#0d6efd; display:inline-block; }
         .muted{ color:#6c757d; }
+        .logo-header {
+            display: block; /* Necesario para que el margen automático funcione */
+            margin: 0 auto 1.5rem; /* Centra horizontalmente y añade espacio abajo */
+            max-width: 180px; /* Evita que el logo sea demasiado grande */
+            height: auto; /* Mantiene la proporción de la imagen */
+        }
     </style>
 </head>
 <body>
 
 <div class="login-wrap">
+    <img src="<%=request.getContextPath()%>/Almacen/img/telitoLogo.png"  alt="Logo de Telito"  class="logo-header">
     <div class="brand-mini">
         <span class="dot"></span>
         <h1 class="h5 m-0">Bienvenido a Telito</h1>
