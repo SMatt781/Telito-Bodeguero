@@ -1,10 +1,8 @@
 package com.example.telitobodeguero.daos;
 
+import com.example.telitobodeguero.beans.*;
 import com.example.telitobodeguero.beans.OrdenCompra;
 import com.example.telitobodeguero.beans.Producto;
-import com.example.telitobodeguero.beans.OrdenCompra;
-import com.example.telitobodeguero.beans.Producto;
-import com.example.telitobodeguero.beans.Zonas;
 
 import java.sql.*;
 import java.time.LocalDate;
