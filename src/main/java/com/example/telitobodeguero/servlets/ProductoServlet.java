@@ -1,21 +1,21 @@
 package com.example.telitobodeguero.servlets;
 
 import com.example.telitobodeguero.beans.Producto;
-import com.example.telitobodeguero.daos.ProductoDao;
-// Importa el bean de Usuarios (Asegúrate de que esta ruta es correcta)
 import com.example.telitobodeguero.beans.Usuarios;
+import com.example.telitobodeguero.daos.ProductoDao;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession; // Importación necesaria
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet(name = "MisProductosServlet", urlPatterns = {"/MisProductos"})
+@WebServlet(name = "ProductoServlet", urlPatterns = {"/MisProductos"})
 public class ProductoServlet extends HttpServlet {
 
     private final ProductoDao productoDao = new ProductoDao();
@@ -24,36 +24,48 @@ public class ProductoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 🛑 CORRECCIÓN CLAVE: Obtener el ID del productor de la SESIÓN
+        // 1. Obtención y Validación del Usuario Logueado
         HttpSession session = request.getSession();
         Usuarios usuario = (Usuarios) session.getAttribute("usuarioLog");
 
         if (usuario == null) {
-            // Manejar caso donde el usuario no ha iniciado sesión (ej: redirigir a login)
             response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
 
-        int idProductor = usuario.getIdUsuarios(); // ⬅️ ¡Aquí se obtiene el ID real!
+        int idProductor = usuario.getIdUsuarios();
 
         try {
-            // Tabla 1: visibles (con lotes) -> Lógica basada en Lote, por tu diseño SQL.
-            List<Producto> productos = productoDao.listarVisiblesPorProductor(idProductor);
+            // 2. Carga de Datos: UNA SOLA VEZ, FILTRADA POR EL PRODUCTOR
+            // Esta lista solo contiene los productos que tiene este productor.
+            List<Producto> misProductosFiltrados = productoDao.listarVisiblesPorProductor(idProductor);
 
-            // Tabla 2: precios sugeridos (todo el catálogo)
-            List<Producto> productosPrecios = productoDao.listarTodos();
+            // 3. Asignación de Atributos al Request
 
-            request.setAttribute("productos", productos);
-            request.setAttribute("productosPrecios", productosPrecios);
+            // TABLA 1: Mis productos y Stock
+            request.setAttribute("productos", misProductosFiltrados);
 
+            // TABLA 2: Precios Sugeridos (Reutiliza la lista filtrada, SOLUCIONANDO EL PROBLEMA)
+            request.setAttribute("productosPrecios", misProductosFiltrados);
+
+            // 4. Despachar al JSP
             RequestDispatcher rd = request.getRequestDispatcher("/Productor/MisProductos.jsp");
+            rd.forward(request, response);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Manejo de errores de base de datos
+            request.setAttribute("error", "Error al cargar productos: " + e.getMessage());
+            RequestDispatcher rd = request.getRequestDispatcher("/error.jsp");
             rd.forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Lanza el error para que Tomcat lo muestre
+            // Manejo de otros errores
             throw new ServletException("Error interno al cargar la lista de productos: " + e.getMessage(), e);
         }
     }
-    // ... otros métodos doGet/doPost
+
+    // Puedes añadir el método doPost aquí si ProductoPrecioServlet no existe.
+    // Como ProductoPrecioServlet existe, este ProductoServlet solo maneja el GET.
 }

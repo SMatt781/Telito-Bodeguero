@@ -2,7 +2,7 @@ package com.example.telitobodeguero.daos;
 
 import com.example.telitobodeguero.beans.Producto;
 import com.example.telitobodeguero.beans.Zonas;
-// Asume que DB está en el mismo paquete o importado
+// Asume que DB está importado y es accesible
 // import com.example.telitobodeguero.daos.DB;
 
 import java.sql.*;
@@ -11,14 +11,12 @@ import java.util.List;
 
 public class ProductoDao {
 
-    // ===============================================
+    // ==========================================================
     //               MÉTODO PARA GUARDAR PRODUCTO
-    // ===============================================
+    // ==========================================================
 
     /**
      * Guarda un nuevo producto en la base de datos.
-     * 🛑 Solución SIN alterar BD: Se quitó la columna Usuarios_idUsuarios del SQL
-     * para evitar la SQLSyntaxErrorException.
      */
     public void crear(Producto p, int idProductor) throws SQLException {
         // SQL solo incluye las columnas que SÍ existen en tu tabla Producto
@@ -30,20 +28,57 @@ public class ProductoDao {
             ps.setString(2, p.getNombre());
             ps.setString(3, p.getPrecio());
             ps.setInt(4, p.getStock());
-            // Se eliminó ps.setInt(5, idProductor); para que la ejecución sea exitosa
 
             ps.executeUpdate();
         }
     }
 
-    // ===============================================
-    //          MÉTODOS DE LISTADO Y BÚSQUEDA
-    // ===============================================
+    // ==========================================================
+    //              MÉTODOS DE LISTADO Y BÚSQUEDA
+    // ==========================================================
 
     /**
-     * Lista productos visibles para el productor.
-     * 🎯 Solución SIN alterar BD: Usa LEFT JOIN y la cláusula OR
-     * para incluir productos con lote del productor o productos sin lote (nuevos).
+     * 🎯 NUEVO: Lista SÓLO los productos que el productor logeado tiene registrados en algún lote.
+     * Esto soporta el listado principal en el doGet del Servlet.
+     */
+    public List<Producto> listarPorProductor(int idProductor) throws SQLException {
+        List<Producto> lista = new ArrayList<>();
+
+        String sql = """
+            SELECT DISTINCT
+                   p.idProducto, 
+                   p.sku, 
+                   p.nombre, 
+                   p.precio, 
+                   p.stock 
+            FROM Producto p
+            JOIN Lote l ON p.idProducto = l.Producto_idProducto
+            WHERE l.Usuarios_idUsuarios = ?
+            ORDER BY p.nombre
+        """;
+
+        try (Connection conn = DB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idProductor);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Producto p = new Producto();
+                    p.setIdProducto(rs.getInt("idProducto"));
+                    p.setSku(rs.getString("sku"));
+                    p.setNombre(rs.getString("nombre"));
+                    p.setPrecio(rs.getString("precio"));
+                    p.setStock(rs.getInt("stock"));
+                    lista.add(p);
+                }
+            }
+        }
+        return lista;
+    }
+
+    /**
+     * Lista productos visibles para el productor (los que puede vender: tiene lote o no tienen lote de nadie).
      */
     public List<Producto> listarVisiblesPorProductor(int idProductor) throws SQLException {
         List<Producto> lista = new ArrayList<>();
@@ -78,15 +113,7 @@ public class ProductoDao {
     }
 
 
-    // El resto de tus métodos (listarProductosConLotesPorProductor, listarTodos, etc.)
-    // deben permanecer INTACTOS si funcionan correctamente.
-
-    // Aquí solo se incluyen algunos para referencia, pero asume que el resto de los métodos
-    // de tu archivo original (que no modificamos) siguen ahí.
-
-
     public List<Producto> listarProductosConLotesPorProductor(int idUsuario) throws SQLException {
-        // ... (Tu implementación original)
         String sql = """
         SELECT 
             p.idProducto,
@@ -104,7 +131,6 @@ public class ProductoDao {
         GROUP BY p.idProducto, z.idZonas
         ORDER BY p.nombre
     """;
-        // ... (Tu implementación de listado)
         List<Producto> lista = new ArrayList<>();
         try (Connection conn = DB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -132,8 +158,6 @@ public class ProductoDao {
 
         return lista;
     }
-
-    // ... (Métodos listarTodos, obtenerPorId, actualizar, borrar, y stockRestanteParaUsuario continúan aquí)
 
     /** Precios sugeridos (todo el catálogo) */
     public List<Producto> listarTodos() throws SQLException {
@@ -180,6 +204,10 @@ public class ProductoDao {
         return null;
     }
 
+    // ==========================================================
+    //               MÉTODOS DE ACTUALIZACIÓN/BORRADO
+    // ==========================================================
+
     public void actualizar(Producto p) throws SQLException {
         String sql = "UPDATE Producto SET sku=?, nombre=?, precio=?, stock=? WHERE idProducto=?";
         try (Connection c = DB.getConnection();
@@ -201,6 +229,36 @@ public class ProductoDao {
             ps.executeUpdate();
         }
     }
+
+    // ==========================================================
+    //                 MÉTODOS DE VALIDACIÓN/STOCK
+    // ==========================================================
+
+    /**
+     * 🔒 NUEVO: Verifica si un productor (idProductor) tiene al menos un lote del producto (idProducto).
+     * Esencial para la validación de seguridad en el doPost.
+     */
+    public boolean esPropiedadDeProductor(int idProducto, int idProductor) throws SQLException {
+
+        String sql = """
+            SELECT 1
+            FROM Lote l
+            WHERE l.Producto_idProducto = ? AND l.Usuarios_idUsuarios = ?
+            LIMIT 1
+        """;
+
+        try (Connection conn = DB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idProducto);
+            pstmt.setInt(2, idProductor);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
 
     public int stockRestanteParaUsuario(int idProductor, int idProducto) throws SQLException {
         String sql = """

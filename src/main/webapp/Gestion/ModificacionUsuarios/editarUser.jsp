@@ -80,7 +80,7 @@
             <div class="row g-3">
                 <div class="col-12 col-lg-7">
                     <div class="mb-1">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">Correo</label>
                         <input type="email" name="correo" class="form-control"
                                value="<%=usuario.getCorreo()%>" required>
                     </div>
@@ -102,7 +102,7 @@
             <!-- Password + Rol -->
             <div class="row g-3 mt-1">
                 <div class="col-12 col-lg-7">
-                    <label class="form-label">Password (dejar vacío para no cambiar)</label>
+                    <label class="form-label">Contraseña (dejar vacío para no cambiar)</label>
                     <input type="password" name="contrasenha" class="form-control" autocomplete="new-password">
                 </div>
                 <div class="col-12 col-lg-5">

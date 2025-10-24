@@ -73,9 +73,9 @@
             <div class="row g-3">
                 <div class="col-12 col-lg-7">
                     <div class="mb-1">
-                        <label for="exampleInputEmail1" class="form-label">Email address</label>
+                        <label for="exampleInputEmail1" class="form-label">Dirección de correo</label>
                         <input type="email" name="correo" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                        <div id="emailHelp" class="form-text">Nunca compartiremos tu correo .</div>
                     </div>
                 </div>
                 <div class="col-12 col-lg-5">
@@ -96,11 +96,11 @@
             <!-- Password + Rol -->
             <div class="row g-3 mt-1">
                 <div class="col-12 col-lg-7">
-                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <label for="exampleInputPassword1" class="form-label">Contraseña</label>
                     <input type="password" name="contrasenha" class="form-control" id="exampleInputPassword1">
                     <div class="form-check mt-2">
                         <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                        <label class="form-check-label" for="exampleCheck1">Mostrar contraseña</label>
                     </div>
                 </div>
                 <div class="col-12 col-lg-5">
@@ -119,7 +119,7 @@
 
             <!-- Botón -->
             <div class="mt-4">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Crear</button>
             </div>
         </form>
     </div>

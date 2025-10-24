@@ -67,8 +67,8 @@ public class InicioAdminDao {
              PreparedStatement psProductos = conn.prepareStatement(sqlProductos);
              ResultSet rs = psProductos.executeQuery()) {
 
-            //Limpiar alertas antes de regenerar
-            conn.prepareStatement("DELETE FROM alertas").executeUpdate();
+            // Reiniciar tabla y contador de AUTO_INCREMENT
+            conn.prepareStatement("TRUNCATE TABLE alertas").executeUpdate();
 
             while (rs.next()) {
                 Producto producto = new Producto();
@@ -96,12 +96,11 @@ public class InicioAdminDao {
                     }
                 }
             }
-
-        } catch (Exception e) {
-            System.out.println("Error al generar alertas: " + e.getMessage());
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     // Obtiene la zona real del producto a través de lote y movimiento
     private int obtenerZonaPorProducto(int idProducto, Connection conn) throws SQLException {
