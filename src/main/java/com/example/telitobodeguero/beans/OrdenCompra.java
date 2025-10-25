@@ -9,7 +9,7 @@ public class OrdenCompra {
     private String estado;
     private LocalDate fechaLlegada;
     private Producto producto;
-
+    private Lote lote;
     private String nombreProveedor;
     private Zonas zona;
 
@@ -63,5 +63,13 @@ public class OrdenCompra {
     }
     public void setZona(Zonas zona) {
         this.zona = zona;
+    }
+
+    public Lote getLote() {
+        return lote;
+    }
+
+    public void setLote(Lote lote) {
+        this.lote = lote;
     }
 }

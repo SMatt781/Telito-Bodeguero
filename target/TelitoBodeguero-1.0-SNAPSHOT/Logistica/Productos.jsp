@@ -107,7 +107,6 @@
                         <th>Código</th>
                         <th>Nombre</th>
                         <th>Stock</th>
-                        <th>Lote</th>
                         <th>Zona</th>
                     </tr>
                     </thead>
@@ -122,7 +121,6 @@
                         <td><%= p.getSku() %></td>
                         <td><%= p.getNombre() %></td>
                         <td><%= p.getStock() %></td>
-                        <td><%= (loteId != null) ? loteId : "-" %></td>
                         <td><%= (zonaNombre != null && !zonaNombre.isEmpty()) ? zonaNombre : "-" %></td>
                     </tr>
                     <%

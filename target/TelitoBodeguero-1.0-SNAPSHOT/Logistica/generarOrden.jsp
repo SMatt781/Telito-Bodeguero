@@ -14,6 +14,9 @@
     // Asegúrate de castear la lista correctamente.
     ArrayList<Producto> listaProductos = (ArrayList<Producto>) request.getAttribute("listaProductos");
     ArrayList<Zonas> listaZonas = (ArrayList<Zonas>) request.getAttribute("listaZonas"); // <-- NUEVA LISTA
+    ArrayList<Usuarios> listaProductores = (ArrayList<Usuarios>) request.getAttribute("listaProductores");
+    Integer prodSel = (Integer) request.getAttribute("productoSeleccionado");
+    Integer provSel = (Integer) request.getAttribute("proveedorSeleccionado");
 %>
 <html>
 <head>
@@ -128,56 +131,120 @@
 
         <form method="POST" action="StockBajo_OrdenCompra?action=crear">
 
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3">Producto</h6>
-                    <div class="mb-3">
-                        <select class="form-select" name="productoId" required>
-                            <option selected disabled value="">Selecciona un producto...</option>
-                            <% if (listaProductos != null) {
-                                for (Producto prod : listaProductos) { %>
-                            <option value="<%= prod.getIdProducto() %>">
-                                <%= prod.getNombre() %>
-                            </option>
-                            <%     }
-                            } %>
-                        </select>
-                    </div>
+            <!-- ZONA -->
+            <h6 class="fw-bold mb-3">Zona</h6>
+            <div class="mb-3">
+                <select class="form-select" name="zonaId" id="zonaSelect" onchange="onZonaChange()">
+                    <option value="">Seleccione una zona</option>
+                    <%
+                        Integer zonaSel = (Integer) request.getAttribute("zonaSeleccionada");
+                        if (listaZonas != null) {
+                            for (Zonas zona : listaZonas) {
+                                boolean selected = (zonaSel != null && zonaSel == zona.getIdZonas());
+                    %>
+                    <option value="<%= zona.getIdZonas() %>" <%= selected?"selected":"" %>>
+                        <%= zona.getNombre() %>
+                    </option>
+                    <%  }
+                    } %>
+                </select>
+            </div>
 
-                    <!-- 🚨 NUEVO DESPLEGABLE PARA ZONA -->
-                    <h6 class="fw-bold mb-3">Zona de Recepción</h6>
-                    <div class="mb-3">
-                        <select class="form-select" name="zonaId" required>
-                            <option selected disabled value="">Selecciona la zona...</option>
-                            <% if (listaZonas != null) {
-                                for (Zonas zona : listaZonas) { %>
-                            <option value="<%= zona.getIdZonas() %>">
-                                <%= zona.getNombre() %>
-                            </option>
-                            <%     }
-                            } %>
-                        </select>
-                    </div>
+            <!-- PRODUCTO -->
+            <h6 class="fw-bold mb-3">Producto</h6>
+            <div class="mb-3">
+                <select class="form-select" name="productoId" id="productoSelect" onchange="onProductoChange()"
+                        <%= (listaProductos == null || listaProductos.isEmpty()) ? "disabled" : "" %>>
+                    <option value="">Seleccione un producto</option>
+                    <%
+                        if (listaProductos != null) {
+                            for (Producto prod : listaProductos) {
+                                boolean selected = (prodSel != null && prodSel == prod.getIdProducto());
+                    %>
+                    <option value="<%= prod.getIdProducto() %>" <%= selected?"selected":"" %>>
+                        <%= prod.getNombre() %>
+                    </option>
+                    <%  }
+                    } %>
+                </select>
+            </div>
 
-                    <h6 class="fw-bold mb-3">Fecha de llegada</h6>
-                    <div class="mb-3">
-                        <input type="date" class="form-control" name="fechaLlegada" required>
-                    </div>
+            <!-- PROVEEDOR -->
+            <h6 class="fw-bold mb-3">Proveedor</h6>
+            <div class="mb-3">
+                <select class="form-select" name="proveedorId"
+                        id="proveedorSelect" onchange="onProveedorChange()"  <%-- <-- AÑADIR ID y ONCHANGE --%>
+                        <%= (listaProductores == null || listaProductores.isEmpty()) ? "disabled" : "" %>>
+                    <option value="">Seleccione un proveedor</option>
+                    <%
+                        // La variable provSel la declaramos arriba
+                        if (listaProductores != null) {
+                            for (Usuarios prod : listaProductores) {
+                                // Añadimos la lógica de 'selected'
+                                boolean selected = (provSel != null && provSel == prod.getIdUsuarios());
+                    %>
+                    <option value="<%= prod.getIdUsuarios() %>" <%= selected ? "selected" : "" %>> <%-- <-- AÑADIR SELECTED --%>
+                        <%= prod.getNombre() + " " + prod.getApellido() %>
+                    </option>
+                    <%
+                            }
+                        }
+                    %>
+                </select>
+            </div>
 
-                    <h6 class="fw-bold mb-3">Cantidad</h6>
-                    <div class="mb-3">
-                        <input type="number" class="form-control" name="cantidad" placeholder="Ingrese cantidad" min="1" required>
-                    </div>
+            <!-- FECHA -->
+            <h6 class="fw-bold mb-3">Fecha de llegada</h6>
+            <div class="mb-3">
+                <input type="date" class="form-control" name="fechaLlegada" required>
+            </div>
 
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Generar orden</button>
-                    </div>
-                </div>
+            <!-- CANTIDAD -->
+            <h6 class="fw-bold mb-3">Cantidad</h6>
+            <div class="mb-3">
+                <input type="number" class="form-control" name="cantidad" placeholder="Ingrese cantidad" min="1" required>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary"
+                <%-- Modifica esta línea --%>
+                        <%= (prodSel == null || provSel == null) ? "disabled" : "" %>>
+                    Generar orden
+                </button>
             </div>
         </form>
+
+
+
     </main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+    // Función para manejar el cambio de ZONA
+    function onZonaChange() {
+        const zonaId = document.getElementById('zonaSelect').value;
+        // Recarga la página enviando SOLO la zona
+        window.location.href = '<%= request.getContextPath() %>/StockBajo_OrdenCompra?action=form_crear&zonaId=' + zonaId;
+    }
+
+    // Función para manejar el cambio de PRODUCTO
+    function onProductoChange() {
+        const zonaId = document.getElementById('zonaSelect').value;
+        const productoId = document.getElementById('productoSelect').value;
+
+        // Recarga la página enviando AMBOS valores
+        window.location.href = '<%= request.getContextPath() %>/StockBajo_OrdenCompra?action=form_crear&zonaId=' + zonaId + '&productoId=' + productoId;
+    }
+    // Función para manejar el cambio de PROVEEDOR
+    function onProveedorChange() {
+        const zonaId = document.getElementById('zonaSelect').value;
+        const productoId = document.getElementById('productoSelect').value;
+        const proveedorId = document.getElementById('proveedorSelect').value;
+
+        // Recarga la página enviando TODOS los valores
+        window.location.href = '<%= request.getContextPath() %>/StockBajo_OrdenCompra?action=form_crear&zonaId=' + zonaId + '&productoId=' + productoId + '&proveedorId=' + proveedorId;
+    }
+</script>
 </body>
 </html>

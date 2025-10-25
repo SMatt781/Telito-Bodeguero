@@ -145,7 +145,7 @@ public class InicioAdminDao {
                 producto.setIdProducto(rs.getInt("producto_id"));
                 producto.setSku(rs.getString("sku"));
                 producto.setNombre(rs.getString("producto_nombre"));
-                producto.setPrecio(String.valueOf(rs.getBigDecimal("precio")));
+                producto.setPrecio(Double.parseDouble(String.valueOf(rs.getBigDecimal("precio"))));
                 producto.setStock(rs.getInt("stock"));
                 producto.setStockMinimo(rs.getInt("stockMinimo"));
                 alerta.setProducto(producto);

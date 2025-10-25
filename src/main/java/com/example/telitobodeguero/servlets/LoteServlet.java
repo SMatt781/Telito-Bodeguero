@@ -235,7 +235,6 @@ public class LoteServlet extends HttpServlet {
 
                 lote.setProducto_idProducto(idProductoStr);
                 lote.setCantidad(cantidad);
-                lote.setUbicacion(ubicacion); // Asignando la cadena vacía
                 lote.setFechaVencimiento(fechaVencimiento);
                 lote.setUsuarios_idUsuarios(idProductor);
 

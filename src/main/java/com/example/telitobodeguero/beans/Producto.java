@@ -6,7 +6,7 @@ public class Producto {
     private String nombre;
     private int stock;
     private String lotes;
-    private String precio;
+    private double precio;
     private int stockMinimo;
     private Lote lote; // Atributo objeto
     private Zonas zona;  // Atributo objeto (corregido a minúscula)
@@ -63,11 +63,11 @@ public class Producto {
         this.stock = stock;
     }
 
-    public String getPrecio() {
+    public double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(String precio) {
+    public void setPrecio(double precio) {
         this.precio = precio;
     }
 

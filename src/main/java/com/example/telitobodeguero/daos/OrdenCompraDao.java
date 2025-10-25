@@ -19,7 +19,7 @@ public class OrdenCompraDao {
         ArrayList<OrdenCompra> listaOrdenCompra = new ArrayList<>();
         String user = "root";
         String pass = "12345678";
-        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+        String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         StringBuilder sql = new StringBuilder(
                 "SELECT " +
@@ -29,21 +29,15 @@ public class OrdenCompraDao {
                         "  oci.cantidad AS Cantidad, " +
                         "  oc.fecha_llegada AS FechaLlegada, " +
                         "  oc.estado AS Estado, " +
-                        "  z.nombre AS NombreZona " + // <-- Nueva columna
+                        "  z.nombre AS NombreZona " +
                         "FROM OrdenCompra oc " +
                         "JOIN OrdenCompraItem oci ON oc.idOrdenCompra = oci.OrdenCompra_idOrdenCompra " +
                         "JOIN Producto p          ON oci.Producto_idProducto = p.idProducto " +
-                        // Subconsulta: tomamos 1 solo lote (el más reciente por id) para cada producto
-                        "JOIN ( " +
-                        "   SELECT Producto_idProducto, MAX(idLote) AS idLote " +
-                        "   FROM Lote " +
-                        "   GROUP BY Producto_idProducto " +
-                        ") lmax ON lmax.Producto_idProducto = p.idProducto " +
-                        "JOIN Lote l ON l.idLote = lmax.idLote " +
-                        "JOIN Usuarios u ON u.idUsuarios = l.Usuarios_idUsuarios " +
-                        "LEFT JOIN Zonas z ON oc.Zonas_idZonas = z.idZonas " + // <-- Nuevo JOIN
-                        "WHERE u.Roles_idRoles = 4 " // solo productores
+                        "JOIN Usuarios u          ON oc.idProveedor = u.idUsuarios " + // <- AHORA tomamos proveedor real de la OC
+                        "LEFT JOIN Zonas z        ON oc.Zonas_idZonas = z.idZonas " +
+                        "WHERE u.Roles_idRoles = 4 "
         );
+
 
         boolean hayEstado = (estadoFiltro != null && !estadoFiltro.isBlank());
         if (hayEstado) {
@@ -52,7 +46,9 @@ public class OrdenCompraDao {
 
         boolean hayFiltroProveedor = (terminoBusquedaProveedor != null && !terminoBusquedaProveedor.isBlank());
         if (hayFiltroProveedor) {
-            sql.append(" AND (u.nombre LIKE ? OR u.apellido LIKE ?) ");
+            sql.append(" AND ( " +
+                    "COALESCE(CONCAT(u.nombre,' ',u.apellido), CONCAT(up.nombre,' ',up.apellido)) LIKE ? " +
+                    ") ");
         }
 
         sql.append(" ORDER BY oc.fecha_llegada ASC, oc.idOrdenCompra DESC");
@@ -110,7 +106,7 @@ public class OrdenCompraDao {
         // [CÓDIGO DE borrarOrden se mantiene igual]
         String user = "root";
         String pass = "12345678";
-        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+        String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         String delItems = "DELETE FROM OrdenCompraItem WHERE OrdenCompra_idOrdenCompra = ?";
         String delOrden = "DELETE FROM OrdenCompra WHERE idOrdenCompra = ?";
@@ -144,15 +140,14 @@ public class OrdenCompraDao {
     // -------------------------------------------------------------------------
     // 3. CREAR ORDEN (Se añade idZona)
     // -------------------------------------------------------------------------
-    public void crearOrden(int idProducto, int cantidad, String fechaLlegada, int idZona) { // <-- NUEVO PARAMETRO
+    public void crearOrden(int idProducto, int cantidad, String fechaLlegada, int idZona, int idProveedor) { // <-- NUEVO PARAMETRO
         String user = "root";
         String pass = "12345678";
-        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+        String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         // SQL: Se añade Zonas_idZonas a la inserción
-        String sqlOrden = "INSERT INTO OrdenCompra (estado, fecha_llegada, Zonas_idZonas) VALUES ('Enviada', ?, ?)";
-        String sqlItem  = "INSERT INTO OrdenCompraItem (OrdenCompra_idOrdenCompra, Producto_idProducto, cantidad) VALUES (?, ?, ?)";
-
+        String sqlOrden = "INSERT INTO OrdenCompra (estado, fecha_llegada, Zonas_idZonas, idProveedor) VALUES ('Enviada', ?, ?, ?)";
+        String sqlItem = "INSERT INTO OrdenCompraItem (OrdenCompra_idOrdenCompra, Producto_idProducto, cantidad) VALUES (?, ?, ?)";
         Connection conn = null;
 
         try {
@@ -164,7 +159,8 @@ public class OrdenCompraDao {
             try (PreparedStatement pstmtOrden = conn.prepareStatement(sqlOrden, Statement.RETURN_GENERATED_KEYS)) {
 
                 pstmtOrden.setString(1, fechaLlegada);
-                pstmtOrden.setInt(2, idZona); // <-- Seteamos el ID de la Zona
+                pstmtOrden.setInt(2, idZona);
+                pstmtOrden.setInt(3, idProveedor); // <-- Seteamos el ID de la Zona
                 pstmtOrden.executeUpdate();
 
                 try (ResultSet rs = pstmtOrden.getGeneratedKeys()) {
@@ -186,11 +182,19 @@ public class OrdenCompraDao {
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             if (conn != null) {
-                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
             throw new RuntimeException("Error al crear orden: " + e.getMessage(), e);
         } finally {
-            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (conn != null) try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -203,7 +207,7 @@ public class OrdenCompraDao {
         ArrayList<Producto> listaProductos = new ArrayList<>();
         String user = "root";
         String pass = "12345678";
-        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+        String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         String sql = "SELECT idProducto, nombre FROM Producto";
 
@@ -229,17 +233,21 @@ public class OrdenCompraDao {
     // -------------------------------------------------------------------------
     // 5. OBTENER PROVEEDOR ID POR PRODUCTO
     // -------------------------------------------------------------------------
-    public int obtenerProveedorIdPorProducto(int idProducto) {
+    public ArrayList<Usuarios> obtenerProveedorIdPorProducto(int idProducto) {
         // [CÓDIGO DE obtenerProveedorIdPorProducto se mantiene igual]
+        ArrayList<Usuarios> lista = new ArrayList<>();
         String user = "root";
         String pass = "12345678";
-        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+        String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
         int idProveedor = -1;
 
         // Buscamos el ID del Usuario (Proveedor) que tiene el producto en algún Lote
-        String sql = "SELECT DISTINCT l.Usuarios_idUsuarios " +
-                "FROM Lote l " +
-                "WHERE l.Producto_idProducto = ?";
+        String sql =
+                "SELECT DISTINCT u.idUsuarios, u.nombre, u.apellido " +
+                        "FROM Lote l " +
+                        "JOIN Usuarios u ON u.idUsuarios = l.Usuarios_idUsuarios " +
+                        "WHERE l.Producto_idProducto = ? " +
+                        "AND u.Roles_idRoles = 4"; // 4 = Productor
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -249,15 +257,19 @@ public class OrdenCompraDao {
                 pstmt.setInt(1, idProducto);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        idProveedor = rs.getInt("Usuarios_idUsuarios");
+                    while (rs.next()) {
+                        Usuarios prod = new Usuarios();
+                        prod.setIdUsuarios(rs.getInt("idUsuarios"));
+                        prod.setNombre(rs.getString("nombre"));
+                        prod.setApellido(rs.getString("apellido"));
+                        lista.add(prod);
                     }
                 }
             }
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
-        return idProveedor;
+        return lista;
     }
 
     // -------------------------------------------------------------------------
@@ -266,7 +278,7 @@ public class OrdenCompraDao {
     public int contarOrdenesEnTransito() {
         String user = "root";
         String pass = "12345678";
-        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+        String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         // ✅ La condición clave: Contar órdenes cuya columna 'estado' es 'Enviada'
         String sql = "SELECT COUNT(*) FROM OrdenCompra WHERE estado = 'En tránsito'";
@@ -292,6 +304,7 @@ public class OrdenCompraDao {
     // -------------------------------------------------------------------------
     // 7. OBTENER LISTA DE ZONAS (NUEVO MÉTODO)
     // -------------------------------------------------------------------------
+
     /**
      * Obtiene todas las zonas de la tabla Zonas para el dropdown de creación.
      */
@@ -299,7 +312,7 @@ public class OrdenCompraDao {
         ArrayList<Zonas> listaZonas = new ArrayList<>();
         String user = "root";
         String pass = "12345678";
-        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+        String url = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
 
         String sql = "SELECT idZonas, nombre FROM Zonas ORDER BY nombre";
 
@@ -325,7 +338,8 @@ public class OrdenCompraDao {
 
     public List<OrdenCompra> listarOCConItemsParaProductor(int idProductor) throws SQLException {
         String sql = """
-            SELECT 
+            
+                SELECT 
                    oc.idOrdenCompra AS oc,
                    oc.estado,
                    oc.fecha_llegada,
@@ -381,7 +395,140 @@ public class OrdenCompraDao {
                 }
             }
         }
+        return
+
+    lista;
+    }
+
+    // =========================================================================
+    // MÉTODO CORREGIDO 1: OBTENER PRODUCTOS POR ZONA
+    // Tu consulta estaba rota por los saltos de línea.
+    // =========================================================================
+    public ArrayList<Producto> obtenerProductosPorZona(int idZona) {
+        ArrayList<Producto> lista = new ArrayList<>();
+        String user = "root";
+        String pass = "12345678";
+        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+
+        // V CONSULTA CORREGIDA (toda en una sola línea de bloque de texto) V
+        String sql = """
+            SELECT DISTINCT p.idProducto, p.nombre, p.sku, p.precio
+            FROM producto p
+            JOIN lote l       ON p.idProducto = l.Producto_idProducto
+            JOIN movimiento m ON l.idLote = m.Lote_idLote
+            WHERE m.Zonas_idZonas = ?
+            ORDER BY p.nombre ASC
+            """;
+        // ^ CONSULTA CORREGIDA ^
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            try (Connection conn = DriverManager.getConnection(url, user, pass);
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                ps.setInt(1, idZona);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Producto p = new Producto();
+                        p.setIdProducto(rs.getInt("idProducto"));
+                        p.setNombre(rs.getString("nombre"));
+                        p.setSku(rs.getString("sku"));
+
+                        // OJO: Tuve que cambiar esto de getString a getDouble
+                        // p.setPrecio(rs.getString("precio")); <-- Tu código (Incorrecto)
+                        p.setPrecio(rs.getDouble("precio")); // <-- Corregido
+
+                        lista.add(p);
+                    }
+                }
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace(); // <-- Si esto falla, la lista se devuelve vacía
+        }
+
         return lista;
     }
 
+    public ArrayList<Usuarios> obtenerProductoresPorProducto(int idProducto) {
+        ArrayList<Usuarios> lista = new ArrayList<>();
+        String user = "root";
+        String pass = "12345678";
+        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+
+        String sql =
+                "SELECT DISTINCT u.idUsuarios, u.nombre, u.apellido " +
+                        "FROM `lote` l " +
+                        "JOIN `usuarios` u ON u.idUsuarios = l.Usuarios_idUsuarios " +
+                        "WHERE l.Producto_idProducto = ? " +
+                        "AND u.Roles_idRoles = 4 " +
+                        "AND u.activo = 1";
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            try (Connection conn = DriverManager.getConnection(url, user, pass);
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                ps.setInt(1, idProducto);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Usuarios prod = new Usuarios();
+                        prod.setIdUsuarios(rs.getInt("idUsuarios"));
+                        prod.setNombre(rs.getString("nombre"));
+                        prod.setApellido(rs.getString("apellido"));
+                        lista.add(prod);
+                    }
+                }
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    public ArrayList<Usuarios> obtenerProductoresPorProductoYZona(int idProducto, int idZona) {
+        ArrayList<Usuarios> lista = new ArrayList<>();
+        String user = "root";
+        String pass = "12345678";
+        String url  = "jdbc:mysql://127.0.0.1:3306/Bodega-Telito";
+
+        // V CONSULTA CORREGIDA (toda en una sola línea de bloque de texto) V
+        String sql = """
+            SELECT DISTINCT u.idUsuarios, u.nombre, u.apellido
+            FROM movimiento m
+            JOIN lote l      ON m.Lote_idLote = l.idLote
+            JOIN usuarios u  ON l.Usuarios_idUsuarios = u.idUsuarios
+            WHERE m.Zonas_idZonas = ?
+              AND l.Producto_idProducto = ?
+              AND u.Roles_idRoles = 4
+            """;
+        // ^ CONSULTA CORREGIDA ^
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            try (Connection conn = DriverManager.getConnection(url, user, pass);
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                ps.setInt(1, idZona);
+                ps.setInt(2, idProducto);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Usuarios prod = new Usuarios();
+                        prod.setIdUsuarios(rs.getInt("idUsuarios"));
+                        prod.setNombre(rs.getString("nombre"));
+                        prod.setApellido(rs.getString("apellido"));
+                        lista.add(prod);
+                    }
+                }
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace(); // <-- Si esto falla, la lista se devuelve vacía
+        }
+
+        return lista;
+    }
 }

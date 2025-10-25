@@ -69,7 +69,6 @@ package com.example.telitobodeguero.beans;
 public class Lote {
     private int idLote;
     private String fechaVencimiento;
-    private String ubicacion;
     private String Producto_idProducto;
     private Producto producto;
     private int cantidad;
@@ -98,14 +97,6 @@ public class Lote {
 
     public void setFechaVencimiento(String fechaVencimiento) {
         this.fechaVencimiento = fechaVencimiento;
-    }
-
-    public String getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
     }
 
     public String getProducto_idProducto() {

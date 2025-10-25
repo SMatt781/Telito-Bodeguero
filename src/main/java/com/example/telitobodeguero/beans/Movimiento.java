@@ -91,6 +91,7 @@ public class Movimiento {
     private Lote lote;
     private Producto producto;
     private Zonas zona;
+    private String ubicacion;
 
     public Zonas getZona() {
         return zona;
@@ -145,6 +146,14 @@ public class Movimiento {
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
     }
 //
 //    public int getLote_idLote() {

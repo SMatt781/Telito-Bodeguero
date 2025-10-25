@@ -80,7 +80,7 @@ public class ProductoNuevoServlet extends HttpServlet {
         Producto nuevoProducto = new Producto();
         nuevoProducto.setSku(sku.trim());
         nuevoProducto.setNombre(nombre.trim());
-        nuevoProducto.setPrecio(precioStr);
+        nuevoProducto.setPrecio(Double.parseDouble(precioStr));
         nuevoProducto.setStock(stock);
 
         try {

@@ -75,7 +75,7 @@
                     <div class="mb-1">
                         <label for="exampleInputEmail1" class="form-label">Dirección de correo</label>
                         <input type="email" name="correo" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                        <div id="emailHelp" class="form-text">Nunca compartiremos tu correo .</div>
+                        <div id="emailHelp" class="form-text">Nunca compartiremos este correo.</div>
                     </div>
                 </div>
                 <div class="col-12 col-lg-5">

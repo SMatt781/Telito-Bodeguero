@@ -30,7 +30,7 @@ public class LoteDao {
         }
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT l.idLote, l.fechaVencimiento, l.ubicacion, ");
+        sql.append("SELECT l.idLote, l.fechaVencimiento, ");
         sql.append("l.Producto_idProducto, p.nombre AS producto, l.cantidad, l.Usuarios_idUsuarios ");
         sql.append("FROM Lote l ");
         sql.append("INNER JOIN Producto p ON l.Producto_idProducto = p.idProducto ");
@@ -58,7 +58,6 @@ public class LoteDao {
                     lote.setIdLote(rs.getInt("idLote"));
                     lote.setFechaVencimiento(rs.getString("fechaVencimiento"));
                     // La columna 'ubicacion' se sigue leyendo del DAO aunque no se muestre en el JSP, para el UPDATE.
-                    lote.setUbicacion(rs.getString("ubicacion"));
                     lote.setProducto_idProducto(rs.getString("Producto_idProducto"));
                     lote.setProductoNombre(rs.getString("producto"));
                     lote.setCantidad(rs.getInt("cantidad"));
@@ -75,7 +74,7 @@ public class LoteDao {
     // ==========================================================
     public Lote obtenerPorId(int idLote) throws SQLException {
         Lote lote = null;
-        String sql = "SELECT l.idLote, l.fechaVencimiento, l.ubicacion, l.Producto_idProducto, p.nombre AS producto, l.cantidad, l.Usuarios_idUsuarios " +
+        String sql = "SELECT l.idLote, l.fechaVencimiento, l.Producto_idProducto, p.nombre AS producto, l.cantidad, l.Usuarios_idUsuarios " +
                 "FROM Lote l INNER JOIN Producto p ON l.Producto_idProducto = p.idProducto " +
                 "WHERE l.idLote = ?";
 
@@ -89,7 +88,6 @@ public class LoteDao {
                     lote = new Lote();
                     lote.setIdLote(rs.getInt("idLote"));
                     lote.setFechaVencimiento(rs.getString("fechaVencimiento"));
-                    lote.setUbicacion(rs.getString("ubicacion"));
                     lote.setProducto_idProducto(rs.getString("Producto_idProducto"));
                     lote.setProductoNombre(rs.getString("producto"));
                     lote.setCantidad(rs.getInt("cantidad"));
@@ -127,7 +125,7 @@ public class LoteDao {
     public void crearLote(Lote lote) throws SQLException {
         Connection conn = null;
 
-        String sqlLote = "INSERT INTO Lote (Producto_idProducto, Usuarios_idUsuarios, cantidad, ubicacion, fechaVencimiento) " +
+        String sqlLote = "INSERT INTO Lote (Producto_idProducto, Usuarios_idUsuarios, cantidad, fechaVencimiento) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
         String sqlStock = "UPDATE Producto SET stock = stock - ? WHERE idProducto = ?";
@@ -142,7 +140,6 @@ public class LoteDao {
                 pstmtLote.setString(1, lote.getProducto_idProducto());
                 pstmtLote.setInt(2, lote.getUsuarios_idUsuarios());
                 pstmtLote.setInt(3, lote.getCantidad());
-                pstmtLote.setString(4, lote.getUbicacion());
                 pstmtLote.setString(5, lote.getFechaVencimiento());
 
                 pstmtLote.executeUpdate();
@@ -197,7 +194,7 @@ public class LoteDao {
     public void actualizarLote(Lote lote) throws SQLException {
         Connection conn = null;
 
-        String sqlLote = "UPDATE Lote SET cantidad = ?, ubicacion = ?, fechaVencimiento = ? " +
+        String sqlLote = "UPDATE Lote SET cantidad = ?, fechaVencimiento = ? " +
                 "WHERE idLote = ? AND Usuarios_idUsuarios = ?";
 
         // stock = stock - (cantidadNueva - cantidadAnterior)
@@ -214,7 +211,6 @@ public class LoteDao {
             try (PreparedStatement pstmtLote = conn.prepareStatement(sqlLote)) {
 
                 pstmtLote.setInt(1, lote.getCantidad());
-                pstmtLote.setString(2, lote.getUbicacion());
                 pstmtLote.setString(3, lote.getFechaVencimiento());
                 pstmtLote.setInt(4, lote.getIdLote());
                 pstmtLote.setInt(5, lote.getUsuarios_idUsuarios());

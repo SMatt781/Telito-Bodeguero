@@ -16,7 +16,7 @@ public abstract class BaseDao {
 
         String user= "root";
         String pass ="12345678";
-        String url = "jdbc:mysql://localhost:3306/bodega-telito";
+        String url = "jdbc:mysql://localhost:3306/Bodega-Telito";
 
         return DriverManager.getConnection(url,user,pass);
     }

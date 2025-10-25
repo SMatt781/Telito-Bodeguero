@@ -32,18 +32,50 @@ public class stockBajo_ordenCompra extends HttpServlet {
 
         switch (action) {
 
-            case "form_crear" -> {
+            case "form_crear"-> {
+                Integer zonaSeleccionada = null;
+                Integer productoSeleccionado = null;
+                Integer proveedorSeleccionado = null; // <-- AÑADIR ESTA LÍNEA
 
-                // Lógica para cargar productos (se mantiene igual)
-                ArrayList<Producto> listaProductos = ocDao.obtenerProductos();
+                ArrayList<Producto> listaProductos = new ArrayList<>();
+                ArrayList<Usuarios> listaProductores = new ArrayList<>();
+
+                String zonaIdParam = request.getParameter("zonaId");
+                String productoIdParam = request.getParameter("productoId");
+                String proveedorIdParam = request.getParameter("proveedorId"); // <-- AÑADIR ESTA LÍNEA
+
+                // Tu lógica de zonaIdParam (sin cambios)
+                if (zonaIdParam != null && zonaIdParam.matches("\\d+")) {
+                    zonaSeleccionada = Integer.parseInt(zonaIdParam);
+                    listaProductos = ocDao.obtenerProductosPorZona(zonaSeleccionada);
+                    request.setAttribute("zonaSeleccionada", zonaSeleccionada);
+                }
+
+                // Tu lógica de productoIdParam (sin cambios)
+                if (productoIdParam != null && productoIdParam.matches("\\d+")) {
+                    productoSeleccionado = Integer.parseInt(productoIdParam);
+                    request.setAttribute("productoSeleccionado", productoSeleccionado);
+
+                    if (zonaSeleccionada != null) {
+                        listaProductores = ocDao.obtenerProductoresPorProductoYZona(productoSeleccionado, zonaSeleccionada);
+                    }
+                }
+
+                // --- AÑADIR ESTE BLOQUE ---
+                // Lógica para el nuevo proveedorIdParam
+                if (proveedorIdParam != null && proveedorIdParam.matches("\\d+")) {
+                    proveedorSeleccionado = Integer.parseInt(proveedorIdParam);
+                    request.setAttribute("proveedorSeleccionado", proveedorSeleccionado);
+                }
+                // --- FIN DEL BLOQUE NUEVO ---
+
                 request.setAttribute("listaProductos", listaProductos);
+                request.setAttribute("listaProductores", listaProductores);
+                request.setAttribute("listaZonas", ocDao.obtenerListaZonas()); // (Asegúrate que este método exista)
 
-                // 🚨 NUEVA LÓGICA: Cargar Zonas para el dropdown
-                ArrayList<Zonas> listaZonas = ocDao.obtenerListaZonas();
-                request.setAttribute("listaZonas", listaZonas);
-
-                RequestDispatcher view = request.getRequestDispatcher("/Logistica/generarOrden.jsp");
-                view.forward(request, response);
+                RequestDispatcher rd = request.getRequestDispatcher("Logistica/generarOrden.jsp");
+                rd.forward(request, response);
+                break;
             }
 
             case "list" -> {
@@ -107,19 +139,19 @@ public class stockBajo_ordenCompra extends HttpServlet {
 
             // 🛠️ ACTUALIZACIÓN: Maneja la creación de la nueva orden
             case "crear" -> {
-
+                String zonaIdStr = request.getParameter("zonaId");
                 String productoIdStr = request.getParameter("productoId");
-                String cantidadStr = request.getParameter("cantidad");
+                String proveedorIdStr = request.getParameter("proveedorId");
                 String fechaLlegadaStr = request.getParameter("fechaLlegada");
-                String zonaIdStr = request.getParameter("zonaId"); // 🚨 NUEVO: Capturamos el ID de la zona
+                String cantidadStr = request.getParameter("cantidad");
+                // 🚨 NUEVO: Capturamos el ID de la zona
 
                 try {
                     int productoId = Integer.parseInt(productoIdStr);
                     int cantidad = Integer.parseInt(cantidadStr);
                     int idZona = Integer.parseInt(zonaIdStr); // 🚨 NUEVO: Convertimos a int
-
-                    // 🚨 CAMBIO CRÍTICO: La llamada al DAO ahora incluye 4 parámetros
-                    ocDao.crearOrden(productoId, cantidad, fechaLlegadaStr, idZona);
+                    int proveedorId = Integer.parseInt(proveedorIdStr);
+                    ocDao.crearOrden(productoId, cantidad, fechaLlegadaStr, idZona, proveedorId);
 
                     // Si la creación es exitosa, redirige al listado
                     response.sendRedirect(request.getContextPath() + "/StockBajo_OrdenCompra?action=list");

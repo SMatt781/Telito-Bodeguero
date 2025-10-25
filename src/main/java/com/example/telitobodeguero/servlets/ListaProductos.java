@@ -1,6 +1,8 @@
 package com.example.telitobodeguero.servlets;
 
+import com.example.telitobodeguero.beans.Movimiento;
 import com.example.telitobodeguero.beans.Producto;
+import com.example.telitobodeguero.beans.Usuarios;
 import com.example.telitobodeguero.daos.ProductoDao;
 import com.example.telitobodeguero.daos.ProductoDaoLogis;
 import com.example.telitobodeguero.utils.Auth;
@@ -26,8 +28,7 @@ public class ListaProductos extends HttpServlet {
 
         ProductoDaoLogis productoDao = new ProductoDaoLogis();
 
-        com.example.telitobodeguero.beans.Usuarios usuario =
-                (com.example.telitobodeguero.beans.Usuarios) request.getSession().getAttribute("usuarioLog");
+        Usuarios usuario =(Usuarios) request.getSession().getAttribute("usuarioLog");
         if (usuario == null) {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
@@ -54,17 +55,16 @@ public class ListaProductos extends HttpServlet {
 
 
         // Cambiamos proveedorFiltro por busquedaTermino
-        String busquedaTermino = request.getParameter("busqueda");
-        String ordenFiltro = request.getParameter("orden");
+        //String busquedaTermino = request.getParameter("busqueda");
+        //String ordenFiltro = request.getParameter("orden");
 
         // La firma del DAO debe haber sido actualizada para aceptar busquedaTermino
-        ArrayList<com.example.telitobodeguero.beans.Producto> listaProductos = productoDao.obtenerListaProductos(busquedaTermino, ordenFiltro);
-
-
+        ArrayList<Producto> listaProductos = productoDao.obtenerListaProductos();
         request.setAttribute("listaProductos", listaProductos);
+
         // Pasamos el término de búsqueda para que se mantenga en el campo input del JSP
-        request.setAttribute("busquedaTermino", busquedaTermino);
-        request.setAttribute("ordenFiltro", ordenFiltro);
+        //request.setAttribute("busquedaTermino", busquedaTermino);
+        //request.setAttribute("ordenFiltro", ordenFiltro);
 
         // 4. Redirigir al JSP de productos
         RequestDispatcher view = request.getRequestDispatcher("/Logistica/Productos.jsp");

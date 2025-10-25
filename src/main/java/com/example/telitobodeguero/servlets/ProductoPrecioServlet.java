@@ -104,7 +104,7 @@ public class ProductoPrecioServlet extends HttpServlet {
             p.setIdProducto(id);
             p.setSku(sku);
             p.setNombre(nombre);
-            p.setPrecio(precioStr);
+            p.setPrecio(Double.parseDouble(precioStr));
             if (stock != null) p.setStock(stock);
 
             // SEGURIDAD: Llama al DAO

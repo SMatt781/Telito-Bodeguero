@@ -26,7 +26,7 @@ public class ProductoDao {
 
             ps.setString(1, p.getSku());
             ps.setString(2, p.getNombre());
-            ps.setString(3, p.getPrecio());
+            ps.setDouble(3, p.getPrecio());
             ps.setInt(4, p.getStock());
 
             ps.executeUpdate();
@@ -68,7 +68,7 @@ public class ProductoDao {
                     p.setIdProducto(rs.getInt("idProducto"));
                     p.setSku(rs.getString("sku"));
                     p.setNombre(rs.getString("nombre"));
-                    p.setPrecio(rs.getString("precio"));
+                    p.setPrecio(rs.getDouble("precio"));
                     p.setStock(rs.getInt("stock"));
                     lista.add(p);
                 }
@@ -103,7 +103,7 @@ public class ProductoDao {
                     p.setIdProducto(rs.getInt("idProducto"));
                     p.setSku(rs.getString("sku"));
                     p.setNombre(rs.getString("nombre"));
-                    p.setPrecio(rs.getString("precio"));
+                    p.setPrecio(rs.getDouble("precio"));
                     p.setStock(rs.getInt("stock"));
                     lista.add(p);
                 }
@@ -176,7 +176,7 @@ public class ProductoDao {
                 p.setIdProducto(rs.getInt("idProducto"));
                 p.setSku(rs.getString("sku"));
                 p.setNombre(rs.getString("nombre"));
-                p.setPrecio(rs.getString("precio"));
+                p.setPrecio(rs.getDouble("precio"));
                 p.setStock(rs.getInt("stock"));
                 lista.add(p);
             }
@@ -195,7 +195,7 @@ public class ProductoDao {
                     p.setIdProducto(rs.getInt("idProducto"));
                     p.setSku(rs.getString("sku"));
                     p.setNombre(rs.getString("nombre"));
-                    p.setPrecio(rs.getString("precio"));
+                    p.setPrecio(rs.getDouble("precio"));
                     p.setStock(rs.getInt("stock"));
                     return p;
                 }
@@ -214,7 +214,7 @@ public class ProductoDao {
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, p.getSku());
             ps.setString(2, p.getNombre());
-            ps.setString(3, p.getPrecio());
+            ps.setDouble(3, p.getPrecio());
             ps.setInt(4, p.getStock());
             ps.setInt(5, p.getIdProducto());
             ps.executeUpdate();
