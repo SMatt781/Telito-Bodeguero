@@ -1,0 +1,228 @@
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page import="com.example.telitobodeguero.beans.Lote, com.example.telitobodeguero.beans.Producto, java.util.List" %>
+<%
+    String ctx = request.getContextPath();
+    Lote lote = (Lote) request.getAttribute("lote"); // null si es crear
+
+    // Lista de productos para llenar el select (establecida en LotesServlet)
+    List<Producto> productos = (List<Producto>) request.getAttribute("productos");
+
+    // ID del producto para el lote NUEVO (viene de LotesServlet?action=formCrear)
+    Integer idProductoNuevo = (Integer) request.getAttribute("idProductoNuevo");
+
+    // idProducto es el valor que debe estar seleccionado en el <select>
+    String idProductoSeleccionado = null;
+
+    boolean esEdicion = (lote != null);
+
+    if (esEdicion) {
+        // Si es edición, usamos el ID del lote que estamos editando
+        idProductoSeleccionado = lote.getProducto_idProducto();
+    } else if (idProductoNuevo != null) {
+        // Si es creación y viene de "Añadir" con filtro, usamos el ID que cargó el Servlet
+        idProductoSeleccionado = String.valueOf(idProductoNuevo);
+    }
+
+    Integer disponibleAttr = (Integer) request.getAttribute("disponible");
+    int disponible = (disponibleAttr == null ? 0 : disponibleAttr);
+    String error = (String) request.getAttribute("error");
+
+    boolean sinStockParaCrear = (!esEdicion && disponible <= 0);
+%>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title><%= esEdicion ? "Editar" : "Nuevo" %> Lote</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet" crossorigin="anonymous" />
+
+    <style>
+        body{display:flex;min-height:100vh;background:#f7f9fc}
+        .sidebar{
+            position:fixed; inset:0 auto 0 0;       /* top:0; left:0; bottom:0 */
+            width:280px; background:#212529; color:#fff;
+            z-index:1000; transition:width .25s ease;
+            overflow-y:auto;
+        }
+        .sidebar.collapsed{ width:80px; }
+        .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
+        .sidebar .brand .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
+        .sidebar .nav-link{ color:#d6d6d6; }
+        .sidebar .nav-link:hover, .sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
+        .sidebar .dropdown-menu{ background:#2b3035; }
+        .sidebar .dropdown-item{ color:#fff; }
+        .sidebar .dropdown-item:hover{ background:#0d6efd; }
+        /* Ocultar textos cuando está colapsado */
+        .sidebar.collapsed .text-label{ display:none; }
+
+        .main{
+            margin-left:280px; transition:margin-left .25s ease;
+            min-height:100vh; padding:2rem;
+        }
+        .main.collapsed{ margin-left:80px; }
+        .nav-link.text-white:hover{background:#0d6efd;color:#fff!important}
+
+        .card{border:0;box-shadow:0 10px 25px rgba(16,24,40,.05)}
+        .form-help{font-size:.875rem;color:#6c757d}
+        .badge-soft{background:#e7f1ff;color:#0d6efd}
+        .btn-pill{border-radius:50rem;padding:.5rem 1.25rem;font-weight:700}
+        .muted{opacity:.7}
+        .hint{font-variant-numeric:tabular-nums}
+        .input-suffix{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);pointer-events:none}
+        .fi{font-style:normal;opacity:.65}
+    </style>
+</head>
+<body>
+
+<jsp:include page="/sidebar.jsp" />
+
+<main class="main" id="main">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="display-6 fw-bold text-primary m-0"><%= esEdicion ? "Editar" : "Nuevo" %> lote</h2>
+            <small class="text-muted">Completa los datos del lote. No se permite exceder el stock disponible.</small>
+        </div>
+        <a class="btn btn-outline-secondary btn-sm btn-pill"
+           href="<%=ctx%>/Lotes<%= (idProductoSeleccionado!=null?("?idProducto="+idProductoSeleccionado):"") %>">↩ Volver</a>
+    </div>
+
+    <% if (error != null) { %>
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <span class="me-2">⚠️</span> <%= error %>
+    </div>
+    <% } %>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" action="<%=ctx%>/Lotes" class="row g-3 position-relative">
+                <input type="hidden" name="action" value="guardar">
+                <% if (esEdicion) { %>
+                <input type="hidden" name="idLote" value="<%= lote.getIdLote() %>">
+                <% } %>
+
+                <div class="col-12">
+                    <label class="form-label">Producto</label>
+                    <select name="idProducto" class="form-select" <%= esEdicion ? "disabled" : "" %> required>
+                        <option value="" disabled <%= (idProductoSeleccionado==null?"selected":"") %>>Seleccione…</option>
+                        <%
+                            if (productos != null) {
+                                for (Producto p : productos) {
+                                    String optVal = String.valueOf(p.getIdProducto());
+                        %>
+                        <option value="<%= optVal %>"
+                                <%= (idProductoSeleccionado!=null && idProductoSeleccionado.equals(optVal) ? "selected" : "") %>>
+                            <%= p.getNombre() %> (<%= p.getSku() %>)
+                        </option>
+                        <%      }
+                        }
+                        %>
+                    </select>
+                    <%-- En edición o creación con preselección, mandamos el valor real oculto si el select está disabled --%>
+                    <% if (esEdicion || idProductoSeleccionado!=null) { %>
+                    <input type="hidden" name="idProducto" value="<%= idProductoSeleccionado %>">
+                    <% } %>
+                    <div class="form-help">El cambio de producto no está permitido en edición.</div>
+                </div>
+
+                <div class="col-12 d-flex justify-content-between align-items-center">
+                    <div class="form-help">
+                        <span class="badge badge-soft rounded-pill px-3 py-2">
+                            Stock disponible: <span id="lblDisponible" class="hint"><%= disponible %></span> u.
+                        </span>
+                        <span class="ms-2 muted">(<%= esEdicion ? "máximo permitido para editar" : "máximo para crear" %>)</span>
+                    </div>
+                    <% if (sinStockParaCrear) { %>
+                    <div class="text-danger small">No hay stock disponible para crear un nuevo lote.</div>
+                    <% } %>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Fecha de vencimiento</label>
+                    <input type="date" name="fechaVencimiento" class="form-control"
+                           value="<%= esEdicion && lote.getFechaVencimiento()!=null ? lote.getFechaVencimiento() : "" %>">
+                </div>
+
+                <%-- Se elimina el campo Ubicación --%>
+                <%--
+                <div class="col-md-6">
+                    <label class="form-label">Ubicación</label>
+                    <input type="text" name="ubicacion" class="form-control"
+                           value="<%= esEdicion && lote.getUbicacion()!=null ? lote.getUbicacion() : "" %>"
+                           maxlength="45" placeholder="Almacén A, Estante 3, Fila 2">
+                </div>
+                --%>
+
+                <div class="col-md-6 position-relative">
+                    <label class="form-label">Cantidad</label>
+                    <input type="number"
+                           name="cantidad"
+                           class="form-control"
+                           min="1"
+                           max="<%= Math.max(disponible, 0) %>"
+                           step="1"
+                           inputmode="numeric"
+                           value="<%= esEdicion ? lote.getCantidad() : "" %>"
+                        <%= (sinStockParaCrear ? "disabled" : "") %>
+                           required>
+                    <span class="input-suffix fi">unid.</span>
+                    <div class="form-help">
+                        Máximo permitido: <span id="lblMax" class="hint"><%= Math.max(disponible, 0) %></span>.
+                        <span id="lblRestante" class="ms-2 hint"></span>
+                    </div>
+                </div>
+
+                <input type="hidden" name="keepFilter" value="<%= (idProductoSeleccionado!=null) ? "1":"0" %>">
+                <div class="col-12 d-flex gap-2">
+                    <button class="btn btn-primary btn-pill" type="submit"
+                            <%= (sinStockParaCrear ? "disabled" : "") %>>
+                        Guardar
+                    </button>
+                    <a class="btn btn-outline-secondary btn-pill"
+                       href="<%=ctx%>/Lotes<%= (idProductoSeleccionado!=null?("?idProducto="+idProductoSeleccionado):"") %>">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script>
+    // Toggle del sidebar
+    const btn = document.getElementById('btnToggle');
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main');
+    btn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        main.classList.toggle('collapsed');
+    });
+
+    // UX: clamp y feedback de cantidad vs máximo
+    (function () {
+        const inp = document.querySelector('input[name="cantidad"]');
+        if (!inp) return;
+        const max = parseInt(inp.max || '0', 10);
+        const restante = document.getElementById('lblRestante');
+
+        function update() {
+            let v = parseInt(inp.value || '0', 10);
+            if (isNaN(v)) v = 0;
+            if (max && v > max) {
+                inp.value = max;
+                v = max;
+            }
+            if (v <= 0) {
+                restante.textContent = '';
+            } else {
+                const r = max - v;
+                restante.textContent = 'Te quedarán: ' + (r < 0 ? 0 : r) + ' u.';
+            }
+        }
+        inp.addEventListener('input', update);
+        update();
+    })();
+</script>
+</body>
+</html>
