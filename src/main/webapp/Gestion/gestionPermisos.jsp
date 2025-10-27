@@ -10,10 +10,17 @@
     ArrayList<Roles> listaRoles = (ArrayList<Roles>) request.getAttribute("listaRoles");
     if (listaRoles == null) listaRoles = new ArrayList<>();
 
+    // Leer rolId del query param
     String rolSeleccionadoParam = request.getParameter("rolId");
     Integer rolSeleccionado = null;
     if (rolSeleccionadoParam != null && rolSeleccionadoParam.matches("\\d+")) {
         rolSeleccionado = Integer.parseInt(rolSeleccionadoParam);
+    }
+
+    // Si no vino rolId (por ejemplo entrada directa a la página),
+    // elegimos el primero de listaRoles como default para no dejar nada "sin selección".
+    if (rolSeleccionado == null && !listaRoles.isEmpty()) {
+        rolSeleccionado = listaRoles.get(0).getIdRoles();
     }
 %>
 
@@ -27,22 +34,34 @@
 
     <style>
         body { margin:0; background:#f3f5f7; }
-        .sidebar{ position:fixed; inset:0 auto 0 0; width:280px; background:#212529; color:#fff;
-            z-index:1000; transition:width .25s ease; overflow-y:auto; }
+        .sidebar{
+            position:fixed; inset:0 auto 0 0; width:280px; background:#212529; color:#fff;
+            z-index:1000; transition:width .25s ease; overflow-y:auto;
+        }
         .sidebar.collapsed{ width:80px; }
         .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
-        .sidebar .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
+        .sidebar .toggle{
+            border:0; background:#0d6efd; color:#fff;
+            padding:.5rem .6rem; border-radius:.5rem;
+        }
         .sidebar .nav-link{ color:#d6d6d6; }
         .sidebar .nav-link:hover{ background:#0d6efd; color:#fff; }
         .text-label{ display:inline; }
         .sidebar.collapsed .text-label{ display:none; }
 
-        .main{ margin-left:280px; transition:margin-left .25s ease; min-height:100vh; padding:2rem; }
+        .main{
+            margin-left:280px; transition:margin-left .25s ease;
+            min-height:100vh; padding:2rem;
+        }
         .main.collapsed{ margin-left:80px; }
 
-        .table-card{ background:#fff; border-radius:.75rem; overflow:hidden;
-            box-shadow:0 6px 14px rgba(0,0,0,.12); }
-        .table-card thead th{ background:#f0f2f5; }
+        .table-card{
+            background:#fff; border-radius:.75rem; overflow:hidden;
+            box-shadow:0 6px 14px rgba(0,0,0,.12);
+        }
+        .table-card thead th{
+            background:#f0f2f5;
+        }
         h1 {
             font-family: 'Poppins', Inter, sans-serif;
             font-weight: 800;
@@ -51,24 +70,25 @@
             margin-bottom: 1.25rem;
             text-transform: uppercase;
         }
+
         .filter-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem; /* Espacio entre cada opción de rol */
+            gap: 1.5rem;
         }
         .filter-item {
             display: flex;
             align-items: center;
             cursor: pointer;
-            user-select: none; /* Evita que el texto se seleccione al hacer clic */
+            user-select: none;
         }
         .filter-item input[type="radio"] {
-            display: none; /* Ocultamos el radio button por defecto */
+            display: none;
         }
         .filter-item .radio-circle {
             width: 20px;
             height: 20px;
-            border: 2px solid #adb5bd; /* Borde gris */
+            border: 2px solid #adb5bd;
             border-radius: 50%;
             margin-right: 0.5rem;
             display: flex;
@@ -76,22 +96,19 @@
             justify-content: center;
             transition: all 0.2s ease;
         }
-        /* Círculo interior que aparece al seleccionar */
         .filter-item .radio-circle::after {
             content: '';
             width: 10px;
             height: 10px;
-            background-color: #0d6efd; /* Azul de Bootstrap */
+            background-color: #0d6efd;
             border-radius: 50%;
             display: block;
-            transform: scale(0); /* Oculto por defecto */
+            transform: scale(0);
             transition: transform 0.2s ease;
         }
-        /* Cuando el radio button está seleccionado, cambiamos el estilo del círculo */
         .filter-item input[type="radio"]:checked + .radio-circle {
             border-color: #0d6efd;
         }
-        /* Mostramos el círculo interior cuando está seleccionado */
         .filter-item input[type="radio"]:checked + .radio-circle::after {
             transform: scale(1);
         }
@@ -113,24 +130,30 @@
             <h1 class="mb-0">Gestión de permisos</h1>
         </div>
 
-        <!-- FILTRO DE ROL -->
+        <!-- FILTRO DE ROL (SIN "VER TODOS") -->
         <div class="mb-4">
             <label class="form-label fw-bold d-block mb-2">Filtrar por rol:</label>
-            <form method="get" action="<%=request.getContextPath()%>/GestionPermisosServlet" id="roleFilterForm">
+
+            <form method="get"
+                  action="<%=request.getContextPath()%>/GestionPermisosServlet"
+                  id="roleFilterForm">
+
                 <div class="filter-group">
-                    <label class="filter-item">
-                        <input type="radio" name="rolId" value="" onchange="this.form.submit()" <%= (rolSeleccionado == null) ? "checked" : "" %>>
-                        <span class="radio-circle"></span>
-                        <span class="role-name">Ver Todos</span>
-                    </label>
 
                     <% for (Roles r : listaRoles) { %>
                     <label class="filter-item">
-                        <input type="radio" name="rolId" value="<%=r.getIdRoles()%>" onchange="this.form.submit()" <%= (rolSeleccionado != null && rolSeleccionado.equals(r.getIdRoles())) ? "checked" : "" %>>
+                        <input type="radio"
+                               name="rolId"
+                               value="<%=r.getIdRoles()%>"
+                               onchange="this.form.submit()"
+                            <%= (rolSeleccionado != null && rolSeleccionado.equals(r.getIdRoles()))
+                                           ? "checked"
+                                           : "" %>>
                         <span class="radio-circle"></span>
                         <span class="role-name"><%=r.getNombre()%></span>
                     </label>
                     <% } %>
+
                 </div>
             </form>
         </div>
@@ -149,7 +172,12 @@
                 <tbody>
                 <% int contadorFilas = 0; %>
                 <% for (Roles_has_Permisos rhp: listaPermisos) {
-                    if (rolSeleccionado == null || rhp.getRol().getIdRoles() == rolSeleccionado) {
+
+                    // Ahora ya no mostramos "todos": solo mostramos
+                    // las filas cuyo rol coincide con rolSeleccionado
+                    if (rolSeleccionado != null
+                            && rhp.getRol().getIdRoles() == rolSeleccionado) {
+
                         contadorFilas++;
                 %>
                 <tr>
@@ -157,14 +185,26 @@
                     <td><%=rhp.getRol().getNombre()%></td>
                     <td><%=rhp.getPermiso().getNombre()%></td>
                     <td>
-                        <form method="post" action="<%=request.getContextPath()%>/GestionPermisosServlet" style="display:inline;"
+                        <form method="post"
+                              action="<%=request.getContextPath()%>/GestionPermisosServlet"
+                              style="display:inline;"
                               id="form-<%=rhp.getRol().getIdRoles()%>-<%=rhp.getPermiso().getIdPermisos()%>">
+
                             <input type="hidden" name="action" value="toggle">
                             <input type="hidden" name="rolId" value="<%=rhp.getRol().getIdRoles()%>">
                             <input type="hidden" name="permisoId" value="<%=rhp.getPermiso().getIdPermisos()%>">
-                            <input type="hidden" name="estado" value="<%= rhp.isActivacion() ? 0 : 1 %>"
+
+                            <!-- estado nuevo que vamos a mandar -->
+                            <input type="hidden"
+                                   name="estado"
+                                   value="<%= rhp.isActivacion() ? 0 : 1 %>"
                                    id="estado-<%=rhp.getRol().getIdRoles()%>-<%=rhp.getPermiso().getIdPermisos()%>">
-                            <input type="hidden" name="rolFiltro" value="<%= request.getParameter("rolId") != null ? request.getParameter("rolId") : "" %>">
+
+                            <!-- para mantener el filtro seleccionado al recargar -->
+                            <input type="hidden"
+                                   name="rolFiltro"
+                                   value="<%= rolSeleccionado != null ? rolSeleccionado.toString() : "" %>">
+
                             <button type="button"
                                     class="badge <%= rhp.isActivacion() ? "bg-success" : "bg-secondary" %>"
                                     onclick="toggleStatus('<%=rhp.getRol().getIdRoles()%>', '<%=rhp.getPermiso().getIdPermisos()%>', this)">
@@ -173,7 +213,7 @@
                         </form>
                     </td>
                 </tr>
-                <% }} %>
+                <% } } %>
                 </tbody>
             </table>
         </div>
@@ -182,50 +222,42 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Sidebar collapse
     const btn = document.getElementById('btnToggle');
     const sidebar = document.getElementById('sidebar');
     const main = document.getElementById('main');
-    btn.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-        main.classList.toggle('collapsed');
-    });
+    if (btn && sidebar && main) {
+        btn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            main.classList.toggle('collapsed');
+        });
+    }
 
+    // Activar / desactivar permiso (toggle badge)
     function toggleStatus(rolId, permisoId, element) {
-
         const hiddenInput = document.getElementById("estado-" + rolId + "-" + permisoId);
 
         if (element.classList.contains("bg-success")) {
-
             element.classList.remove("bg-success");
-
             element.classList.add("bg-secondary");
-
             element.textContent = "Inactivo";
-
             hiddenInput.value = "0";
-
         } else {
-
             element.classList.remove("bg-secondary");
-
             element.classList.add("bg-success");
-
             element.textContent = "Activo";
-
             hiddenInput.value = "1";
-
         }
 
         document.getElementById("form-" + rolId + "-" + permisoId).submit();
-
     }
 
-    // Guardar la posición antes de recargar
+    // Guardar scroll antes de recargar
     window.addEventListener("beforeunload", () => {
         sessionStorage.setItem("scrollPos", window.scrollY);
     });
 
-    // Restaurar la posición al recargar
+    // Restaurar scroll después de recargar
     window.addEventListener("load", () => {
         const scrollPos = sessionStorage.getItem("scrollPos");
         if (scrollPos !== null) {

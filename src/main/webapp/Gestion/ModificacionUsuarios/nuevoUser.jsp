@@ -5,6 +5,7 @@
 
 <jsp:useBean id="listaDistritos" type="java.util.ArrayList<com.example.telitobodeguero.beans.Distritos>" scope="request" />
 <jsp:useBean id="listaRoles" type="java.util.ArrayList<com.example.telitobodeguero.beans.Roles>" scope="request" />
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -17,7 +18,7 @@
         /* ===== LAYOUT ===== */
         body{ margin:0; background:#f3f5f7; }
         .sidebar{
-            position:fixed; inset:0 auto 0 0;      /* top:0; left:0; bottom:0 */
+            position:fixed; inset:0 auto 0 0;
             width:280px; background:#212529; color:#fff;
             z-index:1000; transition:width .25s ease; overflow-y:auto;
         }
@@ -35,19 +36,28 @@
         }
         .main.collapsed{ margin-left:80px; }
 
-        /* ===== FORM CARD ===== */
+        /* ===== CARD DEL FORM ===== */
         .form-card{
             background:#fff; border-radius:1rem; padding:1.5rem;
             box-shadow:0 8px 20px rgba(0,0,0,.12);
+            max-width:900px;
         }
-        .section-title{ color:#1f2d3d; }
+        .section-title{
+            color:#1f2d3d;
+            font-weight:600;
+        }
+        /* Pequeño helper para la nota del correo */
+        .help-text {
+            font-size: .8rem;
+            color: #6c757d;
+            margin-top: .25rem;
+        }
     </style>
 </head>
 <body>
 
 <!-- ===== Sidebar izquierda ===== -->
 <jsp:include page="/sidebar.jsp" />
-
 
 <!-- ===== Contenido principal ===== -->
 <main class="main" id="main">
@@ -57,70 +67,123 @@
                 &larr; Volver
             </button>
         </div>
+
         <h1 class="section-title h3 mb-3">Nuevo usuario</h1>
 
-        <form method="POST" action="<%=request.getContextPath() %>/ListaUsuariosServlet?action=crear" class="form-card">
-            <!-- Nombre y apellido -->
-            <div class="mb-3">
-                <label class="form-label">Nombre y apellido</label>
-                <div class="input-group">
-                    <input type="text" name="nombre" class="form-control" placeholder="Nombre" aria-label="First name">
-                    <input type="text" name="apellido" class="form-control" placeholder="Apellido" aria-label="Last name">
+        <form method="POST"
+              action="<%=request.getContextPath() %>/ListaUsuariosServlet?action=crear"
+              class="form-card">
+
+            <!-- FILA: Nombre / Apellido -->
+            <div class="row g-3">
+                <!-- Nombre -->
+                <div class="col-12 col-lg-6">
+                    <div class="input-group">
+                        <span class="input-group-text" id="lblNombre">Nombre</span>
+                        <input type="text"
+                               class="form-control"
+                               name="nombre"
+                               aria-labelledby="lblNombre"
+                               placeholder="Ej. Juan">
+                    </div>
+                </div>
+
+                <!-- Apellido -->
+                <div class="col-12 col-lg-6">
+                    <div class="input-group">
+                        <span class="input-group-text" id="lblApellido">Apellido</span>
+                        <input type="text"
+                               class="form-control"
+                               name="apellido"
+                               aria-labelledby="lblApellido"
+                               placeholder="Ej. Pérez">
+                    </div>
                 </div>
             </div>
 
-            <!-- Email + Distrito -->
-            <div class="row g-3">
+            <!-- FILA: Correo / Distrito -->
+            <div class="row g-3 mt-3">
+                <!-- Correo -->
                 <div class="col-12 col-lg-7">
-                    <div class="mb-1">
-                        <label for="exampleInputEmail1" class="form-label">Dirección de correo</label>
-                        <input type="email" name="correo" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                        <div id="emailHelp" class="form-text">Nunca compartiremos este correo.</div>
+                    <div class="input-group">
+                        <span class="input-group-text" id="lblCorreo">Correo</span>
+                        <input type="email"
+                               class="form-control"
+                               name="correo"
+                               aria-labelledby="lblCorreo"
+                               placeholder="usuario@ejemplo.com">
                     </div>
                 </div>
+
+                <!-- Distrito -->
                 <div class="col-12 col-lg-5">
-                    <label class="form-label">Distrito</label>
                     <div class="input-group">
-                        <label class="input-group-text" for="distrito">Distrito</label>
-                        <select class="form-select" name="distrito_id" id="distrito_id">
+                        <span class="input-group-text" id="lblDistrito">Distrito</span>
+                        <select class="form-select"
+                                name="distrito_id"
+                                id="distrito_id"
+                                aria-labelledby="lblDistrito">
                             <option selected disabled>Seleccione...</option>
                             <% for (Distritos distritos : listaDistritos) { %>
-                            <option value="<%=distritos.getIdDistritos()%>"><%=distritos.getNombre()%></option>
-                            <% }%>
+                            <option value="<%=distritos.getIdDistritos()%>">
+                                <%=distritos.getNombre()%>
+                            </option>
+                            <% } %>
                         </select>
-
                     </div>
                 </div>
             </div>
 
-            <!-- Password + Rol -->
-            <div class="row g-3 mt-1">
+            <!-- FILA: Contraseña / Rol -->
+            <div class="row g-3 mt-3">
+                <!-- Contraseña -->
                 <div class="col-12 col-lg-7">
-                    <label for="exampleInputPassword1" class="form-label">Contraseña</label>
-                    <input type="password" name="contrasenha" class="form-control" id="exampleInputPassword1">
+                    <div class="input-group">
+                        <span class="input-group-text" id="lblPass">Contraseña</span>
+                        <input type="password"
+                               class="form-control"
+                               name="contrasenha"
+                               id="contrasenhaInput"
+                               aria-labelledby="lblPass"
+                               placeholder="********">
+                    </div>
+
                     <div class="form-check mt-2">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Mostrar contraseña</label>
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="togglePassCheck">
+                        <label class="form-check-label" for="togglePassCheck">
+                            Mostrar contraseña
+                        </label>
                     </div>
                 </div>
+
+                <!-- Rol -->
                 <div class="col-12 col-lg-5">
-                    <label class="form-label">Rol</label>
                     <div class="input-group">
-                        <label class="input-group-text" for="rol">Rol</label>
-                        <select class="form-select" name="rol_id" id="rol_id">
-                            <option selected>Seleccione...</option>
-                            <% for (Roles roles : listaRoles) {%>
-                            <option value="<%=roles.getIdRoles()%>"><%=roles.getNombre()%></option>
-                            <% }%>
+                        <span class="input-group-text" id="lblRol">Rol</span>
+                        <select class="form-select"
+                                name="rol_id"
+                                id="rol_id"
+                                aria-labelledby="lblRol">
+                            <option selected disabled>Seleccione...</option>
+                            <% for (Roles roles : listaRoles) { %>
+                            <option value="<%=roles.getIdRoles()%>">
+                                <%=roles.getNombre()%>
+                            </option>
+                            <% } %>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- Botón -->
+            <!-- Botón Submit -->
             <div class="mt-4">
-                <button type="submit" class="btn btn-primary">Crear</button>
+                <button type="submit" class="btn btn-primary w-auto">
+                    Crear
+                </button>
             </div>
+
         </form>
     </div>
 </main>
@@ -131,10 +194,26 @@
     const btn = document.getElementById('btnToggle');
     const sidebar = document.getElementById('sidebar');
     const main = document.getElementById('main');
-    btn.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-        main.classList.toggle('collapsed');
-    });
+    if (btn && sidebar && main) {
+        btn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            main.classList.toggle('collapsed');
+        });
+    }
+
+    // Mostrar / ocultar contraseña
+    const passInput = document.getElementById('contrasenhaInput');
+    const passToggle = document.getElementById('togglePassCheck');
+
+    if (passInput && passToggle) {
+        passToggle.addEventListener('change', () => {
+            if (passToggle.checked) {
+                passInput.type = 'text';
+            } else {
+                passInput.type = 'password';
+            }
+        });
+    }
 </script>
 </body>
 </html>
