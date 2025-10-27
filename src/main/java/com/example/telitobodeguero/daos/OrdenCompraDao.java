@@ -43,78 +43,77 @@ public class OrdenCompraDao{
     public ArrayList<OrdenCompra> obtenerOrdenCompra(String estadoFiltro, String terminoBusquedaProveedor) {
         ArrayList<OrdenCompra> listaOrdenCompra = new ArrayList<>();
 
-        // Consulta SQL ORIGINAL: No incluye oci.idItem, por lo que este método está bien para Logística.
+        // Consulta SQL basada en el Query provisto por el usuario,
+        // ajustando los alias de columna para coincidir con el código Java (e.g., Proveedor, NombreZona)
         StringBuilder sql = new StringBuilder(
                 "SELECT " +
-                        " oc.idOrdenCompra AS CodigoOrdenCompra, " +
-                        " CONCAT(u.nombre,' ',u.apellido) AS Proveedor, " +
-                        " p.idProducto AS idProducto, " +
-                        " p.nombre AS Producto, " +
-                        " oci.cantidad AS Cantidad, " +
-                        " oc.fecha_llegada AS FechaLlegada, " +
-                        " oc.estado AS Estado, " +
-                        " z.nombre AS NombreZona " +
-                        "FROM OrdenCompra oc " +
-                        "JOIN OrdenCompraItem oci ON oc.idOrdenCompra = oci.OrdenCompra_idOrdenCompra " +
-                        "JOIN Producto p ON oci.Producto_idProducto = p.idProducto " +
-                        "JOIN ( " +
-                        "   SELECT Producto_idProducto, MAX(idLote) AS idLote FROM Lote GROUP BY Producto_idProducto " +
-                        ") lmax ON lmax.Producto_idProducto = p.idProducto " +
-                        "JOIN Lote l ON l.idLote = lmax.idLote " +
-                        "JOIN Usuarios u ON u.idUsuarios = l.Usuarios_idUsuarios " +
-                        "LEFT JOIN Zonas z ON oc.Zonas_idZonas = z.idZonas " +
-                        "WHERE u.Roles_idRoles = 4 "
+                        "  oc.idOrdenCompra AS CodigoOrdenCompra, " + // Mapea a CodigoOrdenCompra
+                        "  CONCAT(u.nombre, ' ', u.apellido) AS Proveedor, " +
+                        "  p.nombre AS Producto, " +
+                        "  z.nombre AS NombreZona, " + // Mapea a NombreZona
+                        "  oc.fecha_llegada AS FechaLlegada, " +
+                        "  oci.cantidad AS Cantidad, " +
+                        "  oc.estado AS Estado " +
+                        "FROM ordencompra oc " +
+                        "INNER JOIN ordencompraitem oci ON oc.idOrdenCompra = oci.OrdenCompra_idOrdenCompra " +
+                        "INNER JOIN producto p ON oci.Producto_idProducto = p.idProducto " +
+                        "INNER JOIN usuarios u ON oc.idProveedor = u.idUsuarios " + // USANDO oc.idProveedor (CORRECTO)
+                        "INNER JOIN zonas z ON oc.Zonas_idZonas = z.idZonas " +
+                        "WHERE 1=1 "
         );
 
-        boolean hayEstado = (estadoFiltro != null && !estadoFiltro.isBlank());
-        if (hayEstado) {
-            sql.append(" AND oc.estado = ? ");
+        // Lógica de filtrado
+        if (estadoFiltro != null && !estadoFiltro.isEmpty() && !"Todos".equalsIgnoreCase(estadoFiltro)) {
+            sql.append("AND oc.estado = ? ");
         }
 
-        boolean hayFiltroProveedor = (terminoBusquedaProveedor != null && !terminoBusquedaProveedor.isBlank());
-        if (hayFiltroProveedor) {
-            sql.append(" AND (u.nombre LIKE ? OR u.apellido LIKE ?) ");
+        if (terminoBusquedaProveedor != null && !terminoBusquedaProveedor.trim().isEmpty()) {
+            // Usamos el mismo CONCAT que en el SELECT para filtrar
+            sql.append("AND CONCAT(u.nombre,' ',u.apellido) LIKE ? ");
         }
 
-        sql.append(" ORDER BY oc.fecha_llegada ASC, oc.idOrdenCompra DESC");
+        sql.append("ORDER BY oc.fecha_llegada DESC, oc.idOrdenCompra DESC");
 
         try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            int paramIndex = 1;
-            if (hayEstado) pstmt.setString(paramIndex++, estadoFiltro.trim());
-            if (hayFiltroProveedor) {
-                String filtro = "%" + terminoBusquedaProveedor.trim() + "%";
-                pstmt.setString(paramIndex++, filtro);
-                pstmt.setString(paramIndex++, filtro);
+            int index = 1;
+            if (estadoFiltro != null && !estadoFiltro.isEmpty() && !"Todos".equalsIgnoreCase(estadoFiltro)) {
+                ps.setString(index++, estadoFiltro);
+            }
+            if (terminoBusquedaProveedor != null && !terminoBusquedaProveedor.trim().isEmpty()) {
+                ps.setString(index++, "%" + terminoBusquedaProveedor.trim() + "%");
             }
 
-            try (ResultSet rs = pstmt.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     OrdenCompra oc = new OrdenCompra();
                     oc.setCodigoOrdenCompra(rs.getInt("CodigoOrdenCompra"));
                     oc.setNombreProveedor(rs.getString("Proveedor"));
-                    oc.setFechaLlegada(rs.getObject("FechaLlegada", LocalDate.class));
+
+                    Producto producto = new Producto();
+                    producto.setNombre(rs.getString("Producto"));
+                    oc.setProducto(producto);
+
+                    Zonas zona = new Zonas();
+                    zona.setNombre(rs.getString("NombreZona")); // Se lee NombreZona
+                    oc.setZona(zona);
+
+                    oc.setFechaLlegada(rs.getDate("FechaLlegada") != null ? rs.getDate("FechaLlegada").toLocalDate() : null);
                     oc.setCantidad(rs.getInt("Cantidad"));
                     oc.setEstado(rs.getString("Estado"));
-
-                    Producto p = new Producto();
-                    p.setIdProducto(rs.getInt("idProducto"));
-                    p.setNombre(rs.getString("Producto"));
-                    oc.setProducto(p);
-
-                    Zonas z = new Zonas();
-                    z.setNombre(rs.getString("NombreZona"));
-                    oc.setZona(z);
 
                     listaOrdenCompra.add(oc);
                 }
             }
         } catch (SQLException e) {
+            // Mensaje de error mejorado para debug
+            System.err.println("Error en obtenerOrdenCompra: " + e.getMessage());
             e.printStackTrace();
         }
         return listaOrdenCompra;
     }
+
 
     // ================================================================
     // 2. BORRAR ORDEN
@@ -356,59 +355,16 @@ public class OrdenCompraDao{
     }
 
     // =========================================================================
-    // MÉTODO CORREGIDO 1: OBTENER PRODUCTOS POR ZONA
-    // =========================================================================
-    public ArrayList<Producto> obtenerProductosPorZona(int idZona) {
-        ArrayList<Producto> lista = new ArrayList<>();
-        String user = "root";
-        String pass = "12345678";
-        String url  = "jdbc:mysql://127.0.0.1:3306/bodega-telito"; // Usando la URL de arriba
+// OBTENER PRODUCTORES POR PRODUCTO -> NO SE SI ELIMAR ESTO
+// =========================================================================
 
-        // V CONSULTA ORIGINAL V
-        String sql = """
-            SELECT DISTINCT p.idProducto, p.nombre, p.sku, p.precio
-            FROM producto p
-            JOIN lote l       ON p.idProducto = l.Producto_idProducto
-            JOIN movimiento m ON l.idLote = m.Lote_idLote
-            WHERE m.Zonas_idZonas = ?
-            ORDER BY p.nombre ASC
-            """;
-        // ^ CONSULTA ORIGINAL ^
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            try (Connection conn = DriverManager.getConnection(url, user, pass);
-                 PreparedStatement ps = conn.prepareStatement(sql)) {
-
-                ps.setInt(1, idZona);
-
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        Producto p = new Producto();
-                        p.setIdProducto(rs.getInt("idProducto"));
-                        p.setNombre(rs.getString("nombre"));
-                        p.setSku(rs.getString("sku"));
-                        p.setPrecio(rs.getDouble("precio")); // Usando getDouble
-
-                        lista.add(p);
-                    }
-                }
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        }
-
-        return lista;
-    }
-
-    // =========================================================================
-    // OBTENER PRODUCTORES POR PRODUCTO
-    // =========================================================================
     public ArrayList<Usuarios> obtenerProductoresPorProducto(int idProducto) {
+
         ArrayList<Usuarios> lista = new ArrayList<>();
+
         String user = "root";
         String pass = "12345678";
-        String url  = "jdbc:mysql://127.0.0.1:3306/bodega-telito"; // Usando la URL de arriba
+        String url = "jdbc:mysql://127.0.0.1:3306/bodega-telito"; // Usando la URL de arriba
 
         String sql =
                 "SELECT DISTINCT u.idUsuarios, u.nombre, u.apellido " +
@@ -443,49 +399,90 @@ public class OrdenCompraDao{
         return lista;
     }
 
+
+
+    // =========================================================================
+    // MÉTODO CORREGIDO 1: OBTENER PRODUCTOS POR ZONA
+    // =========================================================================
+    public ArrayList<Producto> obtenerProductosPorZona(int idZona) {
+        ArrayList<Producto> lista = new ArrayList<>();
+
+        // CORRECCIÓN: Usamos la relación Productor-Distrito-Zona para saber qué Productos
+        // pueden ser ofrecidos por Productores en esa Zona, sin depender de la tabla 'movimiento'.
+        String sql = """
+            SELECT DISTINCT p.idProducto, p.nombre, p.sku, p.precio
+            FROM producto p
+            JOIN lote l ON p.idProducto = l.Producto_idProducto
+            JOIN usuarios u ON u.idUsuarios = l.Usuarios_idUsuarios
+            JOIN distritos d ON d.idDistritos = u.Distritos_idDistritos
+            JOIN zonas z ON z.idZonas = d.Zonas_idZonas
+            WHERE z.idZonas = ?
+            AND u.Roles_idRoles = 4 -- Asegura que solo sean productores
+            ORDER BY p.nombre ASC
+            """;
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idZona);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Producto p = new Producto();
+                    p.setIdProducto(rs.getInt("idProducto"));
+                    p.setNombre(rs.getString("nombre"));
+                    p.setSku(rs.getString("sku"));
+                    p.setPrecio(rs.getDouble("precio"));
+                    lista.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error en obtenerProductosPorZona: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+
     // =========================================================================
     // OBTENER PRODUCTORES POR PRODUCTO Y ZONA
     // =========================================================================
     public ArrayList<Usuarios> obtenerProductoresPorProductoYZona(int idProducto, int idZona) {
         ArrayList<Usuarios> lista = new ArrayList<>();
-        String user = "root";
-        String pass = "12345678";
-        String url  = "jdbc:mysql://127.0.0.1:3306/bodega-telito"; // Usando la URL de arriba
 
-        // V CONSULTA ORIGINAL V
+        // Consulta que filtra por Producto (lote) Y por Zona (a través de la ubicación del productor)
         String sql = """
             SELECT DISTINCT u.idUsuarios, u.nombre, u.apellido
-            FROM movimiento m
-            JOIN lote l      ON m.Lote_idLote = l.idLote
-            JOIN usuarios u  ON l.Usuarios_idUsuarios = u.idUsuarios
-            WHERE m.Zonas_idZonas = ?
-              AND l.Producto_idProducto = ?
-              AND u.Roles_idRoles = 4
+            FROM lote l
+            JOIN usuarios u ON l.Usuarios_idUsuarios = u.idUsuarios
+            JOIN distritos d ON d.idDistritos = u.Distritos_idDistritos
+            JOIN zonas z ON z.idZonas = d.Zonas_idZonas
+            WHERE l.Producto_idProducto = ?
+            AND z.idZonas = ?
+            AND u.Roles_idRoles = 4
+            AND u.activo = 1
             """;
-        // ^ CONSULTA ORIGINAL ^
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            try (Connection conn = DriverManager.getConnection(url, user, pass);
-                 PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-                ps.setInt(1, idZona);
-                ps.setInt(2, idProducto);
+            ps.setInt(1, idProducto);
+            ps.setInt(2, idZona);
 
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        Usuarios prod = new Usuarios();
-                        prod.setIdUsuarios(rs.getInt("idUsuarios"));
-                        prod.setNombre(rs.getString("nombre"));
-                        prod.setApellido(rs.getString("apellido"));
-                        lista.add(prod);
-                    }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Usuarios prod = new Usuarios();
+                    prod.setIdUsuarios(rs.getInt("idUsuarios"));
+                    prod.setNombre(rs.getString("nombre"));
+                    prod.setApellido(rs.getString("apellido"));
+                    lista.add(prod);
                 }
             }
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
+            System.err.println("Error en obtenerProductoresPorProductoYZona: " + e.getMessage());
             e.printStackTrace();
         }
-
         return lista;
     }
 
@@ -620,5 +617,5 @@ public class OrdenCompraDao{
         return false;
     }
 // ...
-
+//SÍ ES EL ULTIMO COMMIT
 }

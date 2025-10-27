@@ -130,7 +130,7 @@
                 <thead class="bg-danger text-white">
                 <tr>
                     <th scope="col">Código</th>
-                    <th scope="col">Nombre</th>
+                    <th scope="col">Producto</th>
                     <th scope="col">Stock (Actual)</th>
                     <th scope="col">Mínimo Requerido</th>
                     <th scope="col">Zona</th>
@@ -147,7 +147,7 @@
                 %>
                 <tr class="table-danger fw-bold">
                     <td><%= p.getSku() != null ? p.getSku() : p.getIdProducto() %></td>
-                    <td class="text-start"><%= p.getNombre() %></td>
+                    <td class="text-center"><%= p.getNombre() %></td>
                     <td>
                         <!-- Resaltar el stock bajo actual -->
                         <span class="badge bg-dark p-2"><%= p.getStock() %></span>
