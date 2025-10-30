@@ -92,6 +92,15 @@ public class Movimiento {
     private Producto producto;
     private Zonas zona;
     private String ubicacion;
+    private Bloque bloque;
+
+    public Bloque getBloque() {
+        return bloque;
+    }
+
+    public void setBloque(Bloque bloque) {
+        this.bloque = bloque;
+    }
 
     public Zonas getZona() {
         return zona;

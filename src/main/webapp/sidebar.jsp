@@ -186,7 +186,7 @@
 
         <% if ((permisos.contains(18) && roleId==1) || (permisos.contains(18) && roleId==2) || (permisos.contains(18) && roleId==3) || (permisos.contains(18) && roleId==4)) { %>
         <li>
-            <a href="<%=request.getContextPath()%>/cargaExcel" class="nav-link text-white">
+            <a href="<%=request.getContextPath()%>/CargaMasivaServlet" class="nav-link text-white">
                 <img src="<%=request.getContextPath()%>/Almacen/img/indexCarga.png" width="25" height="25" class="me-2">
                 <span class="text-label">Carga masiva de datos</span>
             </a>
@@ -198,6 +198,14 @@
             <a href="<%=request.getContextPath()%>/IncidenciaAlmServlet" class="nav-link text-white">
                 <img src="<%=request.getContextPath()%>/Almacen/img/incidencia.png" width="25" height="25" class="me-2">
                 <span class="text-label">Incidencias </span>
+            </a>
+        </li>
+        <% } %>
+        <% if ((permisos.contains(20) && roleId==1) || (permisos.contains(20) && roleId==2) || (permisos.contains(20) && roleId==3) || (permisos.contains(20) && roleId==4)) { %>
+        <li>
+            <a href="<%=request.getContextPath()%>/OrdCompraAlmServlet" class="nav-link text-white">
+                <img src="<%=request.getContextPath()%>/Almacen/img/oc.png" width="25" height="25" class="me-2">
+                <span class="text-label">Órdenes de compra </span>
             </a>
         </li>
         <% } %>

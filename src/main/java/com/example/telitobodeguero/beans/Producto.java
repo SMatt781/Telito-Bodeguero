@@ -10,6 +10,25 @@ public class Producto {
     private int stockMinimo;
     private Lote lote; // Atributo objeto
     private Zonas zona;  // Atributo objeto (corregido a minúscula)
+    // para almacen no borrar por favor
+    private String ubicacionTemp;
+    private int idBloque;
+
+    public int getIdBloque() {
+        return idBloque;
+    }
+
+    public void setIdBloque(int idBloque) {
+        this.idBloque = idBloque;
+    }
+
+    public String getUbicacionTemp() {
+        return ubicacionTemp;
+    }
+
+    public void setUbicacionTemp(String ubicacionTemp) {
+        this.ubicacionTemp = ubicacionTemp;
+    }
 
 
     // 1. Getter de Objeto (Corregido a 'zona' minúscula)

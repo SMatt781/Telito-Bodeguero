@@ -2,7 +2,7 @@
 <%
     // Datos que te pasa el servlet al abrir el formulario
     String sku        = (String) request.getAttribute("sku");
-    String lote       = (String) request.getAttribute("lote");
+    String lote       = (String) request.getAttribute("loteId");
     String zonaNombre = (String) request.getAttribute("zonaNombre");
     String prodNombre = (String) request.getAttribute("prodNombre");
 
@@ -12,6 +12,9 @@
     if (zonaNombre == null) zonaNombre = "Zona";
     String ctx = request.getContextPath();
     String error  = (String) request.getAttribute("error");
+
+    String bloqueId = (String) request.getAttribute("bloqueId");
+    String ubicacion = (String) request.getAttribute("ubicacion");
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -103,7 +106,9 @@
                 <input type="hidden" name="prodNombre" value="<%= prodNombre!=null? prodNombre : "" %>" />
                 <!-- Si tu servlet ya lee la zona desde sesión, este hidden es opcional -->
                 <input type="hidden" name="idZona"     value="<%= zonaIdSes!=null? zonaIdSes : 1 %>" />
-
+                <input type="hidden" name="bloqueId" value="<%= bloqueId!=null?bloqueId:"" %>" />
+                <input type="hidden" name="loteId" value="<%= lote %>" />
+                <input type="hidden" name="fase"   value="grabar">
                 <div class="row g-3">
                     <div class="col-12 col-md-6">
                         <label for="SKU" class="form-label">SKU</label>
@@ -132,10 +137,12 @@
                                min="1" step="1" required />
                     </div>
 
+
+
                     <div class="col-12 col-md-6">
-                        <label for="lote" class="form-label">Lote</label>
-                        <input type="number" id="lote" name="lote" class="form-control"
-                               value="<%= lote!=null? lote : "" %>" required />
+                        <label for="ubicacion" class="form-label">Ubicación</label>
+                        <input type="text" class="form-control" id="ubicacion" name="ubicacion"
+                               value="<%= ubicacion!=null? ubicacion : "" %>" readonly>
                     </div>
 
                     <div class="col-12">

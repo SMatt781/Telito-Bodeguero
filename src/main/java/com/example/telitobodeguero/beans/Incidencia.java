@@ -10,6 +10,26 @@ public class Incidencia {
     private Zonas zona;
     private Producto producto;
     private String estado;
+    //puesto por almacen, por favor no tocar
+    private String ubicacionTemporal;
+    private int idUbicacion;
+
+    public String getUbicacionTemporal() {
+        return ubicacionTemporal;
+    }
+
+    public void setUbicacionTemporal(String ubicacionTemporal) {
+        this.ubicacionTemporal = ubicacionTemporal;
+    }
+
+    public int getIdUbicacion() {
+        return idUbicacion;
+    }
+
+    public void setIdUbicacion(int idUbicacion) {
+        this.idUbicacion = idUbicacion;
+    }
+
 
     public int getIdIncidencia() {
         return idIncidencia;

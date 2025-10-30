@@ -4,7 +4,7 @@
 <%
     // Valores que llegan desde el servlet (cuando vienes desde la tabla)
     String sku  = (String) request.getAttribute("sku");
-    String lote = (String) request.getAttribute("lote");
+    String lote = (String) request.getAttribute("loteId");
     String zonaNombre = (String) request.getAttribute("zonaNombre");
     String prodNombre = (String) request.getAttribute("prodNombre");
 
@@ -16,7 +16,11 @@
     String hoy = LocalDate.now().toString();
     String ctx = request.getContextPath();
     String error = (String) request.getAttribute("error");
-    if (zonaNombre == null) zonaNombre = "Zona";
+
+    //nuevo después del cambio
+    String bloqueId = (String) request.getAttribute("bloqueId");
+    String ubicacion = (String) request.getAttribute("ubicacion");
+
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -104,11 +108,12 @@
             <form action="<%=ctx%>/AlmacenServlet" method="post" novalidate>
                 <input type="hidden" name="accion" value="registrarMovimiento">
                 <input type="hidden" name="tipo"   value="IN">
-
+                <input type="hidden" name="fase"   value="grabar">
                 <input type="hidden" name="idZona" value="<%= zonaIdSes!=null? zonaIdSes : 1 %>">
                 <input type="hidden" name="prodNombre" value="<%= prodNombre!=null?prodNombre:"" %>" />
                 <input type="hidden" name="zonaNombre" value="<%= zonaNombre!=null?zonaNombre:"" %>" />
-
+                <input type="hidden" name="bloqueId" value="<%= bloqueId!=null?bloqueId:"" %>" />
+                <input type="hidden" name="loteId" value="<%= request.getAttribute("loteId")!=null? request.getAttribute("loteId") : "" %>" />
                 <div class="row g-3">
                     <div class="col-12 col-md-6">
                         <label for="SKU" class="form-label">SKU</label>
@@ -134,15 +139,12 @@
                     </div>
 
                     <div class="col-12 col-md-6">
-                        <label for="lote" class="form-label">Lote</label>
-                        <input type="number" class="form-control" id="lote" name="lote"
-                               value="<%= lote!=null? lote : "" %>" required>
+                        <label for="ubicacion" class="form-label">Ubicación</label>
+                        <input type="text" class="form-control" id="ubicacion" name="ubicacion"
+                               value="<%= ubicacion!=null? ubicacion : "" %>" readonly>
                     </div>
 
-                    <div class="col-12 col-md-6">
-                        <label for="fechaVencimiento" class="form-label">Fecha de vencimiento</label>
-                        <input type="date" class="form-control" id="fechaVencimiento" name="fechaVencimiento">
-                    </div>
+
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">

@@ -3,13 +3,16 @@
 <%
     String ctx         = request.getContextPath();
     String sku         = (String) request.getAttribute("sku");
-    String lote        = (String) request.getAttribute("lote");
+    String lote        = (String) request.getAttribute("loteId");
     String zonaNombre  = (String) request.getAttribute("zonaNombre");
     String prodNombre  = (String) request.getAttribute("prodNombre");
     Integer zonaIdSes  = (Integer) session.getAttribute("zonaIdActual");
     String error       = (String) request.getAttribute("error");
     String hoy         = LocalDate.now().toString();
     if (zonaNombre == null) zonaNombre = "Zona";
+    //nuevo después del cambio
+    String bloqueId = (String) request.getAttribute("bloqueId");
+    String ubicacion = (String) request.getAttribute("ubicacion");
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -95,8 +98,15 @@
             <form action="<%=ctx%>/AlmacenServlet" method="post" novalidate>
                 <input type="hidden" name="accion" value="registrarMovimiento" />
                 <input type="hidden" name="tipo"   value="OUT" />
+                <input type="hidden" name="fase"   value="grabar">
                 <!-- Si el servlet ya usa zona desde sesión, este hidden es opcional -->
                 <input type="hidden" name="idZona" value="<%= zonaIdSes!=null? zonaIdSes : 1 %>" />
+                <input type="hidden" name="prodNombre" value="<%= prodNombre!=null?prodNombre:"" %>" />
+                <input type="hidden" name="zonaNombre" value="<%= zonaNombre!=null?zonaNombre:"" %>" />
+                <input type="hidden" name="bloqueId" value="<%= bloqueId!=null?bloqueId:"" %>" />
+                <input type="hidden" name="loteId" value="<%= lote!=null?lote:"" %>" />
+                <!-- stock de la fila de la tabla (para validar que no quede negativo) -->
+                <input type="hidden" name="stockFila" value="<%= request.getAttribute("stockFila")!=null? request.getAttribute("stockFila") : "" %>" />
 
                 <div class="row g-3">
                     <div class="col-12 col-md-6">
@@ -122,9 +132,9 @@
                     </div>
 
                     <div class="col-12 col-md-6">
-                        <label for="lote" class="form-label">Lote</label>
-                        <input type="number" id="lote" name="lote" class="form-control"
-                               value="<%= lote!=null? lote : "" %>" required />
+                        <label for="ubicacion" class="form-label">Ubicación</label>
+                        <input type="text" class="form-control" id="ubicacion" name="ubicacion"
+                               value="<%= ubicacion!=null? ubicacion : "holi" %>" readonly>
                     </div>
                 </div>
 

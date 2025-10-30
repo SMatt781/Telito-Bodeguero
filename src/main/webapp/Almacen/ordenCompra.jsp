@@ -1,12 +1,13 @@
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="com.example.telitobodeguero.beans.Incidencia" %>
+<%@ page import="com.example.telitobodeguero.beans.OrdenCompra" %>
 <%@ page import="java.net.URLDecoder" %>
-<jsp:useBean id="listaIncidencias" scope="request" type="java.util.ArrayList<com.example.telitobodeguero.beans.Incidencia>"/>
-
+<jsp:useBean id="oc_transito" scope="request" type="java.util.ArrayList<com.example.telitobodeguero.beans.OrdenCompra>"/>
+<jsp:useBean id="oc_completadas" scope="request" type="java.util.ArrayList<com.example.telitobodeguero.beans.OrdenCompra>"/>
+<jsp:useBean id="oc_registradas" scope="request" type="java.util.ArrayList<com.example.telitobodeguero.beans.OrdenCompra>"/>
 <%
     String ctx = request.getContextPath();
-//    String statusMessage = (String) request.getAttribute("statusMessage");
     String statusMessageEncoded = request.getParameter("statusMessage");
     String statusMessage = null;
 
@@ -100,15 +101,16 @@
 <header class="topbar d-md-none">
     <button id="btnMobileMenu" class="btn btn-primary me-2" aria-label="Menú">☰</button>
     <img src="<%=ctx%>/Almacen/img/telitoLogo.png" alt="Telito" class="topbar-logo">
-    <span class="ms-2 fw-bold">Incidencias</span>
+    <span class="ms-2 fw-bold">Órdenes de Compra</span>
 </header>
 
 <!-- Contenido -->
 <main id="main" class="content">
     <div class="page-wrap">
 
-        <h1 class="text-primary fw-bold titulo-principal mb-3">Lista de incidencias</h1>
+        <img src="<%=request.getContextPath()%>/Almacen/img/telitoLogo.png" class="topbar-logo d-block mx-auto mb-4" alt="Telito">
 
+        <h1 class="text-primary fw-bold titulo-principal text-center mb-4">ÓRDENES DE COMPRA</h1>
         <% if (statusMessage != null && !statusMessage.isEmpty()) {
             String[] parts = statusMessage.split("\\|", 2);
             String status = parts.length>0 ? parts[0] : "success";
@@ -122,63 +124,48 @@
         <% } %>
 
         <div class="table-responsive">
+            <h3 class="text-secondary mb-3">Órdenes de compra por llegar</h3>
             <table class="table table-striped align-middle">
                 <thead class="table-light">
                 <tr>
-                    <th style="width:6%">ID</th>
-                    <th style="width:12%">SKU</th>
-                    <th style="width:20%">Nombre</th>
-                    <th style="width:10%">Tipo</th>
-                    <th style="width:8%">Cantidad</th>
-                    <th style="width:8%">Ubicacion</th>
-                    <th>Descripción</th>
+                    <th style="width:5%">ID</th>
+                    <th style="width:15%">Nombre</th>
+                    <th style="width:20%">Cantidad</th>
+                    <th style="width:20%">Fecha llegada</th>
                     <th style="width:10%">Estado</th>
-                    <th style="width:16%">Acciones</th>
+                    <th style="width:10%">Acción</th>
+
                 </tr>
                 </thead>
                 <tbody>
                 <%
-                    if (listaIncidencias == null || listaIncidencias.isEmpty()) {
+                    if (oc_transito == null || oc_transito.isEmpty()) {
                 %>
                 <tr>
                     <td colspan="9" class="text-center text-muted py-4">
-                        No hay incidencias registradas.
+                        No hay órdenes de compra registradas.
                     </td>
                 </tr>
                 <%
                 } else {
-                    for (Incidencia inc : listaIncidencias) {
+                    for (OrdenCompra oc : oc_transito) {
                 %>
                 <tr>
-                    <td><%= inc.getIdIncidencia() %></td>
-                    <td><%= inc.getProducto().getSku() %></td>
-                    <td><%= inc.getProducto().getNombre() %></td>
-                    <td><%= inc.getTipoIncidencia() %></td>
-                    <td><%= inc.getCantidad() %></td>
-                    <td><%= inc.getUbicacionTemporal() %></td>
-                    <td><%= inc.getDescripcion() %></td>
-                    <td><%= inc.getEstado() %></td>
+                    <td><%= oc.getCodigoOrdenCompra() %></td>
+                    <td><%= oc.getProducto().getNombre() %></td>
+                    <td><%= oc.getCantidad() %></td>
+                    <td><%= oc.getFechaLlegada() %></td>
+                    <td><%= oc.getEstado() %></td>
                     <td>
-                        <% if ("REGISTRADA".equalsIgnoreCase(inc.getEstado())) { %>
+                        <% if ("EN TRANSITO".equalsIgnoreCase(oc.getEstado())) { %>
                         <div class="d-flex gap-3">
-                            <!-- Mantener -->
-                            <form method="post" action="<%=ctx%>/IncidenciaAlmServlet" class="m-0 p-0">
-                                <input type="hidden" name="accion" value="mantener">
-                                <input type="hidden" name="idInc" value="<%=inc.getIdIncidencia()%>">
-                                <button type="submit" class="btn btn-link p-0 m-0" style="text-decoration:none;">Mantener</button>
+                            <!-- Confirmar Llegada -->
+                            <form method="post" action="<%=ctx%>/OrdCompraAlmServlet" class="m-0 p-0">
+                                <input type="hidden" name="accion" value="confirmarLlegada">
+                                <input type="hidden" name="idOC" value="<%=oc.getCodigoOrdenCompra()%>">
+                                <button type="submit" class="btn btn-link p-0 m-0" style="text-decoration:none;">Confirmar llegada</button>
                             </form>
 
-                            <!-- Quitar -->
-                            <form method="post" action="<%=ctx%>/IncidenciaAlmServlet" class="m-0 p-0">
-                                <input type="hidden" name="accion" value="quitar">
-                                <input type="hidden" name="idInc" value="<%=inc.getIdIncidencia()%>">
-                                <input type="hidden" name="tipo" value="OUT">
-                                <input type="hidden" name="cantidad" value="<%=inc.getCantidad()%>">
-                                <input type="hidden" name="loteId" value="<%=inc.getLote_idLote()%>">
-                                <input type="hidden" name="bloqueId" value="<%=inc.getIdUbicacion()%>">
-                                <input type="hidden" name="ubicacion" value="<%=inc.getUbicacionTemporal()%>">
-                                <button type="submit" class="btn btn-link p-0 m-0 text-danger" style="text-decoration:none;">Quitar</button>
-                            </form>
                         </div>
                         <% } else { %>
                         <span class="text-muted">Sin acciones</span>
@@ -193,7 +180,114 @@
             </table>
         </div>
 
+        <!-- TABLA EN COMPLETADO-->
+        <div class="table-responsive">
+            <h3 class="text-secondary mb-3">Órdenes de compra por registrar</h3>
+            <table class="table table-striped align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th style="width:5%">ID</th>
+                    <th style="width:15%">Nombre</th>
+                    <th style="width:20%">Cantidad</th>
+
+                    <th style="width:10%">Estado</th>
+                    <th style="width:10%">Acción</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <%
+                    if (oc_completadas == null || oc_completadas.isEmpty()) {
+                %>
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">
+                        No hay órdenes de compra registradas.
+                    </td>
+                </tr>
+                <%
+                } else {
+                    for (OrdenCompra oc : oc_completadas) {
+                %>
+                <tr>
+                    <td><%= oc.getCodigoOrdenCompra() %></td>
+                    <td><%= oc.getProducto().getNombre() %></td>
+                    <td><%= oc.getCantidad() %></td>
+
+                    <td><%= oc.getEstado() %></td>
+                    <td>
+                        <% if ("COMPLETADA".equalsIgnoreCase(oc.getEstado())) { %>
+                        <div class="d-flex gap-3">
+                            <!-- REGISTRAR ENTRADA -->
+                            <form method="post" action="<%=ctx%>/OrdCompraAlmServlet" class="m-0 p-0">
+                                <input type="hidden" name="accion" value="registrarEntrada">
+                                <input type="hidden" name="idOC" value=<%=oc.getCodigoOrdenCompra()%>>
+                                <input type="hidden" name="cantidad" value="<%=oc.getCantidad()%>">
+                                <input type="hidden" name="loteId" value="<%=oc.getLote().getIdLote()%>">
+                                <button type="submit" class="btn btn-link p-0 m-0" style="text-decoration:none;">Registrar entrada</button>
+                            </form>
+
+                        </div>
+                        <% } else { %>
+                        <span class="text-muted">Sin acciones</span>
+                        <% } %>
+                    </td>
+                </tr>
+                <%
+                        }
+                    }
+                %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TABLA REGISTRADAS-->
+        <div class="table-responsive">
+            <h3 class="text-secondary mb-3">Órdenes de compra registradas</h3>
+            <table class="table table-striped align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th style="width:5%">ID</th>
+                    <th style="width:15%">Nombre</th>
+                    <th style="width:20%">Cantidad</th>
+
+                    <th style="width:10%">Estado</th>
+
+
+                </tr>
+                </thead>
+                <tbody>
+                <%
+                    if (oc_registradas == null || oc_registradas.isEmpty()) {
+                %>
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">
+                        No hay órdenes de compra registradas.
+                    </td>
+                </tr>
+                <%
+                } else {
+                    for (OrdenCompra oc : oc_registradas) {
+                %>
+                <tr>
+                    <td><%= oc.getCodigoOrdenCompra() %></td>
+                    <td><%= oc.getProducto().getNombre() %></td>
+                    <td><%= oc.getCantidad() %></td>
+
+                    <td><%= oc.getEstado() %></td>
+
+                </tr>
+                <%
+                        }
+                    }
+                %>
+                </tbody>
+            </table>
+        </div>
+
     </div>
+
+
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>

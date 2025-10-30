@@ -29,75 +29,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Inventarios</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Inventarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-  <style>
-      /* ===== Desktop (default) ===== */
-      body{ min-height:100vh; background:#f8f9fa; overflow-x:hidden; }
+    <style>
+        /* ===== Desktop (default) ===== */
+        body{ min-height:100vh; background:#f8f9fa; overflow-x:hidden; }
 
-      .sidebar{
-          position:fixed; top:0; left:0; bottom:0;
-          width:280px; background:#212529; color:#fff;
-          z-index:1000; transition:width .25s ease;
-          overflow-y:auto; display:flex; flex-direction:column;
-      }
-      .sidebar.collapsed{ width:80px; }
-      .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
-      .sidebar .brand .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
-      .sidebar .nav-link{ color:#d6d6d6; }
-      .sidebar .nav-link:hover,.sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
-      .sidebar .dropdown-menu{ background:#2b3035; }
-      .sidebar .dropdown-item{ color:#fff; }
-      .sidebar .dropdown-item:hover{ background:#0d6efd; }
-      .sidebar.collapsed .text-label{ display:none; }
+        .sidebar{
+            position:fixed; top:0; left:0; bottom:0;
+            width:280px; background:#212529; color:#fff;
+            z-index:1000; transition:width .25s ease;
+            overflow-y:auto; display:flex; flex-direction:column;
+        }
+        .sidebar.collapsed{ width:80px; }
+        .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
+        .sidebar .brand .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
+        .sidebar .nav-link{ color:#d6d6d6; }
+        .sidebar .nav-link:hover,.sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
+        .sidebar .dropdown-menu{ background:#2b3035; }
+        .sidebar .dropdown-item{ color:#fff; }
+        .sidebar .dropdown-item:hover{ background:#0d6efd; }
+        .sidebar.collapsed .text-label{ display:none; }
 
-      .content{
-          margin-left:280px; transition:margin-left .25s ease;
-          padding:2rem 1rem; min-height:100vh;
-      }
-      .content.collapsed{ margin-left:80px; }
+        .content{
+            margin-left:280px; transition:margin-left .25s ease;
+            padding:2rem 1rem; min-height:100vh;
+        }
+        .content.collapsed{ margin-left:80px; }
 
-      .page-wrap{ max-width:1100px; margin:0 auto; }
-      .logo-header{ display:block; max-width:320px; width:60%; height:auto; margin:.5rem auto 1rem; }
-      .titulo-principal{ font-size:3rem; }
-      .btn-personalizado{ background:#1872a2; color:#fff; border-color:transparent; }
-      .btn-personalizado:hover{ background:#104b6b; color:#fff; }
+        .page-wrap{ max-width:1100px; margin:0 auto; }
+        .logo-header{ display:block; max-width:320px; width:60%; height:auto; margin:.5rem auto 1rem; }
+        .titulo-principal{ font-size:3rem; }
+        .btn-personalizado{ background:#1872a2; color:#fff; border-color:transparent; }
+        .btn-personalizado:hover{ background:#104b6b; color:#fff; }
 
-      /* ===== Topbar (solo móvil) ===== */
-      .topbar{
-          position:fixed; top:0; left:0; right:0; height:56px;
-          background:#fff; border-bottom:1px solid #e5e7eb;
-          display:flex; align-items:center; padding:.5rem .75rem; z-index:1100;
-      }
-      .topbar-logo{ height:28px; width:auto; }
+        /* ===== Topbar (solo móvil) ===== */
+        .topbar{
+            position:fixed; top:0; left:0; right:0; height:56px;
+            background:#fff; border-bottom:1px solid #e5e7eb;
+            display:flex; align-items:center; padding:.5rem .75rem; z-index:1100;
+        }
+        .topbar-logo{ height:28px; width:auto; }
 
-      /* ===== Mobile (≤768px) ===== */
-      @media (max-width: 767.98px){
-          /* sidebar como panel deslizable */
-          .sidebar{
-              left:-280px; width:280px;              /* oculto fuera de pantalla */
-              display:flex !important;               /* re-mostrar aunque tenga d-none d-md-flex */
-          }
-          .sidebar.show{ left:0; }                 /* visible al togglear */
-          .content{ margin-left:0; padding:1rem; padding-top:72px; }  /* deja espacio a la topbar */
-          .page-wrap{ max-width:100%; }
-          .titulo-principal{ font-size:2rem; text-align:center; }
-          .logo-header{ max-width:220px; width:70%; }
+        /* ===== Mobile (≤768px) ===== */
+        @media (max-width: 767.98px){
+            /* sidebar como panel deslizable */
+            .sidebar{
+                left:-280px; width:280px;              /* oculto fuera de pantalla */
+                display:flex !important;               /* re-mostrar aunque tenga d-none d-md-flex */
+            }
+            .sidebar.show{ left:0; }                 /* visible al togglear */
+            .content{ margin-left:0; padding:1rem; padding-top:72px; }  /* deja espacio a la topbar */
+            .page-wrap{ max-width:100%; }
+            .titulo-principal{ font-size:2rem; text-align:center; }
+            .logo-header{ max-width:220px; width:70%; }
 
-          /* tabla compacta */
-          .table{ font-size:.9rem; }
-          /* Oculta Lote (col 4) y Zona (col 5) en XS para que no desborde */
-          .table thead th:nth-child(4),
-          .table tbody td:nth-child(4),
-          .table thead th:nth-child(5),
-          .table tbody td:nth-child(5){ display:none; }
-      }
+            /* tabla compacta */
+            .table{ font-size:.9rem; }
+            /* Oculta Lote (col 4) y Zona (col 5) en XS para que no desborde */
+            .table thead th:nth-child(4),
+            .table tbody td:nth-child(4),
+            .table thead th:nth-child(5),
+            .table tbody td:nth-child(5){ display:none; }
+        }
 
 
-  </style>
+    </style>
 
 </head>
 
@@ -135,7 +135,7 @@
                     <th style="width:10%">SKU</th>
                     <th style="width:30%">Nombre</th>
                     <th style="width:10%">Stock</th>
-                    <th style="width:10%">Lote</th>
+                    <th style="width:10%">Ubicación</th>
                     <th style="width:15%">Zona</th>
                     <th style="width:25%">Acciones</th>
                 </tr>
@@ -146,22 +146,58 @@
                     <td><%= prod.getSku() %></td>
                     <td><%= prod.getNombre() %></td>
                     <td><%= prod.getStock() %></td>
-                    <td><%= prod.getLotes() %></td>
+                    <td><%= prod.getUbicacionTemp() %></td>
                     <td><%= prod.getZona().getNombre() %></td>
                     <td>
                         <div class="d-flex gap-2">
-                            <a href="<%=request.getContextPath()%>/AlmacenServlet?accion=mostrarRegistro&tipo=entrada&sku=<%= prod.getSku()%>&lote=<%= prod.getLotes()%>&zonaNombre=<%=prod.getZona().getNombre()%>"
-                               class="btn btn-success rounded-circle" title="Entrada">
-                                <img src="<%=request.getContextPath()%>/Almacen/img/entrada.png" width="20" height="20" alt="">
-                            </a>
-                            <a href="<%=request.getContextPath()%>/AlmacenServlet?accion=mostrarRegistro&tipo=salida&sku=<%= prod.getSku()%>&lote=<%= prod.getLotes()%>&zonaNombre=<%=prod.getZona().getNombre()%>"
-                               class="btn btn-personalizado rounded-circle" title="Salida">
-                                <img src="<%=request.getContextPath()%>/Almacen/img/salida.png" width="20" height="20" alt="">
-                            </a>
-                            <a href="<%=request.getContextPath()%>/AlmacenServlet?accion=mostrarIncidencia&sku=<%= prod.getSku()%>&lote=<%= prod.getLotes()%>&zonaNombre=<%=prod.getZona().getNombre()%>&prodNombre=<%=prod.getNombre()%>"
-                               class="btn btn-danger rounded-circle" title="Incidencia">
-                                <img src="<%=request.getContextPath()%>/Almacen/img/incidencia.png" width="20" height="20" alt="">
-                            </a>
+                            <!-- ENTRADA -->
+                            <form method="post" action="<%=request.getContextPath()%>/AlmacenServlet" class="m-0">
+                                <input type="hidden" name="accion" value="registrarMovimiento">
+                                <input type="hidden" name="fase"   value="form">
+                                <input type="hidden" name="tipo" value="IN">
+                                <input type="hidden" name="sku" value="<%= prod.getSku() %>">
+                                <input type="hidden" name="loteId" value="<%= prod.getLote().getIdLote() %>"><%-- usa el idLote correcto --%>
+                                <input type="hidden" name="zonaNombre" value="<%= prod.getZona().getNombre() %>">
+                                <input type="hidden" name="bloqueId" value="<%= prod.getIdBloque() %>">
+                                <input type="hidden" name="ubicacion" value="<%= prod.getUbicacionTemp() %>">
+
+                                <input type="hidden" name="prodNombre" value="<%= prod.getNombre() %>">
+                                <button type="submit" class="btn btn-success rounded-circle" title="Entrada">
+                                    <img src="<%=request.getContextPath()%>/Almacen/img/entrada.png" width="20" height="20" alt="">
+                                </button>
+                            </form>
+
+                            <!-- SALIDA -->
+                            <form method="post" action="<%=request.getContextPath()%>/AlmacenServlet" class="m-0">
+                                <input type="hidden" name="accion" value="registrarMovimiento">
+                                <input type="hidden" name="tipo" value="OUT">
+                                <input type="hidden" name="fase"   value="form">
+                                <input type="hidden" name="sku" value="<%= prod.getSku() %>">
+                                <input type="hidden" name="loteId" value="<%= prod.getLote().getIdLote() %>"><%-- usa el idLote correcto --%>
+                                <input type="hidden" name="zonaNombre" value="<%= prod.getZona().getNombre() %>">
+                                <input type="hidden" name="bloqueId" value="<%= prod.getIdBloque() %>">
+                                <input type="hidden" name="ubicacion" value="<%= prod.getUbicacionTemp() %>">
+                                <input type="hidden" name="stockFila" value="<%= prod.getStock() %>">
+                                <button type="submit" class="btn btn-personalizado rounded-circle" title="Salida">
+                                    <img src="<%=request.getContextPath()%>/Almacen/img/salida.png" width="20" height="20" alt="">
+                                </button>
+                            </form>
+
+                            <!-- INCIDENCIA -->
+                            <form method="post" action="<%=request.getContextPath()%>/AlmacenServlet" class="m-0">
+                                <input type="hidden" name="accion" value="registrarIncidencia">
+                                <input type="hidden" name="fase"   value="form">
+                                <input type="hidden" name="sku" value="<%= prod.getSku() %>">
+                                <input type="hidden" name="loteId" value="<%= prod.getLote().getIdLote() %>">
+                                <input type="hidden" name="zonaNombre" value="<%= prod.getZona().getNombre() %>">
+                                <input type="hidden" name="prodNombre" value="<%= prod.getNombre() %>">
+                                <input type="hidden" name="bloqueId" value="<%= prod.getIdBloque() %>">
+                                <input type="hidden" name="ubicacion" value="<%= prod.getUbicacionTemp() %>">
+                                <button type="submit" class="btn btn-danger rounded-circle" title="Incidencia">
+                                    <img src="<%=request.getContextPath()%>/Almacen/img/incidencia.png" width="20" height="20" alt="">
+                                </button>
+                            </form>
+
                         </div>
                     </td>
                 </tr>
@@ -172,28 +208,28 @@
     </div>
 </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
-    <script>
-        // Desktop: colapsar sidebar (si tu sidebar.jsp pone un botón #btnToggle)
-        const btn = document.getElementById('btnToggle');
-        const sidebar = document.getElementById('sidebar');
-        const main = document.getElementById('main');
-        if (btn && sidebar && main) {
-            btn.addEventListener('click', () => {
-                sidebar.classList.toggle('collapsed');   // desktop
-                main.classList.toggle('collapsed');
-            });
-        }
+<script>
+    // Desktop: colapsar sidebar (si tu sidebar.jsp pone un botón #btnToggle)
+    const btn = document.getElementById('btnToggle');
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main');
+    if (btn && sidebar && main) {
+        btn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');   // desktop
+            main.classList.toggle('collapsed');
+        });
+    }
 
-        // Móvil: abrir/cerrar panel deslizable
-        const btnMobile = document.getElementById('btnMobileMenu');
-        if (btnMobile && sidebar) {
-            btnMobile.addEventListener('click', () => {
-                sidebar.classList.toggle('show');        // mueve left:-280px -> 0
-            });
-        }
-    </script>
+    // Móvil: abrir/cerrar panel deslizable
+    const btnMobile = document.getElementById('btnMobileMenu');
+    if (btnMobile && sidebar) {
+        btnMobile.addEventListener('click', () => {
+            sidebar.classList.toggle('show');        // mueve left:-280px -> 0
+        });
+    }
+</script>
 
 
 </body>
