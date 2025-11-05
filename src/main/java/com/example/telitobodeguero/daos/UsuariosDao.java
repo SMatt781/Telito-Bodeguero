@@ -271,5 +271,41 @@ public class UsuariosDao extends BaseDao{
         return lista;
     }
 
+    public Usuarios buscarPorCorreo(String correo) {
+        Usuarios usuario = null;
+        String sql = "SELECT * FROM usuarios WHERE correo = ?";
+        try (Connection conn = this.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, correo);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    usuario = new Usuarios();
+                    usuario.setIdUsuarios(rs.getInt("idUsuarios"));
+                    usuario.setNombre(rs.getString("nombre"));
+                    usuario.setApellido(rs.getString("apellido"));
+                    usuario.setCorreo(rs.getString("correo"));
+                    usuario.setContrasenha(rs.getString("contrasenha"));
+                    usuario.setActivo(rs.getBoolean("activo"));
+
+                    int rolId = rs.getInt("Roles_idRoles");
+                    if (!rs.wasNull()) {
+                        Roles rol = new Roles();
+                        rol.setIdRoles(rolId);
+                        usuario.setRol(rol);
+                    }
+
+                    int distId = rs.getInt("Distritos_idDistritos");
+                    if (!rs.wasNull()) {
+                        Distritos d = new Distritos();
+                        d.setIdDistritos(distId);
+                        usuario.setDistrito(d);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usuario;
+    }
 
 }

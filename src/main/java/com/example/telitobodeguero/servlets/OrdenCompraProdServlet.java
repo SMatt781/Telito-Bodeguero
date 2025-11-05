@@ -160,7 +160,7 @@ public class OrdenCompraProdServlet extends HttpServlet {
 
                 // 4. Cambiar estado de la orden a "En tránsito"
                 int idOrden = ocDao.obtenerIdOrdenDesdeItem(conn, idItem);
-                ocDao.actualizarEstadoSimple(idOrden, "En tránsito");
+                ocDao.actualizarEstadoSimple(idOrden, "EN TRANSITO");
 
                 conn.commit(); // Éxito: CONFIRMAR ambas operaciones
 

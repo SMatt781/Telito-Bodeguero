@@ -154,24 +154,40 @@
         <% if ((permisos.contains(14) && roleId==1) || (permisos.contains(14) && roleId==2) || (permisos.contains(14) && roleId==3) || (permisos.contains(14) && roleId==4)) { %>
         <li class="nav-item mt-2">
             <a class="nav-link <%= uri.contains("/MisProductos") ? "active" : "" %>" href="<%= ctx %>/MisProductos">
+                <img src="<%=request.getContextPath()%>/images/misproductos.png" width="25" height="25" class="me-2">
                 <span class="text-label">Mis productos</span>
             </a>
         </li>
         <% } %>
+
         <% if ((permisos.contains(15) && roleId==1) || (permisos.contains(15) && roleId==2) || (permisos.contains(15) && roleId==3) || (permisos.contains(15) && roleId==4)) { %>
         <li class="nav-item mt-2">
             <a class="nav-link <%= uri.contains("/Lotes") ? "active" : "" %>" href="<%= ctx %>/Lotes">
+                <img src="<%=request.getContextPath()%>/images/gestionlotes.jpg" width="25" height="25" class="me-2">
                 <span class="text-label">Gestión de Lotes</span>
             </a>
         </li>
         <% } %>
+
         <% if ((permisos.contains(16) && roleId==1) || (permisos.contains(16) && roleId==2) || (permisos.contains(16) && roleId==3) || (permisos.contains(16) && roleId==4)) { %>
         <li class="nav-item mt-2">
             <a class="nav-link <%= uri.contains("/OrdenesCompra") ? "active" : "" %>" href="<%= ctx %>/OrdenesCompra">
+                <img src="<%=request.getContextPath()%>/images/ordenescompraP.jpg" width="25" height="25" class="me-2">
                 <span class="text-label">Órdenes de compras</span>
             </a>
         </li>
+
+        <li class="nav-item mt-2">
+            <a class="nav-link <%= uri.contains("/Notificaciones") ? "active" : "" %>"
+               href="<%=request.getContextPath()%>/Notificaciones">
+                <img src="<%=request.getContextPath()%>/Productor/img/notificaciones.png"
+                     width="25" height="25" class="me-2">
+                <span class="text-label">Notificaciones</span>
+            </a>
+        </li>
         <% } %>
+
+
 
         <!-- Almacén -->
 
@@ -206,6 +222,12 @@
             <a href="<%=request.getContextPath()%>/OrdCompraAlmServlet" class="nav-link text-white">
                 <img src="<%=request.getContextPath()%>/Almacen/img/oc.png" width="25" height="25" class="me-2">
                 <span class="text-label">Órdenes de compra </span>
+            </a>
+        </li>
+        <li>
+            <a href="<%=request.getContextPath()%>/NotificacionesServlet" class="nav-link text-white">
+                <img src="<%=request.getContextPath()%>/Productor/img/notificaciones.png" width="25" height="25" class="me-2">
+                <span class="text-label">Notificaciones </span>
             </a>
         </li>
         <% } %>

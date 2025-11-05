@@ -8,6 +8,21 @@
         response.sendRedirect(request.getContextPath()+"/InicioAdminServlet");
         return;
     }%>
+
+<%
+    // Lista en sesión (la genera NotificacionesAdminServlet)
+    java.util.List<java.util.Map<String,String>> q =
+            (java.util.List<java.util.Map<String,String>>) session.getAttribute("adminNotiQueue");
+
+    int unread = 0;
+    if (q != null) {
+        for (java.util.Map<String,String> n : q) {
+            if (!"1".equals(n.get("leido"))) unread++;
+        }
+    }
+
+    String ctx = request.getContextPath();
+%>
 <!doctype html>
 <html lang="es">
 <head>
@@ -59,6 +74,34 @@
         .tabla1{ background:#0d1822; border-radius:.75rem; overflow:hidden; box-shadow:0 6px 14px rgba(0,0,0,.18);}
         .tabla1 thead th{ background:#263a4a; position:sticky; top:0; z-index:1; }
         .tabla1 a{ color:#9fd2ff; }
+
+        /* ====== CAMPANITA ====== */
+        .bell-wrap {
+            position: relative;
+            display: inline-block;
+        }
+        .bell-btn {
+            border: 0;
+            background: transparent;
+            font-size: 22px;
+            color: #0d6efd;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .badge-dot {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #dc3545;
+            color: #fff;
+            border-radius: 999px;
+            min-width: 18px;
+            height: 18px;
+            line-height: 18px;
+            text-align: center;
+            font-size: 11px;
+            padding: 0 5px;
+        }
     </style>
 </head>
 <body>
@@ -67,7 +110,17 @@
 
 
 <main class="main" id="main">
-    <h1 class="my-3">Bienvenido - Admin</h1>
+    <div class="d-flex justify-content-between align-items-center my-3">
+        <h1 class="m-0">Bienvenido - Admin</h1>
+
+        <!-- Campanita de notificaciones -->
+        <a href="<%=ctx%>/Admin/Notificaciones" class="bell-wrap" title="Notificaciones">
+            <button class="bell-btn">🔔</button>
+            <% if (unread > 0) { %>
+            <span class="badge-dot"><%= unread %></span>
+            <% } %>
+        </a>
+    </div>
     <div class="container-fluid">
         <div class="row g-3 mb-3 justify-content-center">
             <div class="col-12 col-sm-6 col-lg-4">
