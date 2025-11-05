@@ -68,6 +68,8 @@
         .table-wrap{ background:#fff; border-radius:16px; padding:12px; box-shadow:0 6px 16px rgba(0,0,0,.06); }
         .table thead th{ position:sticky; top:0; background:#e9ecef; }
     </style>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 
@@ -81,6 +83,11 @@
         <button type="button" class="btn btn-outline-secondary btn-sm" onclick="history.back()">
             &larr; Volver
         </button>
+        <a href="<%= request.getContextPath() %>/NotificacionesLogisServlet"
+           class="btn btn-outline-primary btn-sm position-relative">
+            <i class="fas fa-bell"></i>
+            <span class="ms-1">Notificaciones</span>
+        </a>
     </div>
 
     <div class="container my-2">

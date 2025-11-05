@@ -4,5 +4,7 @@ public enum NotificacionTipo {
     ORDEN_LLEGADA,
     ORDEN_RETRASO,
     BLOQUE_CRITICO,
-    INCIDENCIA_NUEVA
+    INCIDENCIA_NUEVA,
+    CAMBIO_ESTADO_OC,
+    STOCK_BAJO
 }

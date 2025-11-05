@@ -90,6 +90,8 @@
         .pill.in{background:#47c776}   /* Entrada */
         .pill.out{background:#d23c3c}  /* Salida */
     </style>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 
@@ -103,6 +105,11 @@
         <button type="button" class="btn btn-outline-secondary btn-sm" onclick="history.back()">
             &larr; Volver
         </button>
+        <a href="<%= request.getContextPath() %>/NotificacionesLogisServlet"
+           class="btn btn-outline-primary btn-sm position-relative">
+            <i class="fas fa-bell"></i>
+            <span class="ms-1">Notificaciones</span>
+        </a>
     </div>
 
     <div class="container my-4" id="stock-bajo">

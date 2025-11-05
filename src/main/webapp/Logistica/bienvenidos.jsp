@@ -68,6 +68,8 @@
         /* Cabecera */
         h1{ font-weight:800; color:#2e63f5; letter-spacing:.3px; }
     </style>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 
@@ -81,6 +83,11 @@
         <button type="button" class="btn btn-outline-secondary btn-sm" onclick="history.back()">
             &larr; Volver
         </button>
+        <a href="<%= request.getContextPath() %>/NotificacionesLogisServlet"
+           class="btn btn-outline-primary btn-sm position-relative">
+            <i class="fas fa-bell"></i>
+            <span class="ms-1">Notificaciones</span>
+        </a>
     </div>
 
     <h1 class="mb-3">BIENVENIDO A LOGÍSTICA!</h1>
