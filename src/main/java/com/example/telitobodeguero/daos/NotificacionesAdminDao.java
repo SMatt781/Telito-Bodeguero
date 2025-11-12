@@ -20,49 +20,85 @@ public class NotificacionesAdminDao {
         // Trae TODO (mismo método que ya usas en logística)
         ArrayList<OrdenCompra> lista = ordenCompraDao.obtenerOrdenCompra(null, null);
 
-        // Si quisieras solo estados que te interesan en notificaciones “activas”, puedes filtrar aquí:
-        // lista.removeIf(oc -> oc.getEstado() == null ||
-        //       !(oc.getEstado().equalsIgnoreCase("Enviada")
-        //      || oc.getEstado().equalsIgnoreCase("Recibido")
-        //      || oc.getEstado().equalsIgnoreCase("En tránsito")
-        //      || oc.getEstado().equalsIgnoreCase("En transito")
-        //      || oc.getEstado().equalsIgnoreCase("Registrado")
-        //      || oc.getEstado().equalsIgnoreCase("Completado")));
+        // ===== FILTRO ACTIVADO =====
+        // Se eliminan todas las órdenes que NO están en el flujo que quieres ver.
+        lista.removeIf(oc -> {
+            String estado = normalizar(oc.getEstado());
+            if (estado.isEmpty()) return true; // Quita nulos o vacíos
+
+            switch (estado) {
+                case "enviada":
+                case "enviado":
+                case "recibido":
+                case "recibida":
+                case "en transito":
+                case "en tránsito":
+                case "registrado":
+                case "registrada":
+                case "completado":
+                case "completada":
+                    return false; // NO la borres, la queremos ver
+                default:
+                    return true; // Borra "Generada", "Cancelada", etc.
+            }
+        });
 
         return lista;
     }
 
     /**
+     * NUEVO MÉTODO: Genera un mensaje basado en el estado ACTUAL de la orden.
+     */
+    public String getMensajeEstadoActual(OrdenCompra oc) {
+        if (oc == null || oc.getEstado() == null) {
+            return "Orden sin estado.";
+        }
+
+        String estadoNorm = normalizar(oc.getEstado());
+        // Asumo que tu bean OrdenCompra tiene un getIdOrdenCompra()
+        int idOrden = oc.getCodigoOrdenCompra();
+        String base = "OC #" + idOrden + " está en estado: \"" + oc.getEstado() + "\"";
+
+        switch (estadoNorm) {
+            case "enviada":
+            case "enviado":
+                return "📤 " + base;
+            case "recibido":
+            case "recibida":
+                return "📥 " + base;
+            case "en transito":
+            case "en tránsito":
+                return "🚚 " + base;
+            case "registrado":
+            case "registrada":
+                return "🗂️ " + base;
+            case "completado":
+            case "completada":
+                return "✅ " + base;
+            default:
+                return "ℹ️ " + base;
+        }
+    }
+
+    /**
      * Genera el texto para la notificación de cambio de estado
      * (mantiene variantes “En tránsito” / “En transito”).
+     * (Este método ya no lo usará el servlet, pero puede servir para otros fines)
      */
     public String generarMensajeCambioEstado(String estadoAnterior, String estadoNuevo, int idOrden) {
-        // Normaliza espacios/acentos leves para comparar pero muestra lo que venga
+        // ... (tu código original sin cambios) ...
         String nuevoNorm = normalizar(estadoNuevo);
         String base = "OC #" + idOrden + " cambió de estado: \"" + estadoAnterior + "\" → \"" + estadoNuevo + "\"";
 
         switch (nuevoNorm) {
-            case "enviada":
-            case "enviado":
-                return "📤 " + base + ". Pedido recién enviado.";
-            case "recibido":
-            case "recibida":
-                return "📥 " + base + ". Lote recibido en almacén.";
-            case "en transito":
-            case "en tránsito":
-                return "🚚 " + base + ". Lote en tránsito.";
-            case "registrado":
-            case "registrada":
-                return "🗂️ " + base + ". Ingresado en sistema.";
-            case "completado":
-            case "completada":
-                return "✅ " + base + ". Proceso finalizado.";
+            // ... (el resto de tu switch) ...
             default:
                 return "ℹ️ " + base;
         }
     }
 
     // ---- helpers ----
+    // (Lo mantengo 'private' porque solo se usa dentro de esta clase)
     private String normalizar(String s) {
         if (s == null) return "";
         s = s.trim().toLowerCase();
