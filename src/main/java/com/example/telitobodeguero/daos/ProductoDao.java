@@ -19,12 +19,16 @@ public class ProductoDao {
      * Guarda un nuevo producto en la base de datos.
      */
     public void crear(Producto p, int idProductor) throws SQLException {
-        // SQL solo incluye las columnas que SÍ existen en tu tabla Producto
+
+        // generar SKU automáticamente
+        String nuevoSKU = generarNuevoSKU();
+
         String sql = "INSERT INTO Producto (sku, nombre, precio, stock) VALUES (?,?,?,?)";
+
         try (Connection c = DB.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
-            ps.setString(1, p.getSku());
+            ps.setString(1, nuevoSKU);                 // ← ya no viene del formulario
             ps.setString(2, p.getNombre());
             ps.setDouble(3, p.getPrecio());
             ps.setInt(4, p.getStock());
@@ -32,6 +36,7 @@ public class ProductoDao {
             ps.executeUpdate();
         }
     }
+
 
     // ==========================================================
     //              MÉTODOS DE LISTADO Y BÚSQUEDA
@@ -41,6 +46,43 @@ public class ProductoDao {
      * 🎯 NUEVO: Lista SÓLO los productos que el productor logeado tiene registrados en algún lote.
      * Esto soporta el listado principal en el doGet del Servlet.
      */
+    public String generarNuevoSKU() {
+        String nuevo = "PROD-0001";
+
+        String sql = "SELECT sku FROM Producto ORDER BY idProducto DESC LIMIT 1";
+
+        try (Connection c = DB.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                String ultimoSKU = rs.getString("sku"); // PROD-0045
+                int numero = Integer.parseInt(ultimoSKU.substring(5)); // 45
+                numero++;
+                String num = String.format("%04d", numero); // 0046
+                nuevo = "PROD-" + num;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return nuevo;
+    }
+    public String obtenerUltimoSku() throws SQLException {
+        String sql = "SELECT sku FROM Producto ORDER BY idProducto DESC LIMIT 1";
+
+        try (Connection c = DB.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getString("sku");
+            }
+        }
+        return null;
+    }
+
     public List<Producto> listarPorProductor(int idProductor) throws SQLException {
         List<Producto> lista = new ArrayList<>();
 

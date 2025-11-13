@@ -149,42 +149,6 @@
             </div>
         </div>
 
-        <h3 class="mt-5">Tabla de alertas</h3>
-
-        <div class="table-responsive mt-3">
-            <table class="table table-secondary table-striped table-hover align-middle mb-0">
-                <thead>
-                <tr>
-                    <th>#Alerta</th>
-                    <th>Sku</th>
-                    <th>Producto</th>
-                    <th>Motivo</th>
-                    <th>Stock</th>
-                    <th>Zona</th>
-                    <th>Generar Orden</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% if (listaAlertas != null) {
-                    for (Alertas alertas: listaAlertas) { %>
-                <tr>
-                    <th scope="row"><%=alertas.getIdAlertas()%></th>
-                    <td><%=alertas.getProducto().getSku()%></td>
-                    <td><%=alertas.getProducto().getNombre()%></td>
-                    <td><%=alertas.getTipoAlerta()%></td>
-                    <td><%=alertas.getProducto().getStock()%></td>
-                    <td><%=alertas.getZonas().getNombre()%></td>
-                    <td>
-                        <a href="StockBajo_OrdenCompra?action=form_crear&productoId=<%= alertas.getProducto().getIdProducto() %>"
-                           class="btn btn-sm btn-primary">Generar orden</a>
-                    </td>
-                </tr>
-                <% }
-                } %>
-                </tbody>
-            </table>
-        </div>
-
         <div class="container-fluid px-0 mt-5">
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-12">

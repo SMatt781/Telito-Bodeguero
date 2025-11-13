@@ -178,8 +178,8 @@
         </li>
 
         <li class="nav-item mt-2">
-            <a class="nav-link <%= uri.contains("/Notificaciones") ? "active" : "" %>"
-               href="<%=request.getContextPath()%>/Notificaciones">
+            <a class="nav-link <%= uri.contains("/NotificacionesProd") ? "active" : "" %>"
+               href="<%=request.getContextPath()%>/NotificacionesProd">
                 <img src="<%=request.getContextPath()%>/Productor/img/notificaciones.png"
                      width="25" height="25" class="me-2">
                 <span class="text-label">Notificaciones</span>

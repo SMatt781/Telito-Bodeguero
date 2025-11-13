@@ -16,34 +16,189 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
           rel="stylesheet" crossorigin="anonymous" />
     <style>
-        body{display:flex;min-height:100vh}
-        .sidebar{
-            position:fixed; inset:0 auto 0 0;       /* top:0; left:0; bottom:0 */
-            width:280px; background:#212529; color:#fff;
-            z-index:1000; transition:width .25s ease;
-            overflow-y:auto;
+        /* ==== BASE ==== */
+        body {
+            margin:0;
+            background:#f3f5f7;
+            font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
         }
-        .sidebar.collapsed{ width:80px; }
-        .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
-        .sidebar .brand .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
-        .sidebar .nav-link{ color:#d6d6d6; }
-        .sidebar .nav-link:hover, .sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
-        .sidebar .dropdown-menu{ background:#2b3035; }
-        .sidebar .dropdown-item{ color:#fff; }
-        .sidebar .dropdown-item:hover{ background:#0d6efd; }
-        /* Ocultar textos cuando está colapsado */
+
+        /* ==========================================================
+                  SIDEBAR — MISMO DISEÑO QUE EL PRIMERO (FUNCIONA)
+           ========================================================== */
+        .sidebar{
+            position:fixed;
+            inset:0 auto 0 0;     /* top:0; left:0; bottom:0; */
+            width:280px;
+            background:#212529;
+            color:#fff;
+            z-index:1000;
+            overflow-y:auto;
+            transition:width .25s ease;
+        }
+        .sidebar.collapsed { width:80px; }
         .sidebar.collapsed .text-label{ display:none; }
 
+        .sidebar .brand{
+            padding:1rem 1.25rem;
+            display:flex;
+            align-items:center;
+            gap:.75rem;
+        }
+
+        /* 🔵 ESTE ERA EL ESTILO QUE FALTABA (botón azul original) */
+        .sidebar .brand .toggle{
+            border:0;
+            background:#0d6efd; /* azul */
+            color:#fff;         /* icono blanco */
+            padding:.5rem .6rem;
+            border-radius:.5rem;
+        }
+
+        .sidebar .nav-link{
+            color:#d6d6d6;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link:focus{
+            background:#0d6efd;
+            color:#fff;
+        }
+
+        /* ==========================================================
+                            MAIN CONTENT
+           ========================================================== */
         .main{
-            margin-left:280px; transition:margin-left .25s ease;
-            min-height:100vh; padding:2rem;
+            margin-left:280px;
+            padding:2rem;
+            min-height:100vh;
+            transition:margin-left .25s ease;
         }
         .main.collapsed{ margin-left:80px; }
-        .nav-link.text-white:hover{background:#0d6efd;color:#fff!important}
-        .main-content{flex:1;padding:2rem;background:#f8f9fa}
-        #tablaLotes tbody tr{cursor:pointer}
-        #tablaLotes tbody tr.table-active td{background:#cfe2ff!important}
+
+        /* ==== TITULO ==== */
+        h2{
+            font-weight:800;
+            color:#2e63f5;
+            text-transform:uppercase;
+            letter-spacing:.3px;
+        }
+
+        /* ==========================================================
+                             TABLA
+           ========================================================== */
+
+        .table-responsive{
+            border-radius:12px;
+            overflow-x:auto !important;
+        }
+
+        table thead th{
+            position:sticky;
+            top:0;
+            background:#e9ecef !important;
+            z-index:3;
+            border-bottom:2px solid #ced4da;
+            font-weight:600;
+        }
+
+        table tbody tr:nth-child(odd){ background:#ffffff; }
+        table tbody tr:nth-child(even){ background:#f7f8fa; }
+
+        td, th{
+            white-space:nowrap;
+            padding:.65rem .75rem;
+            vertical-align:middle;
+        }
+
+        #tablaLotes tbody tr.table-active td{
+            background:#cfe2ff !important;
+        }
+
+        /* ==========================================================
+                             BOTONES
+           ========================================================== */
+
+        .btn-primary{
+            background:#2e63f5;
+            border:none;
+            border-radius:50px;
+            padding:.45rem 1.4rem;
+            font-weight:600;
+        }
+
+        .btn-danger{
+            border-radius:50px;
+            font-weight:700;
+        }
+
+        .btn-outline-primary,
+        .btn-outline-secondary{
+            border-radius:50px;
+            font-weight:600;
+        }
+
+        /* ==========================================================
+                             RESPONSIVE REAL
+           ========================================================== */
+
+        /* ====================== 1024px ===================== */
+        @media (max-width: 1024px){
+            .main{
+                padding:1.5rem;
+            }
+        }
+
+        /* ====================== 768px ====================== */
+        @media (max-width: 768px){
+            .main{
+                padding:1.2rem;
+            }
+
+            h2{
+                text-align:center;
+                font-size:1.4rem;
+            }
+
+            .d-flex.gap-2{
+                flex-wrap:wrap;
+                gap:1rem !important;
+            }
+
+            .d-flex.gap-2 select,
+            .d-flex.gap-2 button,
+            .d-flex.gap-2 a{
+                width:100%;
+            }
+
+            .d-flex.justify-content-center.gap-3{
+                flex-wrap:wrap;
+                gap:1rem!important;
+            }
+
+            .btn-primary, .btn-danger{
+                width:100%;
+            }
+        }
+
+        /* ====================== 480px ====================== */
+        @media (max-width: 480px){
+            .main{
+                padding:1rem;
+            }
+
+            td, th{
+                font-size:.8rem;
+            }
+
+            .d-flex.justify-content-between{
+                flex-direction:column;
+                gap:0.8rem;
+                text-align:center;
+            }
+        }
     </style>
+
+
 </head>
 <body>
 

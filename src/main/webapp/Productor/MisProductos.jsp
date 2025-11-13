@@ -13,38 +13,88 @@
     <title>Mis Productos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
     <style>
-        body{display:flex;min-height:100vh;background:#f7f9fc}
+        body { margin:0; background:#f3f5f7; }
+
+        /* ==== Sidebar desplegable ==== */
         .sidebar{
-            position:fixed; inset:0 auto 0 0;       /* top:0; left:0; bottom:0 */
+            position:fixed; inset:0 auto 0 0;
             width:280px; background:#212529; color:#fff;
             z-index:1000; transition:width .25s ease;
             overflow-y:auto;
         }
         .sidebar.collapsed{ width:80px; }
-        .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
-        .sidebar .brand .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
+        .sidebar .brand{
+            padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem;
+        }
+        .sidebar .brand .toggle{
+            border:0; background:#0d6efd; color:#fff;
+            padding:.5rem .6rem; border-radius:.5rem;
+        }
         .sidebar .nav-link{ color:#d6d6d6; }
-        .sidebar .nav-link:hover, .sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
-        .sidebar .dropdown-menu{ background:#2b3035; }
-        .sidebar .dropdown-item{ color:#fff; }
-        .sidebar .dropdown-item:hover{ background:#0d6efd; }
-        /* Ocultar textos cuando está colapsado */
+        .sidebar .nav-link:hover,.sidebar .nav-link:focus{
+            background:#0d6efd; color:#fff;
+        }
         .sidebar.collapsed .text-label{ display:none; }
 
+        /* ==== Main content ==== */
         .main{
             margin-left:280px; transition:margin-left .25s ease;
             min-height:100vh; padding:2rem;
         }
         .main.collapsed{ margin-left:80px; }
-        .nav-link.text-white:hover{background:#0d6efd;color:#fff!important}
-        .main-content{flex:1;padding:2rem}
-        .search-wrap{min-width:260px}
-        .search-wrap input{max-width:320px}
-        .muted{opacity:.65}
+
+        /* ==== Tablas (mismo estilo que el JSP anterior) ==== */
+        .table-products thead th,
+        #tablaProductos thead th,
+        #tablaPrecios thead th{
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background:#e9ecef;
+            color:#212529;
+            border-bottom:2px solid #ced4da;
+        }
+
+        .table-products tbody tr:nth-child(odd),
+        #tablaProductos tbody tr:nth-child(odd),
+        #tablaPrecios tbody tr:nth-child(odd){
+            background:#fff;
+        }
+        .table-products tbody tr:nth-child(even),
+        #tablaProductos tbody tr:nth-child(even),
+        #tablaPrecios tbody tr:nth-child(even){
+            background:#f7f8fa;
+        }
+        .table-products td, .table-products th,
+        #tablaProductos td, #tablaProductos th,
+        #tablaPrecios td, #tablaPrecios th{
+            padding:.65rem .75rem;
+            vertical-align: middle;
+            border-color:#dee2e6;
+        }
+
+        /* ==== Título igual que el otro JSP ==== */
+        h1, h2 {
+            font-weight:800;
+            color:#2e63f5;
+            letter-spacing:.3px;
+        }
+
+        /* ==== Búsqueda ==== */
+        .search-wrap input{
+            max-width:320px;
+            border-radius: .4rem;
+        }
+
+        .muted{opacity:.65;}
+
         /* ancho cómodo para SKU */
         #tablaProductos th:first-child, #tablaProductos td:first-child,
-        #tablaPrecios   th:first-child, #tablaPrecios   td:first-child { white-space:nowrap; min-width:110px; }
+        #tablaPrecios   th:first-child, #tablaPrecios   td:first-child {
+            white-space:nowrap; min-width:110px;
+        }
     </style>
+
 </head>
 <body>
 

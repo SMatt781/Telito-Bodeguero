@@ -9,7 +9,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.*;
 
-@WebServlet(name = "NotificacionesServlet", value = "/Notificaciones")
+@WebServlet(name = "NotificacionesProdServlet", value = "/NotificacionesProd")
 public class NotificacionesProdServlet extends HttpServlet {
 
     private final OrdenCompraDao dao = new OrdenCompraDao();
@@ -45,7 +45,7 @@ public class NotificacionesProdServlet extends HttpServlet {
                 ordenesVistas.add(idOrden);
                 ses.setAttribute("ordenesVistas", ordenesVistas);
             } catch (NumberFormatException ignored) {}
-            response.sendRedirect(request.getContextPath() + "/Notificaciones");
+            response.sendRedirect(request.getContextPath() + "/NotificacionesProd");
             return;
         }
 

@@ -37,41 +37,121 @@
           rel="stylesheet" crossorigin="anonymous" />
 
     <style>
-        /* ... Estilos CSS ... (Mantener estilos) */
         :root { --brand:#2e63f5; }
-        body{display:flex;min-height:100vh;}
+
+        /* ===== BASE ===== */
+        body{
+            display:flex;
+            min-height:100vh;
+            background:#f3f5f7;
+            font-family:'Inter', sans-serif;
+        }
+
+        /* ===== SIDEBAR ===== */
         .sidebar{
-            position:fixed; inset:0 auto 0 0;
-            width:280px; background:#212529; color:#fff;
-            z-index:1000; transition:width .25s ease;
+            position:fixed;
+            inset:0 auto 0 0;
+            width:280px;
+            background:#212529;
+            color:#fff;
+            z-index:1000;
+            transition:width .25s ease;
             overflow-y:auto;
         }
-        .sidebar.collapsed{ width:80px; }
-        .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
-        .sidebar .brand .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
-        .sidebar .nav-link{ color:#d6d6d6; }
-        .sidebar .nav-link:hover, .sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
+
+        .sidebar.collapsed{
+            width:80px;
+        }
+
+        .sidebar .brand{
+            padding:1rem 1.25rem;
+            display:flex;
+            align-items:center;
+            gap:.75rem;
+        }
+
+        .sidebar .brand .toggle{
+            border:0;
+            background:#0d6efd;
+            color:#fff;
+            padding:.5rem .6rem;
+            border-radius:.5rem;
+        }
+
+        .sidebar .nav-link{
+            color:#d6d6d6;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link:focus{
+            background:#0d6efd;
+            color:#fff;
+        }
+
         .sidebar .dropdown-menu{ background:#2b3035; }
         .sidebar .dropdown-item{ color:#fff; }
         .sidebar .dropdown-item:hover{ background:#0d6efd; }
+
         .sidebar.collapsed .text-label{ display:none; }
 
+        /* ===== MAIN ===== */
         .main{
-            margin-left:280px; transition:margin-left .25s ease;
-            min-height:100vh; padding:2rem;
+            margin-left:280px;
+            transition:margin-left .25s ease;
+            min-height:100vh;
+            padding:2rem;
+            width:100%;
         }
-        .main.collapsed{ margin-left:80px; }
-        .nav-link.text-white:hover{background:#0d6efd;color:#fff!important;}
 
-        @media (max-width: 991.98px) {
-            .sidebar:not(.collapsed) { width: 0; overflow: hidden; transition: width 0s; }
-            .main { margin-left: 0 !important; }
+        .main.collapsed{
+            margin-left:80px;
         }
+
+        .nav-link.text-white:hover{
+            background:#0d6efd;
+            color:#fff !important;
+        }
+
+        /* =====================================================
+               RESPONSIVE CORRECTO Y PROFESIONAL
+           ===================================================== */
+
+        /* ===== TABLETS Y CELULARES (sidebar se oculta) ===== */
+        @media (max-width: 991.98px) {
+
+            /* el sidebar desaparece */
+            .sidebar{
+                width:0 !important;
+                overflow:hidden !important;
+            }
+
+            /* el main ocupa todo */
+            .main{
+                margin-left:0 !important;
+                padding:1.4rem;
+            }
+
+            /* para evitar que collapsed afecte móvil */
+            .sidebar.collapsed{
+                width:0 !important;
+            }
+
+            .main.collapsed{
+                margin-left:0 !important;
+            }
+        }
+
+        /* ===== DESKTOP (funciona el colapsado normal) ===== */
         @media (min-width: 992px) {
-            .sidebar.collapsed { width: 80px; }
-            .main.collapsed { margin-left: 80px; }
+            .sidebar.collapsed{
+                width:80px !important;
+            }
+            .main.collapsed{
+                margin-left:80px !important;
+            }
         }
     </style>
+
 </head>
 <body>
 

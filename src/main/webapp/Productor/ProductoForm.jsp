@@ -11,29 +11,77 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
     <style>
+        body { margin:0; background:#f3f5f7; }
+
+        /* ===== Sidebar ===== */
         .sidebar{
-            position:fixed; inset:0 auto 0 0;       /* top:0; left:0; bottom:0 */
+            position:fixed; inset:0 auto 0 0;
             width:280px; background:#212529; color:#fff;
             z-index:1000; transition:width .25s ease;
             overflow-y:auto;
         }
         .sidebar.collapsed{ width:80px; }
         .sidebar .brand{ padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; }
-        .sidebar .brand .toggle{ border:0; background:#0d6efd; color:#fff; padding:.5rem .6rem; border-radius:.5rem; }
+        .sidebar .brand .toggle{
+            border:0; background:#0d6efd; color:#fff;
+            padding:.5rem .6rem; border-radius:.5rem;
+        }
         .sidebar .nav-link{ color:#d6d6d6; }
-        .sidebar .nav-link:hover, .sidebar .nav-link:focus{ background:#0d6efd; color:#fff; }
+        .sidebar .nav-link:hover,.sidebar .nav-link:focus{
+            background:#0d6efd; color:#fff;
+        }
         .sidebar .dropdown-menu{ background:#2b3035; }
         .sidebar .dropdown-item{ color:#fff; }
         .sidebar .dropdown-item:hover{ background:#0d6efd; }
-        /* Ocultar textos cuando está colapsado */
         .sidebar.collapsed .text-label{ display:none; }
 
+        /* ===== Main ===== */
         .main{
             margin-left:280px; transition:margin-left .25s ease;
             min-height:100vh; padding:2rem;
         }
         .main.collapsed{ margin-left:80px; }
+
+        /* ===== Títulos ===== */
+        h3{
+            font-weight:800;
+            color:#2e63f5;
+            letter-spacing:.3px;
+            text-transform:uppercase;
+        }
+
+        /* ===== Card del formulario ===== */
+        .card{
+            border:0;
+            border-radius:12px;
+            box-shadow:0 4px 12px rgba(0,0,0,.08);
+            background:#ffffff;
+        }
+
+        label.form-label{
+            font-weight:600;
+            color:#444;
+        }
+
+        input.form-control{
+            border-radius:8px;
+        }
+
+        .btn-primary{
+            background:#2e63f5;
+            border:none;
+            font-weight:600;
+            padding:.47rem 1.2rem;
+            border-radius:8px;
+        }
+
+        .btn-outline-secondary{
+            border-radius:8px;
+            font-weight:600;
+        }
+
     </style>
+
 </head>
 <body class="bg-light">
 <jsp:include page="/sidebar.jsp" />
@@ -47,22 +95,22 @@
 
         <form class="card p-3" method="post" action="<%=ctx%>/ProductoNuevo">
             <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label">SKU</label>
-                    <input type="text" name="sku" class="form-control" required>
-                </div>
+
                 <div class="col-md-5">
                     <label class="form-label">Nombre</label>
                     <input type="text" name="nombre" class="form-control" required>
                 </div>
-                <div class="col-md-2">
+
+                <div class="col-md-3">
                     <label class="form-label">Precio (S/)</label>
                     <input type="number" name="precio" class="form-control" step="0.01" min="0" required>
                 </div>
+
                 <div class="col-md-2">
                     <label class="form-label">Stock</label>
                     <input type="number" name="stock" class="form-control" min="0" value="0" required>
                 </div>
+
             </div>
 
             <div class="mt-3 d-flex gap-2">
