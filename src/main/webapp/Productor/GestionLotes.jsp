@@ -4,7 +4,7 @@
     String ctx = request.getContextPath();
     List<Lote> lista      = (List<Lote>) request.getAttribute("lista");
     List<Producto> prods  = (List<Producto>) request.getAttribute("productos");
-    Integer idProducto    = (Integer) request.getAttribute("idProducto"); // puede ser null
+    Integer idProducto    = (Integer) request.getAttribute("idProducto");
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -15,20 +15,18 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
           rel="stylesheet" crossorigin="anonymous" />
+
     <style>
-        /* ==== BASE ==== */
         body {
             margin:0;
             background:#f3f5f7;
             font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* ==========================================================
-                  SIDEBAR — MISMO DISEÑO QUE EL PRIMERO (FUNCIONA)
-           ========================================================== */
+        /* ==== SIDEBAR ==== */
         .sidebar{
             position:fixed;
-            inset:0 auto 0 0;     /* top:0; left:0; bottom:0; */
+            inset:0 auto 0 0;
             width:280px;
             background:#212529;
             color:#fff;
@@ -46,27 +44,22 @@
             gap:.75rem;
         }
 
-        /* 🔵 ESTE ERA EL ESTILO QUE FALTABA (botón azul original) */
         .sidebar .brand .toggle{
             border:0;
-            background:#0d6efd; /* azul */
-            color:#fff;         /* icono blanco */
+            background:#0d6efd;
+            color:#fff;
             padding:.5rem .6rem;
             border-radius:.5rem;
         }
 
-        .sidebar .nav-link{
-            color:#d6d6d6;
-        }
+        .sidebar .nav-link{ color:#d6d6d6; }
         .sidebar .nav-link:hover,
         .sidebar .nav-link:focus{
             background:#0d6efd;
             color:#fff;
         }
 
-        /* ==========================================================
-                            MAIN CONTENT
-           ========================================================== */
+        /* ==== MAIN ==== */
         .main{
             margin-left:280px;
             padding:2rem;
@@ -75,7 +68,6 @@
         }
         .main.collapsed{ margin-left:80px; }
 
-        /* ==== TITULO ==== */
         h2{
             font-weight:800;
             color:#2e63f5;
@@ -83,10 +75,7 @@
             letter-spacing:.3px;
         }
 
-        /* ==========================================================
-                             TABLA
-           ========================================================== */
-
+        /* ==== TABLA ==== */
         .table-responsive{
             border-radius:12px;
             overflow-x:auto !important;
@@ -114,41 +103,51 @@
             background:#cfe2ff !important;
         }
 
-        /* ==========================================================
-                             BOTONES
-           ========================================================== */
-
-        .btn-primary{
-            background:#2e63f5;
-            border:none;
-            border-radius:50px;
-            padding:.45rem 1.4rem;
-            font-weight:600;
+        /* =====================================================
+           BOTONES CUADRADOS — ESTILO APLICADO EN TODA LA VISTA
+           ===================================================== */
+        .btn,
+        .btn-primary,
+        .btn-danger,
+        .btn-outline-primary,
+        .btn-outline-secondary,
+        .rounded-pill {
+            border-radius: 6px !important;     /* ← BOTONES CUADRADOS */
         }
 
-        .btn-danger{
-            border-radius:50px;
-            font-weight:700;
+        .btn-primary {
+            background:#2e63f5 !important;
+            border:none !important;
+            padding:.45rem 1.3rem !important;
+            font-weight:600 !important;
+        }
+
+        .btn-danger {
+            padding:.45rem 1.3rem !important;
+            font-weight:700 !important;
         }
 
         .btn-outline-primary,
-        .btn-outline-secondary{
-            border-radius:50px;
-            font-weight:600;
+        .btn-outline-secondary {
+            border-radius:6px !important;
+            border-width:1px !important;
+            font-weight:600 !important;
         }
 
-        /* ==========================================================
-                             RESPONSIVE REAL
-           ========================================================== */
+        #btnAdd,
+        #btnEdit,
+        #btnDel {
+            border-radius:6px !important;
+            padding:.45rem 1.4rem !important;
+        }
 
-        /* ====================== 1024px ===================== */
+        /* ==== RESPONSIVE ==== */
         @media (max-width: 1024px){
             .main{
                 padding:1.5rem;
             }
         }
 
-        /* ====================== 768px ====================== */
         @media (max-width: 768px){
             .main{
                 padding:1.2rem;
@@ -180,7 +179,6 @@
             }
         }
 
-        /* ====================== 480px ====================== */
         @media (max-width: 480px){
             .main{
                 padding:1rem;
@@ -197,14 +195,14 @@
             }
         }
     </style>
-
-
 </head>
+
 <body>
 
 <jsp:include page="/sidebar.jsp" />
 
 <main class="main" id="main">
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="display-6 fw-bold text-primary m-0">Gestión de lotes</h2>
 
@@ -260,26 +258,27 @@
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-3">
-        <button id="btnAdd"  type="button" class="btn btn-primary rounded-pill px-4 fw-bold">Añadir</button>
-        <button id="btnEdit" type="button" class="btn btn-primary rounded-pill px-4 fw-bold" disabled>Modificar</button>
-        <button id="btnDel"  type="button" class="btn btn-danger  rounded-pill px-4 fw-bold" disabled>Eliminar</button>
+        <button id="btnAdd"  type="button" class="btn btn-primary fw-bold">Añadir</button>
+        <button id="btnEdit" type="button" class="btn btn-primary fw-bold" disabled>Modificar</button>
+        <button id="btnDel"  type="button" class="btn btn-danger  fw-bold" disabled>Eliminar</button>
     </div>
-    </div>
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
 <script>
     (() => {
+
         const ctx         = '<%= ctx %>';
         const idProducto  = '<%= idProducto == null ? "" : idProducto.toString() %>';
 
-        // 🎯 Nuevo: Referencia al select de filtro
         const selectProducto = document.querySelector('select[name="idProducto"]');
 
-        // Toggle del sidebar
         const btn = document.getElementById('btnToggle');
         const sidebar = document.getElementById('sidebar');
         const main = document.getElementById('main');
+
         btn.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
             main.classList.toggle('collapsed');
@@ -292,49 +291,57 @@
 
         let selected = null;
 
-        // Selección de fila
         tbody.addEventListener('click', (e) => {
             const tr = e.target.closest('tr');
             if (!tr) return;
             if (selected) selected.classList.remove('table-active');
+
             selected = tr;
             tr.classList.add('table-active');
+
             btnEdit.disabled = false;
             btnDel.disabled  = false;
         });
 
         // Añadir
         btnAdd.addEventListener('click', () => {
-            const idSeleccionado = selectProducto.value; // Obtiene el valor del producto seleccionado
+            const idSel = selectProducto.value;
 
-            if (!idSeleccionado || idSeleccionado === "") {
-                alert('Por favor, selecciona primero un producto del filtro para añadir un lote.');
+            if (!idSel || idSel === "") {
+                alert('Selecciona primero un producto del filtro para añadir un lote.');
                 selectProducto.focus();
                 return;
             }
 
-            // Redirige al Servlet con la acción formCrear y el ID del producto seleccionado
-            window.location.href = ctx + '/Lotes?action=formCrear&idProducto=' + encodeURIComponent(idSeleccionado);
+            window.location.href =
+                ctx + '/Lotes?action=formCrear&idProducto=' + encodeURIComponent(idSel);
         });
 
-        // Modificar
+        // Editar
         btnEdit.addEventListener('click', () => {
             if (!selected) { alert('Selecciona un lote'); return; }
             const idLote = selected.dataset.id;
-            window.location.href = ctx + '/Lotes?action=editar&id=' + encodeURIComponent(idLote);
+
+            window.location.href =
+                ctx + '/Lotes?action=editar&id=' + encodeURIComponent(idLote);
         });
 
-        // Eliminar (mantiene el filtro si lo hay)
+        // Eliminar
         btnDel.addEventListener('click', () => {
             if (!selected) { alert('Selecciona un lote'); return; }
+
             const idLote = selected.dataset.id;
-            // Usa el valor del select como filtro de retorno
             const prod   = selected.dataset.prod || selectProducto.value;
+
             if (!confirm('¿Eliminar el lote ' + idLote + '?')) return;
-            window.location.href = ctx + '/Lotes?action=borrar&id=' + encodeURIComponent(idLote)
+
+            window.location.href =
+                ctx + '/Lotes?action=borrar&id=' + encodeURIComponent(idLote)
                 + (prod ? '&idProducto=' + encodeURIComponent(prod) : '');
         });
+
     })();
 </script>
+
 </body>
 </html>

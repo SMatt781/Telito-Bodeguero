@@ -37,10 +37,24 @@
 
         /* ===== Main ===== */
         .main{
-            margin-left:280px; transition:margin-left .25s ease;
-            min-height:100vh; padding:2rem;
+            margin-left:280px;
+            width: calc(100% - 280px);   /* ← NECESARIO PARA CENTRAR */
+            min-height:100vh;
+            padding:2rem;
+
+            display:flex;
+            justify-content:center;      /* ← CENTRA TODO */
         }
-        .main.collapsed{ margin-left:80px; }
+        .main.collapsed{
+            margin-left:80px;
+            width: calc(100% - 80px);    /* ← SE AJUSTA AL COLAPSAR */
+        }
+
+        /* ===== WRAPPER CENTRADO ===== */
+        .form-wrapper{
+            width:100%;
+            max-width:750px;
+        }
 
         /* ===== Títulos ===== */
         h3{
@@ -80,14 +94,17 @@
             font-weight:600;
         }
 
+
     </style>
 
 </head>
 <body class="bg-light">
 <jsp:include page="/sidebar.jsp" />
 
+<!-- ★★★ WRAPPER CENTRADO AÑADIDO ★★★ -->
 <main class="main" id="main">
-    <div class="container py-4">
+    <div class="form-wrapper">
+
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="m-0">Añadir producto</h3>
             <a href="<%=ctx%>/MisProductos" class="btn btn-outline-secondary btn-sm">Volver</a>
@@ -118,12 +135,12 @@
                 <a href="<%=ctx%>/MisProductos" class="btn btn-outline-secondary">Cancelar</a>
             </div>
         </form>
+
     </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script>
-    // Toggle del sidebar
     const btn = document.getElementById('btnToggle');
     const sidebar = document.getElementById('sidebar');
     const main = document.getElementById('main');
@@ -132,5 +149,6 @@
         main.classList.toggle('collapsed');
     });
 </script>
+
 </body>
 </html>
